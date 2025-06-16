@@ -111,7 +111,6 @@ const StandingsScreen = ({ matches, onBack }) => {
                     index === standings.length - 1 || index === standings.length - 2 ? 'bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-400' :
                     'hover:bg-gray-50'
                   )
-                  'hover:bg-gray-50'
                 } transition-colors`}
               >
                 <div className="flex items-center justify-between">
