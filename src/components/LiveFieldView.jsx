@@ -30,9 +30,16 @@ const LiveFieldView = ({
   const [penaltyScore, setPenaltyScore] = useState({ team1: 0, team2: 0 });
   const [showTiebreaker, setShowTiebreaker] = useState(false);
   const [tiebreakerMethod, setTiebreakerMethod] = useState('');
+  const [showPlayoffResults, setShowPlayoffResults] = useState(false);
+  const [playoffResults, setPlayoffResults] = useState({
+    champion: null,
+    runnerUp: null,
+    thirdPlace: null,
+    fourthPlace: null
+  });
 
   // Calculate standings and generate playoff matches
-  const standings = calculateStandings(matches);
+  const standings = calculateStandings(matches.filter(m => m.type === 'regular')); // Only regular season for standings
   const updatedMatches = generatePlayoffMatches(matches, standings);
   
   const currentMatch = updatedMatches.find(m => m.id === activeMatch) || updatedMatches.find(m => !m.played) || updatedMatches[0];
@@ -49,6 +56,34 @@ const LiveFieldView = ({
     }
   }, [updatedMatches, matches, setMatches]);
 
+  // Check if tournament is complete and show results
+  React.useEffect(() => {
+    const allMatches = matches;
+    const finalMatch = allMatches.find(m => m.id === 14);
+    const thirdPlaceMatch = allMatches.find(m => m.id === 13);
+    
+    if (finalMatch?.played && thirdPlaceMatch?.played) {
+      // Determine final positions
+      const finalWinner = finalMatch.score1 > finalMatch.score2 ? finalMatch.team1 : 
+                         finalMatch.score2 > finalMatch.score1 ? finalMatch.team2 :
+                         finalMatch.winner; // In case of penalties
+      
+      const finalLoser = finalMatch.team1 === finalWinner ? finalMatch.team2 : finalMatch.team1;
+      
+      const thirdWinner = thirdPlaceMatch.score1 > thirdPlaceMatch.score2 ? thirdPlaceMatch.team1 : 
+                         thirdPlaceMatch.score2 > thirdPlaceMatch.score1 ? thirdPlaceMatch.team2 :
+                         thirdPlaceMatch.winner; // In case of penalties
+      
+      const thirdLoser = thirdPlaceMatch.team1 === thirdWinner ? thirdPlaceMatch.team2 : thirdPlaceMatch.team1;
+      
+      setPlayoffResults({
+        champion: finalWinner,
+        runnerUp: finalLoser,
+        thirdPlace: thirdWinner,
+        fourthPlace: thirdLoser
+      });
+    }
+  }, [matches]);
   // Check for ties that need resolution
   const checkForTiebreaker = () => {
     // For final match (14), check if 1st and 2nd place are tied
@@ -138,13 +173,20 @@ const LiveFieldView = ({
     
     alert(`🏆 ${winner} venceu nos pênaltis! (${penaltyScore.team1} x ${penaltyScore.team2})`);
   };
-  // Finalizar jogo com cálculo automático de pontos
+  // Finalizar jogo - playoffs não afetam pontuação regular
   const finishMatch = () => {
     const score1 = currentMatch.score1 || 0;
     const score2 = currentMatch.score2 || 0;
     
     // Check if it's match 13 (3rd place) and it's a tie
     if (currentMatch.id === 13 && score1 === score2) {
+      setShowPenaltyShootout(true);
+      setPenaltyScore({ team1: 0, team2: 0 });
+      return;
+    }
+    
+    // Check if it's match 14 (final) and it's a tie
+    if (currentMatch.id === 14 && score1 === score2) {
       setShowPenaltyShootout(true);
       setPenaltyScore({ team1: 0, team2: 0 });
       return;
@@ -158,12 +200,43 @@ const LiveFieldView = ({
     }
     
     let message = '';
-    if (score1 > score2) {
-      message = `🏆 ${currentMatch.team1} venceu! (+3 pontos)`;
-    } else if (score2 > score1) {
-      message = `🏆 ${currentMatch.team2} venceu! (+3 pontos)`;
+    
+    // Special messages for playoff matches
+    if (currentMatch.id === 13) {
+      // 3rd place match
+      if (score1 > score2) {
+        message = `🥉 ${currentMatch.team1} conquistou o 3º lugar!`;
+      } else if (score2 > score1) {
+        message = `🥉 ${currentMatch.team2} conquistou o 3º lugar!`;
+      }
+    } else if (currentMatch.id === 14) {
+      // Final match
+      if (score1 > score2) {
+        message = `🏆 ${currentMatch.team1} é o CAMPEÃO DO TORNEIO!`;
+      } else if (score2 > score1) {
+        message = `🏆 ${currentMatch.team2} é o CAMPEÃO DO TORNEIO!`;
+      }
     } else {
+      // Regular season matches
+      if (score1 > score2) {
+        message = `🏆 ${currentMatch.team1} venceu! (+3 pontos)`;
+      } else if (score2 > score1) {
+        message = `🏆 ${currentMatch.team2} venceu! (+3 pontos)`;
+      } else {
+        message = `🤝 Empate! (+1 ponto para cada time)`;
+      }
+    }
+    
+    // For regular season ties
+    if (currentMatch.type === 'regular' && score1 === score2) {
       message = `🤝 Empate! (+1 ponto para cada time)`;
+    }
+    
+    // For playoff ties (shouldn't happen as they go to penalties)
+    if ((currentMatch.id === 13 || currentMatch.id === 14) && score1 === score2) {
+      message = `🤝 Empate! Vai para os pênaltis!`;
+    } else {
+      // message already set above
     }
 
     const updatedMatch = { 
@@ -178,7 +251,7 @@ const LiveFieldView = ({
     setMatches(prev => {
       const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
       // Generate playoff matches if this was the last regular season match
-      const newStandings = calculateStandings(updated);
+      const newStandings = calculateStandings(updated.filter(m => m.type === 'regular'));
       return generatePlayoffMatches(updated, newStandings);
     });
     setActiveMatch(null);
@@ -191,8 +264,89 @@ const LiveFieldView = ({
     alert(message);
   };
 
+  // Show tournament results if both playoff matches are complete
+  const showTournamentResults = () => {
+    const finalMatch = matches.find(m => m.id === 14);
+    const thirdPlaceMatch = matches.find(m => m.id === 13);
+    
+    if (finalMatch?.played && thirdPlaceMatch?.played) {
+      setShowPlayoffResults(true);
+    }
+  };
+  
+  React.useEffect(() => {
+    showTournamentResults();
+  }, [matches]);
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Tournament Results Modal */}
+      {showPlayoffResults && playoffResults.champion && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
+            <div className="mb-6">
+              <div className="text-4xl mb-2">🏆</div>
+              <h2 className="text-2xl font-bold text-white mb-1">TORNEIO FINALIZADO!</h2>
+              <p className="text-yellow-100 text-sm">Espaço Novo Tempo - Praia da Costa</p>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Champion */}
+              <div className="bg-white bg-opacity-20 rounded-xl p-4 border-2 border-yellow-300">
+                <div className="flex items-center justify-center space-x-3 mb-2">
+                  <div className="text-3xl">🏆</div>
+                  <div>
+                    <div className="text-yellow-100 text-xs font-medium">CAMPEÃO</div>
+                    <div className="text-white text-lg font-bold">{playoffResults.champion}</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Runner-up */}
+              <div className="bg-white bg-opacity-15 rounded-xl p-3 border border-gray-300">
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="text-2xl">🥈</div>
+                  <div>
+                    <div className="text-gray-200 text-xs font-medium">VICE-CAMPEÃO</div>
+                    <div className="text-white text-base font-bold">{playoffResults.runnerUp}</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Third place */}
+              <div className="bg-white bg-opacity-10 rounded-xl p-3 border border-orange-300">
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="text-xl">🥉</div>
+                  <div>
+                    <div className="text-orange-200 text-xs font-medium">3º LUGAR</div>
+                    <div className="text-white text-base font-bold">{playoffResults.thirdPlace}</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Fourth place */}
+              <div className="bg-white bg-opacity-5 rounded-xl p-3">
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="text-lg">4️⃣</div>
+                  <div>
+                    <div className="text-gray-300 text-xs font-medium">4º LUGAR</div>
+                    <div className="text-white text-sm font-bold">{playoffResults.fourthPlace}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-6">
+              <button
+                onClick={() => setShowPlayoffResults(false)}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+              >
+                Fechar Resultados
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Classificação Rápida */}
       <div className="bg-gray-800 p-3 border-b border-gray-700">
         <h4 className="text-white text-xs font-medium mb-2 text-center">Classificação Atual</h4>
@@ -208,6 +362,18 @@ const LiveFieldView = ({
             </div>
           ))}
         </div>
+        
+        {/* Show tournament results button if complete */}
+        {playoffResults.champion && (
+          <div className="mt-2 text-center">
+            <button
+              onClick={() => setShowPlayoffResults(true)}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+            >
+              🏆 Ver Resultados Finais
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Header do Jogo */}
