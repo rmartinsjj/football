@@ -126,3 +126,31 @@ export const drawTeams = (players) => {
 
   return newTeams;
 };
+
+export const generatePlayoffMatches = (matches, standings) => {
+  // Only generate playoff matches if all 12 regular season matches are completed
+  const regularMatches = matches.filter(m => m.type === 'regular');
+  const allRegularMatchesCompleted = regularMatches.every(m => m.played);
+  
+  if (!allRegularMatchesCompleted || standings.length < 4) {
+    return matches;
+  }
+  
+  const updatedMatches = [...matches];
+  
+  // 3rd place match (3rd vs 4th)
+  const thirdPlaceMatch = updatedMatches.find(m => m.id === 13);
+  if (thirdPlaceMatch && thirdPlaceMatch.team1 === 'TBD') {
+    thirdPlaceMatch.team1 = standings[2].team; // 3rd place
+    thirdPlaceMatch.team2 = standings[3].team; // 4th place
+  }
+  
+  // Final (1st vs 2nd)
+  const finalMatch = updatedMatches.find(m => m.id === 14);
+  if (finalMatch && finalMatch.team1 === 'TBD') {
+    finalMatch.team1 = standings[0].team; // 1st place
+    finalMatch.team2 = standings[1].team; // 2nd place
+  }
+  
+  return updatedMatches;
+};

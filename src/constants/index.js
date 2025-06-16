@@ -6,18 +6,23 @@ export const TEAM_COLORS = {
 };
 
 export const INITIAL_MATCHES = [
-  { id: 1, team1: 'Vermelho', team2: 'Azul', score1: null, score2: null, played: false },
-  { id: 2, team1: 'Verde Branco', team2: 'Brasil', score1: null, score2: null, played: false },
-  { id: 3, team1: 'Verde Branco', team2: 'Vermelho', score1: null, score2: null, played: false },
-  { id: 4, team1: 'Brasil', team2: 'Azul', score1: null, score2: null, played: false },
-  { id: 5, team1: 'Verde Branco', team2: 'Azul', score1: null, score2: null, played: false },
-  { id: 6, team1: 'Vermelho', team2: 'Brasil', score1: null, score2: null, played: false },
-  { id: 7, team1: 'Azul', team2: 'Vermelho', score1: null, score2: null, played: false },
-  { id: 8, team1: 'Brasil', team2: 'Verde Branco', score1: null, score2: null, played: false },
-  { id: 9, team1: 'Vermelho', team2: 'Verde Branco', score1: null, score2: null, played: false },
-  { id: 10, team1: 'Azul', team2: 'Brasil', score1: null, score2: null, played: false },
-  { id: 11, team1: 'Azul', team2: 'Verde Branco', score1: null, score2: null, played: false },
-  { id: 12, team1: 'Brasil', team2: 'Vermelho', score1: null, score2: null, played: false }
+  // Regular season matches (1-12)
+  { id: 1, team1: 'Vermelho', team2: 'Azul', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 2, team1: 'Verde Branco', team2: 'Brasil', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 3, team1: 'Verde Branco', team2: 'Vermelho', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 4, team1: 'Brasil', team2: 'Azul', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 5, team1: 'Verde Branco', team2: 'Azul', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 6, team1: 'Vermelho', team2: 'Brasil', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 7, team1: 'Azul', team2: 'Vermelho', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 8, team1: 'Brasil', team2: 'Verde Branco', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 9, team1: 'Vermelho', team2: 'Verde Branco', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 10, team1: 'Azul', team2: 'Brasil', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 11, team1: 'Azul', team2: 'Verde Branco', score1: null, score2: null, played: false, type: 'regular' },
+  { id: 12, team1: 'Brasil', team2: 'Vermelho', score1: null, score2: null, played: false, type: 'regular' },
+  
+  // Playoff matches (13-14) - will be populated dynamically based on standings
+  { id: 13, team1: 'TBD', team2: 'TBD', score1: null, score2: null, played: false, type: 'third_place', name: 'Disputa 3º Lugar' },
+  { id: 14, team1: 'TBD', team2: 'TBD', score1: null, score2: null, played: false, type: 'final', name: 'Final' }
 ];
 
 export const INITIAL_TEAMS = {
