@@ -12,7 +12,7 @@ const HomeScreen = ({
       <div className="flex items-center justify-between">
         <div 
           className="w-12 h-12 rounded-lg bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/logoespaçonovotempo.png)' }}
+          style={{ backgroundImage: 'url(/logoespaco.png)' }}
           title="Espaço Novo Tempo"
         />
         <button
