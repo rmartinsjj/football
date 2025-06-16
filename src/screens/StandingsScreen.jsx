@@ -191,23 +191,23 @@ const StandingsScreen = ({ matches, onBack }) => {
                 <div className="mt-3 grid grid-cols-5 gap-2 text-center text-sm">
                   <div className="bg-white rounded-lg p-2">
                     <div className="font-medium text-blue-600">{team.gamesPlayed}</div>
-                    <div className="text-xs text-gray-500">Jogos</div>
+                    <div className="text-[10px] text-gray-500 leading-tight">Jogos</div>
                   </div>
                   <div className="bg-white rounded-lg p-2">
                     <div className="font-medium text-green-600">{team.wins}</div>
-                    <div className="text-xs text-gray-500">Vitórias</div>
+                    <div className="text-[10px] text-gray-500 leading-tight">Vitórias</div>
                   </div>
                   <div className="bg-white rounded-lg p-2">
                     <div className="font-medium text-yellow-600">{team.draws}</div>
-                    <div className="text-xs text-gray-500">Empates</div>
+                    <div className="text-[10px] text-gray-500 leading-tight">Empates</div>
                   </div>
                   <div className="bg-white rounded-lg p-2">
                     <div className="font-medium text-red-600">{team.losses}</div>
-                    <div className="text-xs text-gray-500">Derrotas</div>
+                    <div className="text-[10px] text-gray-500 leading-tight">Derrotas</div>
                   </div>
                   <div className="bg-white rounded-lg p-2">
                     <div className="font-medium">{team.goalDiff > 0 ? '+' : ''}{team.goalDiff}</div>
-                    <div className="text-xs text-gray-500">Saldo</div>
+                    <div className="text-[10px] text-gray-500 leading-tight">Saldo</div>
                   </div>
                 </div>
               </div>
