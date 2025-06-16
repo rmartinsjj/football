@@ -24,7 +24,8 @@ const LiveFieldView = ({
   formatTime,
   addGoal,
   removeGoal,
-  updateMatchScore
+  updateMatchScore,
+  setOnTimerFinished
 }) => {
   const [goalkeepers, setGoalkeepers] = useState({ 
     left: { name: 'Goleiro 1' }, 
@@ -51,9 +52,11 @@ const LiveFieldView = ({
 
   // Set up timer finished callback
   React.useEffect(() => {
-    setOnTimerFinished(() => () => {
-      showToastMessage('⏰ Tempo esgotado!', 'info');
-    });
+    if (setOnTimerFinished) {
+      setOnTimerFinished(() => () => {
+        showToastMessage('⏰ Tempo esgotado!', 'info');
+      });
+    }
   }, [setOnTimerFinished]);
 
   // Calculate standings and generate playoff matches
@@ -616,7 +619,7 @@ const LiveFieldView = ({
               style={{ left: pos.x, top: pos.y }}
               onClick={() => addGoal(player.id, player.name, currentMatch.team2, currentMatch.id)}
             >
-              <div className={`w-5 h-5 ${TEAM_COLORS[currentMatch.team2].bg} rounded-full border-2 border-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-transform`}>
+              <div className={`w-5 h-5 ${TEAM_COLORS[currentMatch.team2].bg} rounded-full border-2 border-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95  transition-transform`}>
                 <Users size={10} className="text-white" />
               </div>
               <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
