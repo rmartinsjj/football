@@ -40,7 +40,7 @@ export const calculateStandings = (matches) => {
         standings[team2].points += 3;
         standings[team1].losses++;
       } else {
-        // Empate
+        // Empate (incluindo 0x0)
         standings[team1].draws++;
         standings[team2].draws++;
         standings[team1].points += 1;
