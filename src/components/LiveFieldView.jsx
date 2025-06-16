@@ -37,6 +37,7 @@ const LiveFieldView = ({
     thirdPlace: null,
     fourthPlace: null
   });
+  const [showNextGameButton, setShowNextGameButton] = useState(false);
 
   // Calculate standings and generate playoff matches
   const standings = calculateStandings(matches.filter(m => m.type === 'regular')); // Only regular season for standings
@@ -255,6 +256,7 @@ const LiveFieldView = ({
       return generatePlayoffMatches(updated, newStandings);
     });
     setActiveMatch(null);
+    setShowNextGameButton(true);
     
     // Force re-render after a small delay to ensure state is updated
     setTimeout(() => {
@@ -262,6 +264,14 @@ const LiveFieldView = ({
     }, 100);
     
     alert(message);
+  };
+
+  const goToNextGame = () => {
+    setShowNextGameButton(false);
+    const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
+    if (nextMatch) {
+      setTimeout(() => startMatchTimer(nextMatch.id), 500);
+    }
   };
 
   // Show tournament results if both playoff matches are complete
@@ -461,6 +471,15 @@ const LiveFieldView = ({
               >
                 ✓
               </button>
+              {showNextGameButton && (
+                <button
+                  onClick={goToNextGame}
+                  className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-2 h-6 rounded-full flex items-center justify-center transition-colors text-xs font-medium"
+                  title="Próximo Jogo"
+                >
+                  ▶
+                </button>
+              )}
             </div>
           )}
         </div>
