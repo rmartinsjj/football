@@ -20,6 +20,8 @@ const ColeteScreen = ({
   const [toastMessage, setToastMessage] = React.useState('');
   const [toastType, setToastType] = React.useState('success');
   const [showToast, setShowToast] = React.useState(false);
+  const [isDrawing, setIsDrawing] = React.useState(false);
+  const [drawingStep, setDrawingStep] = React.useState(0);
 
   const showToastMessage = (message, type = 'success') => {
     setToastMessage(message);
@@ -31,16 +33,43 @@ const ColeteScreen = ({
   const championTeam = standings.length > 0 ? standings[0].team : null;
   const championPlayers = championTeam ? teams[championTeam] || [] : [];
 
-  const drawColete = () => {
+  const drawingMessages = [
+    "🧽 Preparando o sorteio do colete...",
+    "🎲 Sorteando quem vai lavar...",
+    "🏆 Resultado definido!"
+  ];
+
+  const drawColete = async () => {
     const eligiblePlayers = coleteParticipants.filter(p => p.id !== immunePlayer?.id);
     
-    if (eligiblePlayers.length > 0) {
-      const randomPlayer = eligiblePlayers[Math.floor(Math.random() * eligiblePlayers.length)];
-      setColeteWinner(randomPlayer);
-      showToastMessage(`🧽 ${randomPlayer.name} foi sorteado para lavar o colete!`, 'success');
-    } else {
+    if (eligiblePlayers.length === 0) {
       showToastMessage('Adicione jogadores para o sorteio!', 'error');
+      return;
     }
+
+    setIsDrawing(true);
+    setDrawingStep(0);
+
+    // Primeira mensagem - 1.5 segundos
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setDrawingStep(1);
+
+    // Segunda mensagem - 1.5 segundos
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setDrawingStep(2);
+
+    // Terceira mensagem - 1 segundo
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Sortear o jogador
+    const randomPlayer = eligiblePlayers[Math.floor(Math.random() * eligiblePlayers.length)];
+    setColeteWinner(randomPlayer);
+    
+    // Finalizar loading
+    setIsDrawing(false);
+    setDrawingStep(0);
+    
+    showToastMessage(`🧽 ${randomPlayer.name} foi sorteado para lavar o colete!`, 'success');
   };
 
   const addPlayerToColete = (player) => {
