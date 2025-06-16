@@ -36,7 +36,7 @@ const SettingsScreen = ({
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20">
       <Header title="Configurações" showBack={true} onBack={onBack} />
       
       {/* Toast Message */}
@@ -220,9 +220,29 @@ const SettingsScreen = ({
         </div>
 
         {/* Botões de Ação */}
-        <div className="flex space-x-3">
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 p-4 max-w-sm mx-auto">
+          <div className="flex space-x-3">
+            <button
+              onClick={handleSave}
+              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-2xl font-medium flex items-center justify-center space-x-2 transition-all duration-200 active:scale-95 shadow-lg"
+            >
+              <Save size={20} />
+              <span>Salvar Configurações</span>
+            </button>
+            
+            <button
+              onClick={handleReset}
+              className="bg-gray-600 hover:bg-gray-700 text-white p-4 rounded-2xl transition-colors shadow-lg"
+              title="Restaurar Padrão"
+            >
+              <RotateCcw size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Espaçamento para o botão fixo - versão desktop/fallback */}
+        <div className="flex space-x-3 opacity-0 pointer-events-none">
           <button
-            onClick={handleSave}
             className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-2xl font-medium flex items-center justify-center space-x-2 transition-all duration-200 active:scale-95"
           >
             <Save size={20} />
@@ -230,9 +250,7 @@ const SettingsScreen = ({
           </button>
           
           <button
-            onClick={handleReset}
             className="bg-gray-600 hover:bg-gray-700 text-white p-4 rounded-2xl transition-colors"
-            title="Restaurar Padrão"
           >
             <RotateCcw size={20} />
           </button>
