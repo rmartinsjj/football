@@ -3,7 +3,7 @@ import { Medal, Settings } from 'lucide-react';
 import Header from '../components/Header';
 import { TEAM_COLORS } from '../constants';
 import { calculateStandings } from '../utils/tournamentUtils';
-import TiebreakerModal from '../components/TiebreakerModal';
+import TiebreakerModal from '../components/LiveFieldView-TiebreakerModal';
 
 const StandingsScreen = ({ matches, onBack }) => {
   const [showTiebreaker, setShowTiebreaker] = React.useState(false);
