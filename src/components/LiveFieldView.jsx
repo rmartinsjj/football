@@ -26,6 +26,10 @@ const LiveFieldView = ({
     right: { name: 'Goleiro 2' } 
   });
   const [showGoalkeeperConfig, setShowGoalkeeperConfig] = useState(false);
+  const [showPenaltyShootout, setShowPenaltyShootout] = useState(false);
+  const [penaltyScore, setPenaltyScore] = useState({ team1: 0, team2: 0 });
+  const [showTiebreaker, setShowTiebreaker] = useState(false);
+  const [tiebreakerMethod, setTiebreakerMethod] = useState('');
 
   // Calculate standings and generate playoff matches
   const standings = calculateStandings(matches);
@@ -45,10 +49,113 @@ const LiveFieldView = ({
     }
   }, [updatedMatches, matches, setMatches]);
 
+  // Check for ties that need resolution
+  const checkForTiebreaker = () => {
+    // For final match (14), check if 1st and 2nd place are tied
+    if (currentMatch.id === 14) {
+      const firstPlace = standings[0];
+      const secondPlace = standings[1];
+      
+      if (firstPlace.points === secondPlace.points) {
+        setShowTiebreaker(true);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleTiebreakerDecision = (method) => {
+    setTiebreakerMethod(method);
+    
+    if (method === 'goals') {
+      // Use goal difference to decide
+      const firstPlace = standings[0];
+      const secondPlace = standings[1];
+      
+      if (firstPlace.goalDiff !== secondPlace.goalDiff) {
+        const winner = firstPlace.goalDiff > secondPlace.goalDiff ? firstPlace.team : secondPlace.team;
+        alert(`🏆 ${winner} se classificou para a final por saldo de gols!`);
+      } else if (firstPlace.goalsFor !== secondPlace.goalsFor) {
+        const winner = firstPlace.goalsFor > secondPlace.goalsFor ? firstPlace.team : secondPlace.team;
+        alert(`🏆 ${winner} se classificou para a final por gols marcados!`);
+      } else {
+        // Still tied, need to draw
+        handleTiebreakerDecision('draw');
+        return;
+      }
+    } else if (method === 'draw') {
+      // Random draw
+      const teams = [standings[0].team, standings[1].team];
+      const winner = teams[Math.floor(Math.random() * 2)];
+      alert(`🎲 Por sorteio: ${winner} se classificou para a final!`);
+    }
+    
+    setShowTiebreaker(false);
+  };
+
+  const addPenaltyGoal = (team) => {
+    setPenaltyScore(prev => ({
+      ...prev,
+      [team]: prev[team] + 1
+    }));
+  };
+
+  const removePenaltyGoal = (team) => {
+    setPenaltyScore(prev => ({
+      ...prev,
+      [team]: Math.max(0, prev[team] - 1)
+    }));
+  };
+
+  const finishPenaltyShootout = () => {
+    const team1Name = currentMatch.team1;
+    const team2Name = currentMatch.team2;
+    
+    if (penaltyScore.team1 === penaltyScore.team2) {
+      alert('⚽ Disputa de pênaltis ainda está empatada! Continue marcando os gols.');
+      return;
+    }
+    
+    const winner = penaltyScore.team1 > penaltyScore.team2 ? team1Name : team2Name;
+    const finalScore1 = currentMatch.score1 || 0;
+    const finalScore2 = currentMatch.score2 || 0;
+    
+    // Update match with penalty result
+    const updatedMatch = { 
+      ...currentMatch, 
+      played: true,
+      score1: finalScore1,
+      score2: finalScore2,
+      penaltyScore1: penaltyScore.team1,
+      penaltyScore2: penaltyScore.team2,
+      winner: winner
+    };
+    
+    setMatches(prev => prev.map(m => m.id === currentMatch.id ? updatedMatch : m));
+    setActiveMatch(null);
+    setShowPenaltyShootout(false);
+    setPenaltyScore({ team1: 0, team2: 0 });
+    
+    alert(`🏆 ${winner} venceu nos pênaltis! (${penaltyScore.team1} x ${penaltyScore.team2})`);
+  };
   // Finalizar jogo com cálculo automático de pontos
   const finishMatch = () => {
     const score1 = currentMatch.score1 || 0;
     const score2 = currentMatch.score2 || 0;
+    
+    // Check if it's match 13 (3rd place) and it's a tie
+    if (currentMatch.id === 13 && score1 === score2) {
+      setShowPenaltyShootout(true);
+      setPenaltyScore({ team1: 0, team2: 0 });
+      return;
+    }
+    
+    // Check if we need tiebreaker for final qualification
+    if (currentMatch.id === 12) {
+      if (checkForTiebreaker()) {
+        return;
+      }
+    }
     
     let message = '';
     if (score1 > score2) {
@@ -116,6 +223,11 @@ const LiveFieldView = ({
             <div className="text-2xl font-bold text-white">
               {currentMatch.score1 || 0} × {currentMatch.score2 || 0}
             </div>
+            {showPenaltyShootout && (
+              <div className="text-yellow-400 text-xs mt-1">
+                Pênaltis: {penaltyScore.team1} × {penaltyScore.team2}
+              </div>
+            )}
           </div>
           
           <div className="flex items-center space-x-2">
@@ -227,6 +339,118 @@ const LiveFieldView = ({
         )}
       </div>
 
+      {/* Disputa de Pênaltis */}
+      {showPenaltyShootout && (
+        <div className="bg-yellow-800 mx-3 mb-3 rounded-xl p-4 border-2 border-yellow-500">
+          <div className="text-center mb-3">
+            <h3 className="text-yellow-200 font-bold text-sm mb-1">⚽ DISPUTA DE PÊNALTIS</h3>
+            <p className="text-yellow-300 text-xs">Jogo empatado! Marque os gols dos pênaltis:</p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Time 1 Penalties */}
+            <div className="text-center">
+              <h4 className="text-white font-bold text-sm mb-2">{currentMatch.team1}</h4>
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <button
+                  onClick={() => removePenaltyGoal('team1')}
+                  className="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                >
+                  -
+                </button>
+                <div className="bg-gray-700 text-white font-bold text-xl w-12 h-12 rounded-full flex items-center justify-center">
+                  {penaltyScore.team1}
+                </div>
+                <button
+                  onClick={() => addPenaltyGoal('team1')}
+                  className="bg-green-600 hover:bg-green-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            
+            {/* Time 2 Penalties */}
+            <div className="text-center">
+              <h4 className="text-white font-bold text-sm mb-2">{currentMatch.team2}</h4>
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <button
+                  onClick={() => removePenaltyGoal('team2')}
+                  className="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                >
+                  -
+                </button>
+                <div className="bg-gray-700 text-white font-bold text-xl w-12 h-12 rounded-full flex items-center justify-center">
+                  {penaltyScore.team2}
+                </div>
+                <button
+                  onClick={() => addPenaltyGoal('team2')}
+                  className="bg-green-600 hover:bg-green-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex space-x-2">
+            <button
+              onClick={finishPenaltyShootout}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-medium transition-colors"
+            >
+              🏆 Finalizar Pênaltis
+            </button>
+            <button
+              onClick={() => {
+                setShowPenaltyShootout(false);
+                setPenaltyScore({ team1: 0, team2: 0 });
+              }}
+              className="bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-lg transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Sistema de Desempate */}
+      {showTiebreaker && (
+        <div className="bg-purple-800 mx-3 mb-3 rounded-xl p-4 border-2 border-purple-500">
+          <div className="text-center mb-3">
+            <h3 className="text-purple-200 font-bold text-sm mb-1">🤝 DESEMPATE PARA A FINAL</h3>
+            <p className="text-purple-300 text-xs">
+              {standings[0].team} e {standings[1].team} estão empatados em pontos!
+            </p>
+            <p className="text-purple-300 text-xs mt-1">Como deseja decidir a classificação?</p>
+          </div>
+          
+          <div className="space-y-2">
+            <button
+              onClick={() => handleTiebreakerDecision('goals')}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+            >
+              <Target size={16} />
+              <span>Por Saldo de Gols</span>
+            </button>
+            <button
+              onClick={() => handleTiebreakerDecision('draw')}
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
+            >
+              <Shuffle size={16} />
+              <span>Por Sorteio</span>
+            </button>
+          </div>
+          
+          <div className="mt-3 text-center">
+            <button
+              onClick={() => setShowTiebreaker(false)}
+              className="text-purple-300 hover:text-purple-200 text-xs transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
       {/* Campo de Futebol */}
       <div className="relative bg-green-600 mx-3 my-3 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
         <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 225">
