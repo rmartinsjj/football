@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Users } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
 import { calculateStandings, generatePlayoffMatches } from '../utils/tournamentUtils';
-import TiebreakerModal from './TiebreakerModal';
-import ToastMessage from './ToastMessage';
-import MatchHeader from './MatchHeader';
-import GoalkeeperConfig from './GoalkeeperConfig';
-import PenaltyShootout from './PenaltyShootout';
+import LiveFieldViewTiebreakerModal from './LiveFieldView-TiebreakerModal';
+import LiveFieldViewToastMessage from './LiveFieldView-ToastMessage';
+import LiveFieldViewMatchHeader from './LiveFieldView-MatchHeader';
+import LiveFieldViewGoalkeeperConfig from './LiveFieldView-GoalkeeperConfig';
+import LiveFieldViewPenaltyShootout from './LiveFieldView-PenaltyShootout';
 
 const LiveFieldView = ({ 
   matches,
@@ -361,7 +361,7 @@ const LiveFieldView = ({
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Toast Message */}
-      <ToastMessage
+      <LiveFieldViewToastMessage
         message={toastMessage}
         type={toastType}
         isVisible={showToast}
@@ -466,7 +466,7 @@ const LiveFieldView = ({
       </div>
 
       {/* Match Header */}
-      <MatchHeader
+      <LiveFieldViewMatchHeader
         currentMatch={currentMatch}
         timer={timer}
         formatTime={formatTime}
@@ -486,14 +486,14 @@ const LiveFieldView = ({
       />
 
       {/* Goalkeeper Configuration */}
-      <GoalkeeperConfig
+      <LiveFieldViewGoalkeeperConfig
         goalkeepers={goalkeepers}
         setGoalkeepers={setGoalkeepers}
         isVisible={showGoalkeeperConfig}
       />
 
       {/* Penalty Shootout */}
-      <PenaltyShootout
+      <LiveFieldViewPenaltyShootout
         isVisible={showPenaltyShootout}
         currentMatch={currentMatch}
         penaltyScore={penaltyScore}
@@ -507,7 +507,7 @@ const LiveFieldView = ({
       />
 
       {/* Tiebreaker Modal */}
-      <TiebreakerModal
+      <LiveFieldViewTiebreakerModal
         isOpen={showTiebreaker}
         onClose={() => setShowTiebreaker(false)}
         tiebreakerTeams={tiebreakerTeams}

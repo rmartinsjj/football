@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
-const ToastMessage = ({ 
+const LiveFieldViewToastMessage = ({ 
   message, 
   type = 'success', 
   isVisible, 
@@ -61,4 +61,4 @@ const ToastMessage = ({
   );
 };
 
-export default ToastMessage;
+export default LiveFieldViewToastMessage;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PenaltyShootout = ({
+const LiveFieldViewPenaltyShootout = ({
   isVisible,
   currentMatch,
   penaltyScore,
@@ -82,4 +82,4 @@ const PenaltyShootout = ({
   );
 };
 
-export default PenaltyShootout;
+export default LiveFieldViewPenaltyShootout;

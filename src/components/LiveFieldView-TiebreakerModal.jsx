@@ -2,7 +2,7 @@ import React from 'react';
 import { X, BarChart3, Shuffle } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
 
-const TiebreakerModal = ({ 
+const LiveFieldViewTiebreakerModal = ({ 
   isOpen, 
   onClose, 
   tiebreakerTeams, 
@@ -84,4 +84,4 @@ const TiebreakerModal = ({
   );
 };
 
-export default TiebreakerModal;
+export default LiveFieldViewTiebreakerModal;

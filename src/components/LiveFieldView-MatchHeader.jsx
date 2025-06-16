@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Pause, RotateCcw, Goal } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
 
-const MatchHeader = ({
+const LiveFieldViewMatchHeader = ({
   currentMatch,
   timer,
   formatTime,
@@ -121,4 +121,4 @@ const MatchHeader = ({
   );
 };
 
-export default MatchHeader;
+export default LiveFieldViewMatchHeader;

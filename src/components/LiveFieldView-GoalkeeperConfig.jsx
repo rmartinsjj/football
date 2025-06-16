@@ -1,6 +1,6 @@
 import React from 'react';
 
-const GoalkeeperConfig = ({ 
+const LiveFieldViewGoalkeeperConfig = ({ 
   goalkeepers, 
   setGoalkeepers, 
   isVisible 
@@ -46,4 +46,4 @@ const GoalkeeperConfig = ({
   );
 };
 
-export default GoalkeeperConfig;
+export default LiveFieldViewGoalkeeperConfig;
