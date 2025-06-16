@@ -34,9 +34,8 @@ const MatchesScreen = ({
           updated.score2 = numericScore;
         }
         
-        // Marcar como jogado apenas se ambos os placares estão preenchidos
-        updated.played = (updated.score1 !== null && updated.score1 !== '') && 
-                        (updated.score2 !== null && updated.score2 !== '');
+        // NÃO marcar como jogado automaticamente - só quando apertar "Finalizar"
+        // updated.played permanece como estava
         
         return updated;
       }

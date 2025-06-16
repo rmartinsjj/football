@@ -16,7 +16,8 @@ export const calculateStandings = (matches) => {
   };
 
   matches.forEach(match => {
-    if (match.played && match.score1 !== null && match.score2 !== null && match.score1 !== '' && match.score2 !== '') {
+    // Só calcular pontos para jogos FINALIZADOS (played = true)
+    if (match.played === true && match.score1 !== null && match.score2 !== null && match.score1 !== '' && match.score2 !== '') {
       const team1 = match.team1;
       const team2 = match.team2;
       const score1 = parseInt(match.score1) || 0;

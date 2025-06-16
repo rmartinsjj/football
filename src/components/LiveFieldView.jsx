@@ -56,11 +56,6 @@ const LiveFieldView = ({
     setActiveMatch(null);
     
     alert(message);
-    
-    const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
-    if (nextMatch) {
-      setTimeout(() => startMatchTimer(nextMatch.id), 500);
-    }
   };
 
   return (
