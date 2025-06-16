@@ -10,10 +10,10 @@ const HomeScreen = ({
   <div className="min-h-screen pb-4">
     <div className="dark-card px-4 pt-6 pb-4">
       <div className="flex items-center justify-between">
-        <img 
-          src="/logoespaçonovotempo.png" 
-          alt="Espaço Novo Tempo" 
-          className="w-12 h-12 rounded-lg object-cover"
+        <div 
+          className="w-12 h-12 rounded-lg bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/logoespaçonovotempo.png)' }}
+          title="Espaço Novo Tempo"
         />
         <button
           onClick={() => setCurrentScreen('settings')}
