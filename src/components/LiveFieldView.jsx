@@ -31,6 +31,8 @@ const LiveFieldView = ({
   const [showTiebreaker, setShowTiebreaker] = useState(false);
   const [tiebreakerMethod, setTiebreakerMethod] = useState('');
   const [showPlayoffResults, setShowPlayoffResults] = useState(false);
+  const [tiebreakerTeams, setTiebreakerTeams] = useState([]);
+  const [tiebreakerPositions, setTiebreakerPositions] = useState([]);
   const [playoffResults, setPlayoffResults] = useState({
     champion: null,
     runnerUp: null,
@@ -86,17 +88,53 @@ const LiveFieldView = ({
     }
   }, [matches]);
   // Check for ties that need resolution
-  const checkForTiebreaker = () => {
-    // For final match (14), check if 1st and 2nd place are tied
-    if (currentMatch.id === 14) {
-      const firstPlace = standings[0];
-      const secondPlace = standings[1];
-      
-      if (firstPlace.points === secondPlace.points) {
-        setShowTiebreaker(true);
-        return true;
-      }
+  const checkForTiebreaker = (standings) => {
+    // Check for ties that affect playoff positioning
+    const ties = [];
+    
+    // Check 1st vs 2nd place (affects who goes to final)
+    if (standings[0].points === standings[1].points) {
+      ties.push({
+        teams: [standings[0].team, standings[1].team],
+        positions: ['1º lugar (Final)', '2º lugar (Final)'],
+        description: 'Empate entre 1º e 2º lugar - Ambos vão para a Final, mas quem será cabeça de chave?'
+      });
     }
+    
+    // Check 2nd vs 3rd place (affects final vs 3rd place match)
+    if (standings[1].points === standings[2].points && standings[0].points !== standings[1].points) {
+      ties.push({
+        teams: [standings[1].team, standings[2].team],
+        positions: ['2º lugar (Final)', '3º lugar (Disputa 3º)'],
+        description: 'Empate entre 2º e 3º lugar - Quem vai para a Final e quem disputa o 3º lugar?'
+      });
+    }
+    
+    // Check 3rd vs 4th place (affects 3rd place match vs colete)
+    if (standings[2].points === standings[3].points && standings[1].points !== standings[2].points) {
+      ties.push({
+        teams: [standings[2].team, standings[3].team],
+        positions: ['3º lugar (Disputa 3º)', '4º lugar (Colete)'],
+        description: 'Empate entre 3º e 4º lugar - Quem disputa o 3º lugar e quem vai direto para o colete?'
+      });
+    }
+    
+    // Check for 3-way or 4-way ties
+    if (standings[0].points === standings[1].points && standings[1].points === standings[2].points) {
+      ties.push({
+        teams: [standings[0].team, standings[1].team, standings[2].team],
+        positions: ['1º lugar (Final)', '2º lugar (Final)', '3º lugar (Disputa 3º)'],
+        description: 'Empate triplo entre 1º, 2º e 3º lugar - Como definir as posições?'
+      });
+    }
+    
+    if (ties.length > 0) {
+      setTiebreakerTeams(ties[0].teams);
+      setTiebreakerPositions(ties[0].positions);
+      setShowTiebreaker(true);
+      return true;
+    }
+    
     return false;
   };
 
@@ -104,16 +142,23 @@ const LiveFieldView = ({
     setTiebreakerMethod(method);
     
     if (method === 'goals') {
-      // Use goal difference to decide
-      const firstPlace = standings[0];
-      const secondPlace = standings[1];
+      // Use goal difference/goals scored to decide
+      const tiedTeams = tiebreakerTeams.map(teamName => 
+        standings.find(s => s.team === teamName)
+      ).sort((a, b) => {
+        // First by goal difference
+        if (b.goalDiff !== a.goalDiff) return b.goalDiff - a.goalDiff;
+        // Then by goals scored
+        return b.goalsFor - a.goalsFor;
+      });
       
-      if (firstPlace.goalDiff !== secondPlace.goalDiff) {
-        const winner = firstPlace.goalDiff > secondPlace.goalDiff ? firstPlace.team : secondPlace.team;
-        alert(`🏆 ${winner} se classificou para a final por saldo de gols!`);
-      } else if (firstPlace.goalsFor !== secondPlace.goalsFor) {
-        const winner = firstPlace.goalsFor > secondPlace.goalsFor ? firstPlace.team : secondPlace.team;
-        alert(`🏆 ${winner} se classificou para a final por gols marcados!`);
+      if (tiedTeams[0].goalDiff !== tiedTeams[1].goalDiff || tiedTeams[0].goalsFor !== tiedTeams[1].goalsFor) {
+        let message = `📊 Desempate por critérios técnicos:\n\n`;
+        tiedTeams.forEach((team, index) => {
+          message += `${tiebreakerPositions[index]}: ${team.team}\n`;
+          message += `   Saldo: ${team.goalDiff > 0 ? '+' : ''}${team.goalDiff} | Gols: ${team.goalsFor}\n\n`;
+        });
+        alert(message);
       } else {
         // Still tied, need to draw
         handleTiebreakerDecision('draw');
@@ -121,12 +166,19 @@ const LiveFieldView = ({
       }
     } else if (method === 'draw') {
       // Random draw
-      const teams = [standings[0].team, standings[1].team];
-      const winner = teams[Math.floor(Math.random() * 2)];
-      alert(`🎲 Por sorteio: ${winner} se classificou para a final!`);
+      const shuffledTeams = [...tiebreakerTeams].sort(() => Math.random() - 0.5);
+      
+      let message = `🎲 Resultado do sorteio:\n\n`;
+      shuffledTeams.forEach((team, index) => {
+        message += `${tiebreakerPositions[index]}: ${team}\n`;
+      });
+      
+      alert(message);
     }
     
     setShowTiebreaker(false);
+    setTiebreakerTeams([]);
+    setTiebreakerPositions([]);
   };
 
   const addPenaltyGoal = (team) => {
@@ -194,8 +246,10 @@ const LiveFieldView = ({
     }
     
     // Check if we need tiebreaker for final qualification
-    if (currentMatch.id === 12) {
-      if (checkForTiebreaker()) {
+    if (currentMatch.id === 12) { // Last regular season match
+      // Calculate final standings
+      const finalStandings = calculateStandings(matches.filter(m => m.type === 'regular'));
+      if (checkForTiebreaker(finalStandings)) {
         return;
       }
     }
@@ -603,6 +657,73 @@ const LiveFieldView = ({
 
       {/* Sistema de Desempate */}
       {showTiebreaker && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+          <div className="bg-purple-800 rounded-2xl max-w-sm w-full p-6 border-2 border-purple-500 shadow-2xl">
+            <div className="text-center mb-4">
+              <h3 className="text-purple-200 font-bold text-lg mb-2">🤝 DESEMPATE NECESSÁRIO</h3>
+              <p className="text-purple-300 text-sm mb-3">
+                {tiebreakerTeams.length} times estão empatados em pontos!
+              </p>
+              
+              {/* Show tied teams and their stats */}
+              <div className="bg-purple-900 rounded-lg p-3 mb-4">
+                <h4 className="text-purple-200 text-xs font-medium mb-2">Times Empatados:</h4>
+                {tiebreakerTeams.map((teamName, index) => {
+                  const teamStats = standings.find(s => s.team === teamName);
+                  return (
+                    <div key={teamName} className="flex items-center justify-between text-purple-100 text-xs mb-1">
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-3 h-3 ${TEAM_COLORS[teamName].bg} rounded-full`}></div>
+                        <span>{teamName}</span>
+                      </div>
+                      <div className="text-right">
+                        <span>{teamStats.points}pts | Saldo: {teamStats.goalDiff > 0 ? '+' : ''}{teamStats.goalDiff}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <p className="text-purple-300 text-sm">
+                Como deseja definir as posições para os playoffs?
+              </p>
+            </div>
+            
+            <div className="space-y-3">
+              <button
+                onClick={() => handleTiebreakerDecision('goals')}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl font-medium transition-colors flex items-center justify-center space-x-2"
+              >
+                <span>📊</span>
+                <div className="text-left">
+                  <div className="font-bold">Saldo de Gols</div>
+                  <div className="text-xs opacity-90">Usar saldo de gols e gols marcados</div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => handleTiebreakerDecision('draw')}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white p-4 rounded-xl font-medium transition-colors flex items-center justify-center space-x-2"
+              >
+                <span>🎲</span>
+                <div className="text-left">
+                  <div className="font-bold">Sortear</div>
+                  <div className="text-xs opacity-90">Sorteio aleatório das posições</div>
+                </div>
+              </button>
+            </div>
+            
+            <div className="mt-4 text-center">
+              <p className="text-purple-300 text-xs">
+                ⚠️ Esta decisão definirá quem vai para a Final e quem disputa o 3º lugar
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Old tiebreaker code - keeping for reference but should be removed */}
+      {false && showTiebreaker && (
         <div className="bg-purple-800 mx-3 mb-3 rounded-xl p-4 border-2 border-purple-500">
           <div className="text-center mb-3">
             <h3 className="text-purple-200 font-bold text-sm mb-1">🤝 DESEMPATE PARA A FINAL</h3>
@@ -617,14 +738,14 @@ const LiveFieldView = ({
               onClick={() => handleTiebreakerDecision('goals')}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
             >
-              <Target size={16} />
+              <span>📊</span>
               <span>Por Saldo de Gols</span>
             </button>
             <button
               onClick={() => handleTiebreakerDecision('draw')}
               className="w-full bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
             >
-              <Shuffle size={16} />
+              <span>🎲</span>
               <span>Por Sorteio</span>
             </button>
           </div>
