@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shuffle, Plus, Minus, UserPlus, UserMinus } from 'lucide-react';
+import { Shuffle, Plus, Minus, UserPlus, UserMinus, Edit3, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import Header from '../components/Header';
 import { TEAM_COLORS } from '../constants';
 import { drawTeams } from '../utils/tournamentUtils';
@@ -17,6 +17,12 @@ const TeamsScreen = ({
   const [showPlayerManagement, setShowPlayerManagement] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState('');
   const [availablePlayers, setAvailablePlayers] = useState([]);
+  const [expandedTeams, setExpandedTeams] = useState({
+    'Vermelho': true,
+    'Azul': true,
+    'Brasil': true,
+    'Verde Branco': true
+  });
 
   const drawingMessages = [
     "🎲 Estamos sorteando os times...",
@@ -47,6 +53,32 @@ const TeamsScreen = ({
     // Finalizar loading
     setIsDrawing(false);
     setDrawingStep(0);
+  };
+
+  const handleReDraw = async () => {
+    if (confirm('Tem certeza que deseja re-sortear os times? Isso irá redistribuir todos os jogadores novamente.')) {
+      setIsDrawing(true);
+      setDrawingStep(0);
+
+      // Primeira mensagem - 1.5 segundos
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setDrawingStep(1);
+
+      // Segunda mensagem - 1.5 segundos
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setDrawingStep(2);
+
+      // Terceira mensagem - 1 segundo
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Re-sortear os times
+      const newTeams = drawTeams(players);
+      setTeams(newTeams);
+      
+      // Finalizar loading
+      setIsDrawing(false);
+      setDrawingStep(0);
+    }
   };
 
   const getAvailablePlayersForTeam = (teamName) => {
@@ -81,12 +113,31 @@ const TeamsScreen = ({
     setShowPlayerManagement(true);
   };
 
+  const toggleTeamExpansion = (teamName) => {
+    setExpandedTeams(prev => ({
+      ...prev,
+      [teamName]: !prev[teamName]
+    }));
+  };
+
+  const toggleAllTeams = () => {
+    const allExpanded = Object.values(expandedTeams).every(expanded => expanded);
+    const newState = !allExpanded;
+    setExpandedTeams({
+      'Vermelho': newState,
+      'Azul': newState,
+      'Brasil': newState,
+      'Verde Branco': newState
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title="Times" showBack={true} onBack={onBack} />
       
       <div className="p-4">
-        {!tournamentStarted && (
+        {/* Seção de Sorteio/Re-sortear */}
+        {!tournamentStarted ? (
           <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
             <h3 className="text-base font-semibold text-gray-900 mb-3">Sortear Times</h3>
             <p className="text-gray-600 mb-4 text-sm">Distribua os {players.length} jogadores em 4 times automaticamente.</p>
@@ -127,77 +178,127 @@ const TeamsScreen = ({
               </button>
             )}
           </div>
-        )}
-
-        {tournamentStarted && (
+        ) : (
           <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">
-            <h3 className="text-base font-semibold text-gray-900 mb-3">Gerenciar Jogadores</h3>
-            <p className="text-gray-600 mb-4 text-sm">
-              Adicione jogadores que chegaram atrasados ou remova jogadores que se machucaram.
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(teams).map(([teamName]) => (
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-semibold text-gray-900">Controles dos Times</h3>
+              <button
+                onClick={toggleAllTeams}
+                className="text-gray-500 hover:text-gray-700 p-1 rounded transition-colors"
+              >
+                {Object.values(expandedTeams).every(expanded => expanded) ? (
+                  <ChevronUp size={20} />
+                ) : (
+                  <ChevronDown size={20} />
+                )}
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-2">
+              {isDrawing ? (
+                <div className="text-center py-4">
+                  <div className="relative">
+                    <div className="w-12 h-12 mx-auto mb-3 relative">
+                      <div className="absolute inset-0 border-4 border-orange-200 rounded-full"></div>
+                      <div className="absolute inset-0 border-4 border-orange-500 rounded-full border-t-transparent animate-spin"></div>
+                      <div className="absolute inset-2 bg-orange-100 rounded-full flex items-center justify-center">
+                        <RotateCcw className="text-orange-600 animate-pulse" size={16} />
+                      </div>
+                    </div>
+                    <div className="text-sm font-bold text-gray-900 mb-2 animate-pulse">
+                      {drawingMessages[drawingStep]}
+                    </div>
+                    <div className="flex justify-center space-x-1">
+                      {[0, 1, 2].map((step) => (
+                        <div
+                          key={step}
+                          className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                            step <= drawingStep ? 'bg-orange-500' : 'bg-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
                 <button
-                  key={teamName}
-                  onClick={() => openPlayerManagement(teamName)}
-                  className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} text-white p-3 rounded-lg text-sm flex items-center justify-center space-x-2 active:scale-95 transition-all`}
+                  onClick={handleReDraw}
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all duration-200 active:scale-95"
                 >
-                  <UserPlus size={16} />
-                  <span>Editar {teamName}</span>
+                  <RotateCcw size={18} />
+                  <span>Re-sortear Times</span>
                 </button>
-              ))}
+              )}
             </div>
           </div>
         )}
 
+        {/* Times */}
         <div className="grid grid-cols-1 gap-3">
           {Object.entries(teams).map(([teamName, teamPlayers]) => (
             <div key={teamName} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               <div className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} p-3`}>
                 <div className="flex items-center justify-between text-white">
-                  <h3 className="font-bold text-base">{teamName}</h3>
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
-                      {teamPlayers.length} jogadores
+                  <div className="flex items-center space-x-3">
+                    <h3 className="font-bold text-base">{teamName}</h3>
+                    <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full text-xs">
+                      {teamPlayers.length}
                     </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
                     {tournamentStarted && (
                       <button
                         onClick={() => openPlayerManagement(teamName)}
-                        className="bg-white bg-opacity-20 hover:bg-opacity-30 p-1 rounded-full transition-colors"
+                        className="bg-white bg-opacity-20 hover:bg-opacity-30 p-1.5 rounded-full transition-colors"
+                        title="Editar jogadores"
                       >
-                        <UserPlus size={16} />
+                        <Edit3 size={14} />
                       </button>
                     )}
+                    <button
+                      onClick={() => toggleTeamExpansion(teamName)}
+                      className="bg-white bg-opacity-20 hover:bg-opacity-30 p-1.5 rounded-full transition-colors"
+                      title={expandedTeams[teamName] ? "Recolher" : "Expandir"}
+                    >
+                      {expandedTeams[teamName] ? (
+                        <ChevronUp size={14} />
+                      ) : (
+                        <ChevronDown size={14} />
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
               
-              <div className="p-3">
-                {teamPlayers.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4 text-sm">Nenhum jogador sorteado</p>
-                ) : (
-                  <div className="space-y-1">
-                    {teamPlayers.map((player, index) => (
-                      <div key={player.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className={`w-6 h-6 ${TEAM_COLORS[teamName].bg} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
-                            {index + 1}
+              {expandedTeams[teamName] && (
+                <div className="p-3">
+                  {teamPlayers.length === 0 ? (
+                    <p className="text-gray-500 text-center py-4 text-sm">Nenhum jogador sorteado</p>
+                  ) : (
+                    <div className="space-y-1">
+                      {teamPlayers.map((player, index) => (
+                        <div key={player.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-6 h-6 ${TEAM_COLORS[teamName].bg} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
+                              {index + 1}
+                            </div>
+                            <span className="font-medium text-gray-900 text-sm">{player.name}</span>
                           </div>
-                          <span className="font-medium text-gray-900 text-sm">{player.name}</span>
+                          {tournamentStarted && (
+                            <button
+                              onClick={() => removePlayerFromTeam(player.id, teamName)}
+                              className="text-red-500 hover:bg-red-50 p-1 rounded transition-colors"
+                              title="Remover jogador"
+                            >
+                              <UserMinus size={14} />
+                            </button>
+                          )}
                         </div>
-                        {tournamentStarted && (
-                          <button
-                            onClick={() => removePlayerFromTeam(player.id, teamName)}
-                            className="text-red-500 hover:bg-red-50 p-1 rounded transition-colors"
-                          >
-                            <UserMinus size={14} />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
