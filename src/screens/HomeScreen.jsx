@@ -27,16 +27,29 @@ const HomeScreen = ({
     </div>
 
     <div className="px-4 py-3">
-      <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl p-4 text-white mb-4 shadow-lg">
+      <div 
+        className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
+        style={{
+          backgroundImage: 'url(/1245151 copy.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl"></div>
+        
+        <div className="relative z-10">
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-base font-semibold mb-1">Torneio Ativo</h3>
-            <p className="text-blue-200 text-sm">{players.length} jogadores • 4 times</p>
+            <p className="text-gray-200 text-sm">{players.length} jogadores • 4 times</p>
           </div>
           <div className="text-right">
             <div className="text-xl font-bold">{matches.filter(m => m.played).length}/{matches.length}</div>
-            <p className="text-blue-200 text-sm">jogos</p>
+            <p className="text-gray-200 text-sm">jogos</p>
           </div>
+        </div>
         </div>
       </div>
     </div>
