@@ -114,6 +114,7 @@ const App = () => {
         return (
           <StandingsScreen
             matches={matches}
+            settings={settings}
             onBack={handleBackToHome}
           />
         );

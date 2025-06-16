@@ -155,6 +155,71 @@ export const generatePlayoffMatches = (matches, standings) => {
   return updatedMatches;
 };
 
+// Generate next match for winner-stays mode
+export const generateNextWinnerStaysMatch = (matches, currentWinnerTeam, teams) => {
+  const teamNames = Object.keys(teams);
+  const availableTeams = teamNames.filter(team => team !== currentWinnerTeam);
+  
+  if (availableTeams.length === 0) {
+    return null; // No teams available to challenge
+  }
+  
+  // Pick a random challenger from available teams
+  const challengerTeam = availableTeams[Math.floor(Math.random() * availableTeams.length)];
+  
+  // Find the next match ID
+  const lastMatchId = Math.max(...matches.map(m => m.id), 0);
+  
+  return {
+    id: lastMatchId + 1,
+    team1: currentWinnerTeam,
+    team2: challengerTeam,
+    score1: null,
+    score2: null,
+    played: false,
+    type: 'winner-stays'
+  };
+};
+
+// Get winner-stays standings (just track wins for each team)
+export const calculateWinnerStaysStandings = (matches) => {
+  const standings = {
+    'Vermelho': { wins: 0, matches: 0 },
+    'Azul': { wins: 0, matches: 0 },
+    'Brasil': { wins: 0, matches: 0 },
+    'Verde Branco': { wins: 0, matches: 0 }
+  };
+
+  matches.forEach(match => {
+    if (match.played === true && match.type === 'winner-stays') {
+      const score1 = parseInt(match.score1 ?? 0) || 0;
+      const score2 = parseInt(match.score2 ?? 0) || 0;
+      
+      standings[match.team1].matches++;
+      standings[match.team2].matches++;
+      
+      if (score1 > score2) {
+        standings[match.team1].wins++;
+      } else if (score2 > score1) {
+        standings[match.team2].wins++;
+      }
+      // In case of tie, no one gets a win (but the challenger becomes new winner)
+    }
+  });
+  
+  return Object.entries(standings)
+    .map(([team, stats]) => ({ 
+      team, 
+      ...stats,
+      winRate: stats.matches > 0 ? (stats.wins / stats.matches * 100).toFixed(1) : '0.0'
+    }))
+    .sort((a, b) => {
+      // Sort by wins first, then by win rate
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      return parseFloat(b.winRate) - parseFloat(a.winRate);
+    });
+};
+
 // Winner-stays logic: handle match results for "quem ganha fica" mode
 export const handleWinnerStaysMatch = (match, currentWinnerTeam) => {
   const score1 = parseInt(match.score1 ?? 0) || 0;

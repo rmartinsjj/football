@@ -147,7 +147,7 @@ const SettingsScreen = ({
                   />
                   <div>
                     <div className="text-white font-medium">⚡ Quem Ganha Fica</div>
-                    <div className="text-gray-400 text-sm">Time vencedor permanece em campo</div>
+                    <div className="text-gray-400 text-sm">Time vencedor permanece, empate = desafiante vira vencedor</div>
                   </div>
                 </label>
               </div>
@@ -208,11 +208,11 @@ const SettingsScreen = ({
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-green-400 mt-1">•</span>
-                  <span>Time perdedor sai e entra o próximo da fila</span>
+                  <span>Em caso de empate: desafiante se torna o novo vencedor</span>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-green-400 mt-1">•</span>
-                  <span>Ideal para muitos jogadores e poucos campos</span>
+                  <span>Próximos desafios são gerados automaticamente</span>
                 </div>
               </>
             )}

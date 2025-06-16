@@ -141,6 +141,8 @@ const MatchesScreen = ({
           addGoal={addGoal}
           removeGoal={removeGoal}
           updateMatchScore={updateMatchScore}
+          settings={settings}
+          setSettings={setSettings}
         />
       ) : (
         <MatchesList 
@@ -154,6 +156,7 @@ const MatchesScreen = ({
           resetTimer={resetTimer}
           formatTime={formatTime}
           updateMatchScore={updateMatchScore}
+          settings={settings}
         />
       )}
     </div>

@@ -2,20 +2,24 @@ import React from 'react';
 import { Medal, Settings } from 'lucide-react';
 import Header from '../components/Header';
 import { TEAM_COLORS } from '../constants';
-import { calculateStandings } from '../utils/tournamentUtils';
+import { calculateStandings, calculateWinnerStaysStandings } from '../utils/tournamentUtils';
 import TiebreakerModal from '../components/LiveFieldView-TiebreakerModal';
 
-const StandingsScreen = ({ matches, onBack }) => {
+const StandingsScreen = ({ matches, settings, onBack }) => {
   const [showTiebreaker, setShowTiebreaker] = React.useState(false);
   const [tiebreakerTeams, setTiebreakerTeams] = React.useState([]);
   
-  // Only calculate standings for regular season matches
-  const standings = calculateStandings(matches.filter(m => m.type === 'regular'));
+  const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
+  
+  // Calculate standings based on tournament type
+  const standings = isWinnerStaysMode 
+    ? calculateWinnerStaysStandings(matches)
+    : calculateStandings(matches.filter(m => m.type === 'regular'));
   
   // Check if playoffs are complete to show final results
   const finalMatch = matches.find(m => m.id === 14);
   const thirdPlaceMatch = matches.find(m => m.id === 13);
-  const playoffsComplete = finalMatch?.played && thirdPlaceMatch?.played;
+  const playoffsComplete = !isWinnerStaysMode && finalMatch?.played && thirdPlaceMatch?.played;
   
   let finalResults = null;
   if (playoffsComplete) {
@@ -119,9 +123,10 @@ const StandingsScreen = ({ matches, onBack }) => {
           <div className="p-6 border-b border-gray-600">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-white">
-                {playoffsComplete ? 'Classificação da Fase Regular' : 'Tabela de Classificação'}
+                {isWinnerStaysMode ? 'Ranking de Vitórias' :
+                 playoffsComplete ? 'Classificação da Fase Regular' : 'Tabela de Classificação'}
               </h3>
-              {!playoffsComplete && (
+              {!playoffsComplete && !isWinnerStaysMode && (
                 <button
                   onClick={checkForTies}
                   className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 text-sm transition-colors"
@@ -131,9 +136,14 @@ const StandingsScreen = ({ matches, onBack }) => {
                 </button>
               )}
             </div>
-            {playoffsComplete && (
+            {playoffsComplete && !isWinnerStaysMode && (
               <p className="text-sm text-gray-400 mt-1">
                 Pontuação baseada apenas nos 12 jogos da fase regular
+              </p>
+            )}
+            {isWinnerStaysMode && (
+              <p className="text-sm text-gray-400 mt-1">
+                Ranking baseado no número de vitórias no modo "Quem Ganha Fica"
               </p>
             )}
           </div>
@@ -184,12 +194,32 @@ const StandingsScreen = ({ matches, onBack }) => {
                     <span className="font-bold text-white">{team.team}</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-white">{team.points}</div>
-                    <div className="text-sm text-gray-400">pontos</div>
+                    <div className="text-2xl font-bold text-white">
+                      {isWinnerStaysMode ? team.wins : team.points}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      {isWinnerStaysMode ? 'vitórias' : 'pontos'}
+                    </div>
                   </div>
                 </div>
                 
-                <div className="mt-3 grid grid-cols-5 gap-2 text-center text-sm">
+                {isWinnerStaysMode ? (
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
+                    <div className="bg-gray-700 rounded-lg p-2">
+                      <div className="font-medium text-blue-600">{team.matches}</div>
+                      <div className="text-[8px] text-gray-400 leading-tight text-center">Jogos</div>
+                    </div>
+                    <div className="bg-gray-700 rounded-lg p-2">
+                      <div className="font-medium text-green-600">{team.wins}</div>
+                      <div className="text-[8px] text-gray-400 leading-tight text-center">Vitórias</div>
+                    </div>
+                    <div className="bg-gray-700 rounded-lg p-2">
+                      <div className="font-medium text-yellow-600">{team.winRate}%</div>
+                      <div className="text-[8px] text-gray-400 leading-tight text-center">Taxa</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-3 grid grid-cols-5 gap-2 text-center text-sm">
                   <div className="bg-gray-700 rounded-lg p-2">
                     <div className="font-medium text-blue-600">{team.gamesPlayed}</div>
                     <div className="text-[8px] text-gray-400 leading-tight text-center">J</div>
@@ -210,7 +240,8 @@ const StandingsScreen = ({ matches, onBack }) => {
                     <div className="font-medium text-white">{team.goalDiff > 0 ? '+' : ''}{team.goalDiff}</div>
                     <div className="text-[8px] text-gray-400 leading-tight text-center">SG</div>
                   </div>
-                </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -219,7 +250,22 @@ const StandingsScreen = ({ matches, onBack }) => {
         <div className="mt-6 dark-card rounded-2xl p-6 shadow-sm">
           <h4 className="font-semibold text-white mb-3">Legenda</h4>
           <div className="space-y-2 text-sm">
-            {playoffsComplete ? (
+            {isWinnerStaysMode ? (
+              <>
+                <div className="flex items-center space-x-2">
+                  <span className="text-lg">🏆</span>
+                  <span className="text-gray-300">Ranking baseado no número de vitórias</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-lg">⚡</span>
+                  <span className="text-gray-300">Modo "Quem Ganha Fica" - Time vencedor permanece</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-lg">🤝</span>
+                  <span className="text-gray-300">Em empates, o desafiante se torna o novo vencedor</span>
+                </div>
+              </>
+            ) : playoffsComplete ? (
               <>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">🏆</span>

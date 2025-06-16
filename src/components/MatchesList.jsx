@@ -12,8 +12,11 @@ const MatchesList = ({
   resumeTimer,
   resetTimer,
   formatTime,
-  updateMatchScore
+  updateMatchScore,
+  settings
 }) => {
+  const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
+  
   return (
     <div className="p-4 bg-gray-900 min-h-screen">
       {activeMatch && (
@@ -50,13 +53,25 @@ const MatchesList = ({
         </div>
       )}
 
+      {/* Winner-stays mode info */}
+      {isWinnerStaysMode && settings.currentWinnerTeam && (
+        <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl p-4 text-white mb-4">
+          <div className="text-center">
+            <h3 className="font-bold text-lg mb-1">🏆 Time que Fica</h3>
+            <p className="text-purple-200">{settings.currentWinnerTeam}</p>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
-        {matches.map((match) => (
+        {matches.filter(match => !isWinnerStaysMode || !match.played).map((match) => (
           <div key={match.id} className="bg-gray-800 rounded-xl border border-gray-700 p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <span className="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm font-medium">
-                  Jogo {match.id}
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  match.type === 'winner-stays' ? 'bg-purple-700 text-purple-200' : 'bg-gray-700 text-gray-300'
+                }`}>
+                  {match.type === 'winner-stays' ? `⚡ Desafio ${match.id}` : `Jogo ${match.id}`}
                 </span>
                 {match.played && (
                   <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -65,11 +80,11 @@ const MatchesList = ({
                 )}
               </div>
               <button
-                onClick={() => startMatchTimer(match.id, match.id > 12)}
+                onClick={() => startMatchTimer(match.id, match.id > 12 || match.type === 'winner-stays')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex items-center space-x-2 transition-colors"
               >
                 <Clock size={14} />
-                <span>{match.id > 12 ? '10min' : '7min'}</span>
+                <span>{match.id > 12 || match.type === 'winner-stays' ? '10min' : '7min'}</span>
               </button>
             </div>
             
