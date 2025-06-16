@@ -141,7 +141,7 @@ const App = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen">
+    <div className="w-full max-w-sm mx-auto bg-white min-h-screen relative">
       {renderCurrentScreen()}
     </div>
   );

@@ -87,11 +87,11 @@ const MatchesScreen = ({
     <div className="min-h-screen bg-gray-50">
       <Header title="Jogos" showBack={true} onBack={onBack} />
       
-      <div className="p-4 bg-white border-b border-gray-100">
-        <div className="flex bg-gray-100 rounded-xl p-1">
+      <div className="p-3 bg-white border-b border-gray-100">
+        <div className="flex bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setViewMode('field')}
-            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
               viewMode === 'field' 
                 ? 'bg-white text-gray-900 shadow-sm' 
                 : 'text-gray-600'
@@ -101,7 +101,7 @@ const MatchesScreen = ({
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
               viewMode === 'list' 
                 ? 'bg-white text-gray-900 shadow-sm' 
                 : 'text-gray-600'
