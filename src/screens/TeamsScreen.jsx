@@ -18,10 +18,10 @@ const TeamsScreen = ({
   const [selectedTeam, setSelectedTeam] = useState('');
   const [availablePlayers, setAvailablePlayers] = useState([]);
   const [expandedTeams, setExpandedTeams] = useState({
-    'Vermelho': true,
-    'Azul': true,
-    'Brasil': true,
-    'Verde Branco': true
+    'Vermelho': false,
+    'Azul': false,
+    'Brasil': false,
+    'Verde Branco': false
   });
 
   const drawingMessages = [
