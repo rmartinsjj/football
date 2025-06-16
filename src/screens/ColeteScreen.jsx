@@ -248,14 +248,41 @@ const ColeteScreen = ({
           )}
         </div>
 
-        <button
-          onClick={drawColete}
-          disabled={coleteParticipants.filter(p => p.id !== immunePlayer?.id).length === 0}
-          className="w-full bg-gradient-to-r from-red-500 to-red-600 disabled:from-gray-600 disabled:to-gray-700 text-white p-4 rounded-2xl font-medium flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:cursor-not-allowed"
-        >
-          <Shuffle size={20} />
-          <span>🧽 Sortear Quem Lava o Colete</span>
-        </button>
+        {isDrawing ? (
+          <div className="text-center py-8">
+            <div className="relative">
+              <div className="w-16 h-16 mx-auto mb-4 relative">
+                <div className="absolute inset-0 border-4 border-red-800 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-red-500 rounded-full border-t-transparent animate-spin"></div>
+                <div className="absolute inset-2 bg-red-900 rounded-full flex items-center justify-center">
+                  <span className="text-red-400 animate-pulse text-xl">🧽</span>
+                </div>
+              </div>
+              <div className="text-lg font-bold text-white mb-2 animate-pulse">
+                {drawingMessages[drawingStep]}
+              </div>
+              <div className="flex justify-center space-x-1">
+                {[0, 1, 2].map((step) => (
+                  <div
+                    key={step}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      step <= drawingStep ? 'bg-red-500' : 'bg-gray-600'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={drawColete}
+            disabled={coleteParticipants.filter(p => p.id !== immunePlayer?.id).length === 0}
+            className="w-full bg-gradient-to-r from-red-500 to-red-600 disabled:from-gray-600 disabled:to-gray-700 text-white p-4 rounded-2xl font-medium flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:cursor-not-allowed"
+          >
+            <Shuffle size={20} />
+            <span>🧽 Sortear Quem Lava o Colete</span>
+          </button>
+        )}
 
         {immunePlayer && (
           <p className="text-center text-green-400 text-sm mt-2">
