@@ -33,6 +33,6 @@ export const INITIAL_TEAMS = {
 };
 
 export const TIMER_DURATION = {
-  NORMAL_MATCH: 7 * 60, // 7 minutes in seconds
-  FINAL_MATCH: 10 * 60  // 10 minutes in seconds
+  NORMAL_MATCH: 7 * 60, // 7 minutes in seconds (default)
+  FINAL_MATCH: 10 * 60  // 10 minutes in seconds (default)
 };

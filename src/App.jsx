@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { INITIAL_MATCHES, INITIAL_TEAMS } from './constants';
 import { useTimer } from './hooks/useTimer';
+import { TIMER_DURATION } from './constants';
 
 // Screen Components
 import HomeScreen from './screens/HomeScreen';
@@ -10,6 +11,7 @@ import MatchesScreen from './screens/MatchesScreen';
 import StandingsScreen from './screens/StandingsScreen';
 import ScorersScreen from './screens/ScorersScreen';
 import ColeteScreen from './screens/ColeteScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -23,6 +25,14 @@ const App = () => {
   const [coleteParticipants, setColeteParticipants] = useState([]);
   const [immunePlayer, setImmunePlayer] = useState(null);
   const [coleteWinner, setColeteWinner] = useState(null);
+  
+  // Settings state
+  const [settings, setSettings] = useState({
+    normalMatchTime: TIMER_DURATION.NORMAL_MATCH / 60, // Convert to minutes
+    finalMatchTime: TIMER_DURATION.FINAL_MATCH / 60, // Convert to minutes
+    numberOfTeams: 4,
+    tournamentType: 'championship', // 'championship' or 'winner-stays'
+  });
 
   // Timer hook
   const {
@@ -36,7 +46,7 @@ const App = () => {
     resumeTimer,
     resetTimer,
     formatTime
-  } = useTimer();
+  } = useTimer(settings);
 
   const handleBackToHome = () => {
     setCurrentScreen('home');
@@ -126,6 +136,15 @@ const App = () => {
             setImmunePlayer={setImmunePlayer}
             coleteWinner={coleteWinner}
             setColeteWinner={setColeteWinner}
+            onBack={handleBackToHome}
+          />
+        );
+      
+      case 'settings':
+        return (
+          <SettingsScreen
+            settings={settings}
+            setSettings={setSettings}
             onBack={handleBackToHome}
           />
         );

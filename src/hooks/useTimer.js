@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
-import { TIMER_DURATION } from '../constants';
 
 // Timer finished callback will be handled by the component using this hook
-export const useTimer = () => {
+export const useTimer = (settings = null) => {
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [activeMatch, setActiveMatch] = useState(null);
   const [onTimerFinished, setOnTimerFinished] = useState(null);
+  
+  // Default timer durations (can be overridden by settings)
+  const getTimerDuration = (isFinal = false) => {
+    if (settings) {
+      return isFinal 
+        ? settings.finalMatchTime * 60 
+        : settings.normalMatchTime * 60;
+    }
+    // Fallback to default values
+    return isFinal ? 10 * 60 : 7 * 60;
+  };
 
   useEffect(() => {
     let interval;
@@ -30,8 +40,8 @@ export const useTimer = () => {
 
   const startMatchTimer = (matchId, isFinal = false) => {
     setActiveMatch(matchId);
-    const minutes = isFinal ? TIMER_DURATION.FINAL_MATCH : TIMER_DURATION.NORMAL_MATCH;
-    setTimer(minutes);
+    const duration = getTimerDuration(isFinal);
+    setTimer(duration);
     setIsTimerRunning(true);
   };
 
@@ -44,8 +54,8 @@ export const useTimer = () => {
   };
 
   const resetTimer = (isFinal = false) => {
-    const minutes = isFinal ? TIMER_DURATION.FINAL_MATCH : TIMER_DURATION.NORMAL_MATCH;
-    setTimer(minutes);
+    const duration = getTimerDuration(isFinal);
+    setTimer(duration);
     setIsTimerRunning(false);
   };
 
