@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import MatchesList from '../components/MatchesList';
 import LiveFieldView from '../components/LiveFieldView';
+import { handleWinnerStaysMatch } from '../utils/tournamentUtils';
 
 const MatchesScreen = ({ 
   matches, 
@@ -19,6 +20,8 @@ const MatchesScreen = ({
   resumeTimer,
   resetTimer,
   formatTime,
+  settings,
+  setSettings,
   onBack 
 }) => {
   const [viewMode, setViewMode] = useState('field');

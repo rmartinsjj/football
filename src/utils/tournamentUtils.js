@@ -154,3 +154,48 @@ export const generatePlayoffMatches = (matches, standings) => {
   
   return updatedMatches;
 };
+
+// Winner-stays logic: handle match results for "quem ganha fica" mode
+export const handleWinnerStaysMatch = (match, currentWinnerTeam) => {
+  const score1 = parseInt(match.score1 ?? 0) || 0;
+  const score2 = parseInt(match.score2 ?? 0) || 0;
+  
+  let newWinnerTeam = currentWinnerTeam;
+  let message = '';
+  
+  if (score1 > score2) {
+    // Team1 won
+    newWinnerTeam = match.team1;
+    if (currentWinnerTeam === match.team1) {
+      message = `🏆 ${match.team1} continua vencendo e permanece em campo!`;
+    } else {
+      message = `🏆 ${match.team1} venceu e agora é o time que fica em campo!`;
+    }
+  } else if (score2 > score1) {
+    // Team2 won
+    newWinnerTeam = match.team2;
+    if (currentWinnerTeam === match.team2) {
+      message = `🏆 ${match.team2} continua vencendo e permanece em campo!`;
+    } else {
+      message = `🏆 ${match.team2} venceu e agora é o time que fica em campo!`;
+    }
+  } else {
+    // Tie - the team that tied with the current winner becomes the new winner
+    if (currentWinnerTeam === match.team1) {
+      newWinnerTeam = match.team2;
+      message = `🤝 Empate! ${match.team2} empatou com o atual vencedor e agora fica em campo!`;
+    } else if (currentWinnerTeam === match.team2) {
+      newWinnerTeam = match.team1;
+      message = `🤝 Empate! ${match.team1} empatou com o atual vencedor e agora fica em campo!`;
+    } else {
+      // First match or no current winner - randomly pick one
+      newWinnerTeam = Math.random() < 0.5 ? match.team1 : match.team2;
+      message = `🤝 Empate! ${newWinnerTeam} foi sorteado para ficar em campo!`;
+    }
+  }
+  
+  return {
+    newWinnerTeam,
+    message
+  };
+};

@@ -32,6 +32,7 @@ const App = () => {
     finalMatchTime: TIMER_DURATION.FINAL_MATCH / 60, // Convert to minutes
     numberOfTeams: 4,
     tournamentType: 'championship', // 'championship' or 'winner-stays'
+    currentWinnerTeam: null, // For winner-stays mode
   });
 
   // Timer hook
@@ -103,6 +104,8 @@ const App = () => {
             resumeTimer={resumeTimer}
             resetTimer={resetTimer}
             formatTime={formatTime}
+            settings={settings}
+            setSettings={setSettings}
             onBack={handleBackToHome}
           />
         );
