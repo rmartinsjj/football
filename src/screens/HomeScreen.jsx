@@ -10,17 +10,11 @@ const HomeScreen = ({
   <div className="min-h-screen pb-4">
     <div className="dark-card px-4 pt-6 pb-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <img 
-            src="/logoespaçonovotempo copy.png" 
-            alt="Espaço Novo Tempo" 
-            className="w-12 h-12 rounded-lg object-cover"
-          />
-          <div>
-            <h1 className="text-lg font-bold text-white">Torneio Futebol</h1>
-            <p className="text-gray-300 text-xs">Espaço Novo Tempo - Praia da Costa</p>
-          </div>
-        </div>
+        <img 
+          src="/logoespaçonovotempo copy.png" 
+          alt="Espaço Novo Tempo" 
+          className="w-12 h-12 rounded-lg object-cover"
+        />
         <button
           onClick={() => setCurrentScreen('settings')}
           className="p-3 hover:bg-gray-700 rounded-xl transition-colors"
