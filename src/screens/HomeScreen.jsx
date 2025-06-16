@@ -24,7 +24,7 @@ const HomeScreen = ({
             <p className="text-blue-100 text-sm">{players.length} jogadores • 4 times</p>
           </div>
           <div className="text-right">
-            <div className="text-xl font-bold">{matches.filter(m => m.played).length}/12</div>
+            <div className="text-xl font-bold">{matches.filter(m => m.played).length}/{matches.length}</div>
             <p className="text-blue-100 text-sm">jogos</p>
           </div>
         </div>

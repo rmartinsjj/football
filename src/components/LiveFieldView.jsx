@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Pause, RotateCcw, Users, Goal } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
-import { calculateStandings } from '../utils/tournamentUtils';
+import { calculateStandings, generatePlayoffMatches } from '../utils/tournamentUtils';
 
 const LiveFieldView = ({ 
   matches,
@@ -27,15 +27,23 @@ const LiveFieldView = ({
   });
   const [showGoalkeeperConfig, setShowGoalkeeperConfig] = useState(false);
 
-  const currentMatch = matches.find(m => m.id === activeMatch) || matches.find(m => !m.played) || matches[0];
-  const remainingMatches = matches.filter(m => m.id > currentMatch.id);
+  // Calculate standings and generate playoff matches
+  const standings = calculateStandings(matches);
+  const updatedMatches = generatePlayoffMatches(matches, standings);
+  
+  const currentMatch = updatedMatches.find(m => m.id === activeMatch) || updatedMatches.find(m => !m.played) || updatedMatches[0];
+  const remainingMatches = updatedMatches.filter(m => m.id > currentMatch.id && !m.played);
   const completedMatches = matches.filter(m => m.id < currentMatch.id && m.played);
   
   const team1Players = teams[currentMatch.team1] || [];
   const team2Players = teams[currentMatch.team2] || [];
 
-  // Calcular classificação rápida
-  const standings = calculateStandings(matches);
+  // Update matches if playoff matches were generated
+  React.useEffect(() => {
+    if (JSON.stringify(updatedMatches) !== JSON.stringify(matches)) {
+      setMatches(updatedMatches);
+    }
+  }, [updatedMatches, matches, setMatches]);
 
   // Finalizar jogo com cálculo automático de pontos
   const finishMatch = () => {
@@ -60,7 +68,12 @@ const LiveFieldView = ({
     
     console.log('Finishing match:', updatedMatch);
     
-    setMatches(prev => prev.map(m => m.id === currentMatch.id ? updatedMatch : m));
+    setMatches(prev => {
+      const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
+      // Generate playoff matches if this was the last regular season match
+      const newStandings = calculateStandings(updated);
+      return generatePlayoffMatches(updated, newStandings);
+    });
     setActiveMatch(null);
     
     // Force re-render after a small delay to ensure state is updated
@@ -424,52 +437,76 @@ const LiveFieldView = ({
       {/* Próximos Jogos */}
       <div className="bg-gray-800 mx-3 mb-3 rounded-xl p-3">
         <h3 className="text-white font-bold mb-2 text-sm">
-          Próximos Jogos ({remainingMatches.length} restantes)
+          {remainingMatches.some(m => m.type === 'regular') ? 'Próximos Jogos' : 'Playoffs'} ({remainingMatches.length} restantes)
         </h3>
-        <div className="space-y-1" style={{ maxHeight: '120px', overflowY: 'auto', overflowX: 'hidden' }}>
-          {remainingMatches.length > 0 ? remainingMatches.slice(0, 3).map((match) => (
+        <div className="space-y-1 max-h-32 overflow-y-auto">
+          {remainingMatches.length > 0 ? remainingMatches.map((match) => (
             <div key={match.id} className={`flex items-center justify-between rounded-lg p-2 ${
-              match.played ? 'bg-green-700' : 'bg-gray-700'
+              match.played ? 'bg-green-700' : 
+              match.type === 'final' ? 'bg-yellow-700' :
+              match.type === 'third_place' ? 'bg-orange-700' :
+              'bg-gray-700'
             }`}>
               <div className="flex items-center space-x-2">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                   match.played 
                     ? 'bg-green-600 text-white' 
+                    : match.type === 'final' ? 'bg-yellow-600 text-white'
+                    : match.type === 'third_place' ? 'bg-orange-600 text-white'
                     : 'bg-gray-600 text-white'
                 }`}>
-                  Jogo {match.id}
+                  {match.type === 'final' ? '🏆 Final' : 
+                   match.type === 'third_place' ? '🥉 3º Lugar' : 
+                   `Jogo ${match.id}`}
                 </span>
-                <span className="text-white text-xs">
-                  {match.played 
-                    ? `${match.team1} ${match.score1 || 0} × ${match.score2 || 0} ${match.team2}`
-                    : `${match.team1} × ${match.team2}`
-                  }
-                </span>
+                {match.team1 !== 'TBD' && match.team2 !== 'TBD' && (
+                  <span className="text-white text-xs">
+                    {match.played 
+                      ? `${match.team1} ${match.score1 || 0} × ${match.score2 || 0} ${match.team2}`
+                      : `${match.team1} × ${match.team2}`
+                    }
+                  </span>
+                )}
+                {(match.team1 === 'TBD' || match.team2 === 'TBD') && (
+                  <span className="text-gray-400 text-xs">Aguardando classificação</span>
+                )}
               </div>
               <div className="flex items-center space-x-2">
                 {match.played ? (
                   <span className="text-green-400 text-xs">✓</span>
-                ) : (
+                ) : match.team1 !== 'TBD' && match.team2 !== 'TBD' ? (
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       setActiveMatch(match.id);
-                      startMatchTimer(match.id, match.id > 12);
+                      startMatchTimer(match.id, match.type === 'final' || match.type === 'third_place');
                     }}
                     className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-2 py-1 rounded-lg text-xs transition-colors"
                   >
                     Iniciar
                   </button>
+                ) : (
+                  <span className="text-gray-500 text-xs">-</span>
                 )}
               </div>
             </div>
           )) : (
             <div className="text-center py-2">
-              <span className="text-gray-400 text-xs">Este é o último jogo do torneio!</span>
+              <span className="text-gray-400 text-xs">Torneio finalizado! 🏆</span>
             </div>
           )}
         </div>
+        
+        {/* Show playoff info when regular season is complete */}
+        {matches.filter(m => m.type === 'regular').every(m => m.played) && 
+         remainingMatches.some(m => m.type === 'final' || m.type === 'third_place') && (
+          <div className="mt-3 p-2 bg-yellow-800 rounded-lg">
+            <div className="text-yellow-200 text-xs text-center">
+              🏆 Fase de Playoffs iniciada!
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
