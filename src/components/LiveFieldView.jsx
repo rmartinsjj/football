@@ -269,10 +269,11 @@ const LiveFieldView = ({
 
   const goToNextGame = () => {
     setShowNextGameButton(false);
-    setActiveMatch(null); // Agora sim limpar o activeMatch
+    setActiveMatch(null); // Limpar o activeMatch
     const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
     if (nextMatch) {
-      setTimeout(() => startMatchTimer(nextMatch.id), 500);
+      // NÃO iniciar o timer automaticamente - apenas definir como próximo jogo ativo
+      setTimeout(() => setActiveMatch(nextMatch.id), 100);
     }
   };
 
