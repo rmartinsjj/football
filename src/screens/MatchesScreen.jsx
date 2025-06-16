@@ -84,7 +84,14 @@ const MatchesScreen = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen" style={{
+      backgroundImage: 'url(/1245151 copy.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      backgroundColor: '#1a1b23'
+    }}>
       <Header title="Jogos" showBack={true} onBack={onBack} />
       
       <div className="p-3 bg-gray-800 border-b border-gray-700">

@@ -369,12 +369,13 @@ const LiveFieldView = ({
     showTournamentResults();
   }, [matches]);
   return (
-    <div className="min-h-screen bg-gray-900" style={{
+    <div className="min-h-screen" style={{
       backgroundImage: 'url(/1245151 copy.png)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed'
+      backgroundAttachment: 'fixed',
+      backgroundColor: '#1a1b23'
     }}>
       {/* Toast Message */}
       <LiveFieldViewToastMessage
