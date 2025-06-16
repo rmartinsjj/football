@@ -175,7 +175,8 @@ const StandingsScreen = ({ matches, onBack }) => {
                         <>
                           {index === 0 && <Medal className="text-green-500" size={20} />}
                           {index === 1 && <Medal className="text-blue-500" size={20} />}
-                          {(index === standings.length - 1 || index === standings.length - 2) && <span className="text-lg">🧽</span>}
+                          {index === 2 && <span className="text-lg">🏅</span>}
+                          {index === standings.length - 1 && <span className="text-lg">🧽</span>}
                         </>
                       )}
                     </div>
@@ -244,12 +245,12 @@ const StandingsScreen = ({ matches, onBack }) => {
                   <span className="text-gray-600">1º e 2º lugar - Classificados para a final</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Medal className="text-blue-500" size={16} />
-                  <span className="text-gray-600">3º e 4º lugar - Disputam o 3º lugar</span>
+                  <span className="text-lg">🏅</span>
+                  <span className="text-gray-600">3º lugar - Disputa o 3º lugar</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">🧽</span>
-                  <span className="text-gray-600">Últimos colocados disputam o sorteio do colete</span>
+                  <span className="text-gray-600">4º lugar - Vai direto para o sorteio do colete</span>
                 </div>
               </>
             )}
