@@ -15,50 +15,47 @@ const MatchesList = ({
   updateMatchScore
 }) => {
   return (
-    <div className="p-6">
+    <div className="p-4 bg-gray-900 min-h-screen">
       {activeMatch && (
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-4 text-white mb-6">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl p-4 text-white mb-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-3">
               <span className="font-bold">⏱️ Jogo {activeMatch}</span>
-              <span className="text-2xl font-bold">{formatTime(timer)}</span>
+              <span className="text-xl font-bold">{formatTime(timer)}</span>
             </div>
             <div className="flex space-x-2">
               {!isTimerRunning ? (
                 <button
                   onClick={resumeTimer}
-                  className="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1 rounded-lg flex items-center space-x-1 transition-all text-sm"
+                  className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
                 >
                   <Play size={12} />
-                  <span>Play</span>
                 </button>
               ) : (
                 <button
                   onClick={pauseTimer}
-                  className="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1 rounded-lg flex items-center space-x-1 transition-all text-sm"
+                  className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
                 >
                   <Pause size={12} />
-                  <span>Pause</span>
                 </button>
               )}
               <button
                 onClick={() => resetTimer()}
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1 rounded-lg flex items-center space-x-1 transition-all text-sm"
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
               >
                 <RotateCcw size={12} />
-                <span>Reset</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {matches.map((match) => (
-          <div key={match.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div key={match.id} className="bg-gray-800 rounded-xl border border-gray-700 p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm font-medium">
                   Jogo {match.id}
                 </span>
                 {match.played && (
@@ -69,7 +66,7 @@ const MatchesList = ({
               </div>
               <button
                 onClick={() => startMatchTimer(match.id, match.id > 12)}
-                className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-xl text-sm flex items-center space-x-2 transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex items-center space-x-2 transition-colors"
               >
                 <Clock size={14} />
                 <span>{match.id > 12 ? '10min' : '7min'}</span>
@@ -86,13 +83,13 @@ const MatchesList = ({
                   min="0"
                   value={match.score1 || ''}
                   onChange={(e) => updateMatchScore(match.id, match.team1, e.target.value)}
-                  className="w-16 h-16 text-3xl font-bold text-center border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="w-16 h-16 text-3xl font-bold text-center border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:border-blue-500 focus:outline-none"
                   placeholder="0"
                 />
               </div>
               
               <div className="px-6">
-                <div className="text-2xl font-bold text-gray-400">×</div>
+                <div className="text-2xl font-bold text-gray-300">×</div>
               </div>
               
               <div className="text-center flex-1">
@@ -104,7 +101,7 @@ const MatchesList = ({
                   min="0"
                   value={match.score2 || ''}
                   onChange={(e) => updateMatchScore(match.id, match.team2, e.target.value)}
-                  className="w-16 h-16 text-3xl font-bold text-center border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="w-16 h-16 text-3xl font-bold text-center border-2 border-gray-600 bg-gray-700 text-white rounded-xl focus:border-blue-500 focus:outline-none"
                   placeholder="0"
                 />
               </div>

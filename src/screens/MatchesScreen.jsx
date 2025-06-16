@@ -84,17 +84,17 @@ const MatchesScreen = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <Header title="Jogos" showBack={true} onBack={onBack} />
       
-      <div className="p-3 bg-white border-b border-gray-100">
-        <div className="flex bg-gray-100 rounded-lg p-1">
+      <div className="p-3 bg-gray-800 border-b border-gray-700">
+        <div className="flex bg-gray-700 rounded-lg p-1">
           <button
             onClick={() => setViewMode('field')}
             className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
               viewMode === 'field' 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-600'
+                ? 'bg-gray-600 text-white shadow-sm' 
+                : 'text-gray-300 hover:text-white'
             }`}
           >
             Campo ao Vivo
@@ -103,8 +103,8 @@ const MatchesScreen = ({
             onClick={() => setViewMode('list')}
             className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
               viewMode === 'list' 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-600'
+                ? 'bg-gray-600 text-white shadow-sm' 
+                : 'text-gray-300 hover:text-white'
             }`}
           >
             Lista de Jogos
