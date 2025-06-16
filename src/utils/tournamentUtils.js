@@ -199,11 +199,16 @@ export const calculateWinnerStaysStandings = (matches) => {
       standings[match.team2].matches++;
       
       if (score1 > score2) {
+        // Team1 won
         standings[match.team1].wins++;
       } else if (score2 > score1) {
+        // Team2 won
+        standings[match.team2].wins++;
+      } else {
+        // Tie - in winner-stays mode, the challenger (team2) becomes the new winner
+        // So we give the "win" to team2 (the challenger)
         standings[match.team2].wins++;
       }
-      // In case of tie, no one gets a win (but the challenger becomes new winner)
     }
   });
   

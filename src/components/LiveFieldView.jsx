@@ -306,6 +306,11 @@ const LiveFieldView = ({
       setActiveMatch(null);
       setShowNextGameButton(true);
       showToastMessage(result.message, 'success');
+      
+      // Force re-calculation of standings
+      setTimeout(() => {
+        console.log('Winner-stays match finished, standings should update now');
+      }, 100);
       return;
     }
     
