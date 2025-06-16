@@ -84,6 +84,7 @@ const LiveFieldView = ({
 
       {/* Header do Jogo */}
       <div className="bg-gray-800 p-3">
+        {/* Header com Times, Jogo, Tempo e Controles */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <div className={`w-6 h-6 ${TEAM_COLORS[currentMatch.team1].bg} rounded-full`}></div>
@@ -91,20 +92,6 @@ const LiveFieldView = ({
           </div>
           
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-3 text-white text-sm mb-1">
-              <span className="font-bold">Jogo {currentMatch.id}</span>
-              <span className="text-green-400 font-bold">
-                {activeMatch === currentMatch.id ? formatTime(timer) : '00:00'}
-              </span>
-              {/* Ícone da Trave com Goleiros */}
-              <button
-                onClick={() => setShowGoalkeeperConfig(!showGoalkeeperConfig)}
-                className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                title="Configurar goleiros"
-              >
-                <Goal size={16} />
-              </button>
-            </div>
             <div className="text-2xl font-bold text-white">
               {currentMatch.score1 || 0} × {currentMatch.score2 || 0}
             </div>
@@ -116,8 +103,24 @@ const LiveFieldView = ({
           </div>
         </div>
 
-        {/* Controles do Jogo - Ultra Minimalistas */}
-        <div className="flex justify-center space-x-1 mb-3">
+        {/* Linha com Jogo, Tempo, Goleiros e Controles */}
+        <div className="flex items-center justify-center space-x-3 mb-3">
+          <span className="text-white font-bold text-sm">Jogo {currentMatch.id}</span>
+          
+          <span className="text-green-400 font-bold text-sm">
+            {activeMatch === currentMatch.id ? formatTime(timer) : '00:00'}
+          </span>
+          
+          {/* Ícone da Trave com Goleiros */}
+          <button
+            onClick={() => setShowGoalkeeperConfig(!showGoalkeeperConfig)}
+            className="text-yellow-400 hover:text-yellow-300 transition-colors"
+            title="Configurar goleiros"
+          >
+            <Goal size={16} />
+          </button>
+          
+          {/* Controles do Jogo - Ultra Minimalistas */}
           {activeMatch !== currentMatch.id ? (
             <button
               onClick={() => startMatchTimer(currentMatch.id)}
@@ -127,7 +130,7 @@ const LiveFieldView = ({
               <Play size={12} />
             </button>
           ) : (
-            <>
+            <div className="flex items-center space-x-1">
               {!isTimerRunning ? (
                 <button
                   onClick={resumeTimer}
@@ -159,7 +162,7 @@ const LiveFieldView = ({
               >
                 ✓
               </button>
-            </>
+            </div>
           )}
         </div>
 
