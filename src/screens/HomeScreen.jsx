@@ -10,9 +10,10 @@ const HomeScreen = ({
   <div className="min-h-screen pb-4">
     <div className="dark-card px-4 pt-6 pb-4">
       <div className="flex items-center justify-between">
-        <div 
-          className="w-12 h-12 rounded-lg bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/logoespaco.png)' }}
+        <img 
+          src="/logoespaco.png" 
+          alt="Espaço Novo Tempo" 
+          className="h-12 w-auto object-contain"
           title="Espaço Novo Tempo"
         />
         <button
