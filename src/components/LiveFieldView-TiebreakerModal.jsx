@@ -18,35 +18,35 @@ const LiveFieldViewTiebreakerModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-xs w-full shadow-xl">
+      <div className="dark-card-solid rounded-xl max-w-xs w-full shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <h3 className="text-lg font-bold text-gray-900">⚽ Desempate</h3>
+        <div className="flex items-center justify-between p-4 border-b border-gray-600">
+          <h3 className="text-lg font-bold text-white">⚽ Desempate</h3>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-1 hover:bg-gray-700 rounded-full transition-colors"
           >
-            <X size={20} className="text-gray-500" />
+            <X size={20} className="text-gray-400" />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-4">
-          <p className="text-gray-600 text-sm mb-4">
+          <p className="text-gray-300 text-sm mb-4">
             Times empatados em pontos. Como resolver?
           </p>
 
           {/* Tied Teams */}
-          <div className="bg-gray-50 rounded-lg p-3 mb-4">
+          <div className="bg-gray-700 rounded-lg p-3 mb-4">
             {tiebreakerTeams.map((teamName) => {
               const teamStats = standings.find(s => s.team === teamName);
               return (
                 <div key={teamName} className="flex items-center justify-between py-1">
                   <div className="flex items-center space-x-2">
                     <div className={`w-3 h-3 ${TEAM_COLORS[teamName].bg} rounded-full`}></div>
-                    <span className="text-sm font-medium">{teamName}</span>
+                    <span className="text-sm font-medium text-white">{teamName}</span>
                   </div>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-400">
                     {teamStats.points}pts | {teamStats.goalDiff > 0 ? '+' : ''}{teamStats.goalDiff}
                   </span>
                 </div>

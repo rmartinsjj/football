@@ -100,8 +100,8 @@ const ColeteScreen = ({
       />
       
       <div className="p-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
+        <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Ações Rápidas</h3>
           
           <div className="grid grid-cols-1 gap-3">
             {championTeam && (
@@ -130,11 +130,11 @@ const ColeteScreen = ({
         </div>
 
         {championPlayers.length > 0 && (
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
               🏆 Imunidade do Campeão ({championTeam})
             </h3>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-gray-300 text-sm mb-4">
               O campeão pode escolher uma pessoa para imunizar do sorteio:
             </p>
             
@@ -145,8 +145,8 @@ const ColeteScreen = ({
                   onClick={() => setImmunePlayer(immunePlayer?.id === player.id ? null : player)}
                   className={`p-3 rounded-xl text-left transition-colors ${
                     immunePlayer?.id === player.id
-                      ? 'bg-green-100 border-2 border-green-500 text-green-800'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      ? 'bg-green-900 border-2 border-green-500 text-green-200'
+                      : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -161,8 +161,8 @@ const ColeteScreen = ({
           </div>
         )}
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Adicionar Jogadores Individuais</h3>
+        <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Adicionar Jogadores Individuais</h3>
           
           <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
             {players.map((player) => (
@@ -170,14 +170,14 @@ const ColeteScreen = ({
                 key={player.id}
                 className={`flex items-center justify-between p-3 rounded-xl ${
                   coleteParticipants.find(p => p.id === player.id)
-                    ? 'bg-red-100 border border-red-300'
-                    : 'bg-gray-100'
+                    ? 'bg-red-900 border border-red-600'
+                    : 'bg-gray-700'
                 }`}
               >
-                <span className="font-medium text-gray-900">{player.name}</span>
+                <span className="font-medium text-white">{player.name}</span>
                 <div className="flex items-center space-x-2">
                   {immunePlayer?.id === player.id && (
-                    <span className="text-green-600 text-xs font-bold bg-green-100 px-2 py-1 rounded">
+                    <span className="text-green-400 text-xs font-bold bg-green-900 px-2 py-1 rounded">
                       IMUNE
                     </span>
                   )}
@@ -202,14 +202,14 @@ const ColeteScreen = ({
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
+        <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-white">
               Participantes do Sorteio ({coleteParticipants.length})
             </h3>
             <button
               onClick={() => setColeteParticipants([])}
-              className="text-red-500 hover:bg-red-50 px-3 py-1 rounded-lg text-sm transition-colors"
+              className="text-red-400 hover:bg-red-900 px-3 py-1 rounded-lg text-sm transition-colors"
             >
               Limpar Todos
             </button>
@@ -217,7 +217,7 @@ const ColeteScreen = ({
 
           {coleteParticipants.length === 0 ? (
             <div className="text-center py-8">
-              <span className="text-gray-500">Nenhum participante adicionado</span>
+              <span className="text-gray-400">Nenhum participante adicionado</span>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
@@ -226,19 +226,19 @@ const ColeteScreen = ({
                   key={player.id}
                   className={`flex items-center justify-between p-2 rounded-lg ${
                     immunePlayer?.id === player.id
-                      ? 'bg-green-100 border border-green-300'
-                      : 'bg-red-100 border border-red-300'
+                      ? 'bg-green-900 border border-green-600'
+                      : 'bg-red-900 border border-red-600'
                   }`}
                 >
                   <span className="text-sm font-medium">
                     {player.name}
                     {immunePlayer?.id === player.id && (
-                      <span className="text-green-600 text-xs ml-1">(IMUNE)</span>
+                      <span className="text-green-400 text-xs ml-1">(IMUNE)</span>
                     )}
                   </span>
                   <button
                     onClick={() => removePlayerFromColete(player.id)}
-                    className="text-red-600 hover:bg-red-200 p-1 rounded"
+                    className="text-red-400 hover:bg-red-800 p-1 rounded"
                   >
                     <Minus size={12} />
                   </button>
@@ -251,22 +251,22 @@ const ColeteScreen = ({
         <button
           onClick={drawColete}
           disabled={coleteParticipants.filter(p => p.id !== immunePlayer?.id).length === 0}
-          className="w-full bg-gradient-to-r from-red-500 to-red-600 disabled:from-gray-300 disabled:to-gray-400 text-white p-4 rounded-2xl font-medium flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-red-500 to-red-600 disabled:from-gray-600 disabled:to-gray-700 text-white p-4 rounded-2xl font-medium flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:cursor-not-allowed"
         >
           <Shuffle size={20} />
           <span>🧽 Sortear Quem Lava o Colete</span>
         </button>
 
         {immunePlayer && (
-          <p className="text-center text-green-600 text-sm mt-2">
+          <p className="text-center text-green-400 text-sm mt-2">
             {immunePlayer.name} está imune e não participará do sorteio
           </p>
         )}
 
         {coleteWinner && (
-          <div className="mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
-            <h4 className="font-bold text-red-800">🧽 Resultado do Sorteio</h4>
-            <p className="text-red-700">{coleteWinner.name} foi sorteado para lavar o colete!</p>
+          <div className="mt-6 bg-red-900 border-l-4 border-red-500 p-4 rounded-lg">
+            <h4 className="font-bold text-red-200">🧽 Resultado do Sorteio</h4>
+            <p className="text-red-300">{coleteWinner.name} foi sorteado para lavar o colete!</p>
           </div>
         )}
       </div>

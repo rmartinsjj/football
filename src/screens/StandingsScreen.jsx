@@ -115,16 +115,16 @@ const StandingsScreen = ({ matches, onBack }) => {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-          <div className="p-6 border-b border-gray-100">
+        <div className="dark-card rounded-2xl shadow-sm overflow-hidden mb-6">
+          <div className="p-6 border-b border-gray-600">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-white">
                 {playoffsComplete ? 'Classificação da Fase Regular' : 'Tabela de Classificação'}
               </h3>
               {!playoffsComplete && (
                 <button
                   onClick={checkForTies}
-                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 text-sm transition-colors"
+                  className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 text-sm transition-colors"
                 >
                   <Settings size={16} />
                   <span>Resolver Empate</span>
@@ -132,7 +132,7 @@ const StandingsScreen = ({ matches, onBack }) => {
               )}
             </div>
             {playoffsComplete && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-400 mt-1">
                 Pontuação baseada apenas nos 12 jogos da fase regular
               </p>
             )}
@@ -148,19 +148,19 @@ const StandingsScreen = ({ matches, onBack }) => {
                     finalResults.runnerUp === team.team ? 'bg-gradient-to-r from-gray-50 to-gray-100 border-l-4 border-gray-400' :
                     finalResults.thirdPlace === team.team ? 'bg-gradient-to-r from-orange-50 to-orange-100 border-l-4 border-orange-400' :
                     finalResults.fourthPlace === team.team ? 'bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-400' :
-                    'hover:bg-gray-50'
+                    'hover:bg-gray-700'
                   ) : (
-                    index === 0 ? 'bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500' :
-                    index === 1 ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-400' :
-                    index === standings.length - 1 || index === standings.length - 2 ? 'bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-400' :
-                    'hover:bg-gray-50'
+                    index === 0 ? 'bg-gradient-to-r from-green-900 to-green-800 border-l-4 border-green-500' :
+                    index === 1 ? 'bg-gradient-to-r from-blue-900 to-blue-800 border-l-4 border-blue-400' :
+                    index === standings.length - 1 || index === standings.length - 2 ? 'bg-gradient-to-r from-red-900 to-red-800 border-l-4 border-red-400' :
+                    'hover:bg-gray-700'
                   )
                 } transition-colors`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-3">
-                      <span className="text-2xl font-bold text-gray-600">
+                      <span className="text-2xl font-bold text-gray-300">
                         {playoffsComplete ? (
                           finalResults.champion === team.team ? '🏆' :
                           finalResults.runnerUp === team.team ? '🥈' :
@@ -181,34 +181,34 @@ const StandingsScreen = ({ matches, onBack }) => {
                       )}
                     </div>
                     <div className={`w-4 h-4 ${TEAM_COLORS[team.team].bg} rounded-full`}></div>
-                    <span className="font-bold text-gray-900">{team.team}</span>
+                    <span className="font-bold text-white">{team.team}</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">{team.points}</div>
-                    <div className="text-sm text-gray-500">pontos</div>
+                    <div className="text-2xl font-bold text-white">{team.points}</div>
+                    <div className="text-sm text-gray-400">pontos</div>
                   </div>
                 </div>
                 
                 <div className="mt-3 grid grid-cols-5 gap-2 text-center text-sm">
-                  <div className="bg-white rounded-lg p-2">
+                  <div className="bg-gray-700 rounded-lg p-2">
                     <div className="font-medium text-blue-600">{team.gamesPlayed}</div>
-                    <div className="text-[8px] text-gray-500 leading-tight text-center">J</div>
+                    <div className="text-[8px] text-gray-400 leading-tight text-center">J</div>
                   </div>
-                  <div className="bg-white rounded-lg p-2">
+                  <div className="bg-gray-700 rounded-lg p-2">
                     <div className="font-medium text-green-600">{team.wins}</div>
-                    <div className="text-[8px] text-gray-500 leading-tight text-center">V</div>
+                    <div className="text-[8px] text-gray-400 leading-tight text-center">V</div>
                   </div>
-                  <div className="bg-white rounded-lg p-2">
+                  <div className="bg-gray-700 rounded-lg p-2">
                     <div className="font-medium text-yellow-600">{team.draws}</div>
-                    <div className="text-[8px] text-gray-500 leading-tight text-center">E</div>
+                    <div className="text-[8px] text-gray-400 leading-tight text-center">E</div>
                   </div>
-                  <div className="bg-white rounded-lg p-2">
+                  <div className="bg-gray-700 rounded-lg p-2">
                     <div className="font-medium text-red-600">{team.losses}</div>
-                    <div className="text-[8px] text-gray-500 leading-tight text-center">D</div>
+                    <div className="text-[8px] text-gray-400 leading-tight text-center">D</div>
                   </div>
-                  <div className="bg-white rounded-lg p-2">
-                    <div className="font-medium">{team.goalDiff > 0 ? '+' : ''}{team.goalDiff}</div>
-                    <div className="text-[8px] text-gray-500 leading-tight text-center">SG</div>
+                  <div className="bg-gray-700 rounded-lg p-2">
+                    <div className="font-medium text-white">{team.goalDiff > 0 ? '+' : ''}{team.goalDiff}</div>
+                    <div className="text-[8px] text-gray-400 leading-tight text-center">SG</div>
                   </div>
                 </div>
               </div>
@@ -216,41 +216,41 @@ const StandingsScreen = ({ matches, onBack }) => {
           </div>
         </div>
 
-        <div className="mt-6 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h4 className="font-semibold text-gray-900 mb-3">Legenda</h4>
+        <div className="mt-6 dark-card rounded-2xl p-6 shadow-sm">
+          <h4 className="font-semibold text-white mb-3">Legenda</h4>
           <div className="space-y-2 text-sm">
             {playoffsComplete ? (
               <>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">🏆</span>
-                  <span className="text-gray-600">Campeão do Torneio</span>
+                  <span className="text-gray-300">Campeão do Torneio</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">🥈</span>
-                  <span className="text-gray-600">Vice-campeão</span>
+                  <span className="text-gray-300">Vice-campeão</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">🥉</span>
-                  <span className="text-gray-600">3º lugar</span>
+                  <span className="text-gray-300">3º lugar</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">4️⃣</span>
-                  <span className="text-gray-600">4º lugar</span>
+                  <span className="text-gray-300">4º lugar</span>
                 </div>
               </>
             ) : (
               <>
                 <div className="flex items-center space-x-2">
                   <Medal className="text-green-500" size={16} />
-                  <span className="text-gray-600">1º e 2º lugar - Classificados para a final</span>
+                  <span className="text-gray-300">1º e 2º lugar - Classificados para a final</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">🏅</span>
-                  <span className="text-gray-600">3º lugar - Disputa o 3º lugar</span>
+                  <span className="text-gray-300">3º lugar - Disputa o 3º lugar</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">🧽</span>
-                  <span className="text-gray-600">4º lugar - Vai direto para o sorteio do colete</span>
+                  <span className="text-gray-300">4º lugar - Vai direto para o sorteio do colete</span>
                 </div>
               </>
             )}
