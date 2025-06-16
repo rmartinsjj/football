@@ -51,9 +51,22 @@ const LiveFieldView = ({
       message = `🤝 Empate! (+1 ponto para cada time)`;
     }
 
-    const updatedMatch = { ...currentMatch, played: true };
+    const updatedMatch = { 
+      ...currentMatch, 
+      played: true,
+      score1: score1,
+      score2: score2
+    };
+    
+    console.log('Finishing match:', updatedMatch);
+    
     setMatches(prev => prev.map(m => m.id === currentMatch.id ? updatedMatch : m));
     setActiveMatch(null);
+    
+    // Force re-render after a small delay to ensure state is updated
+    setTimeout(() => {
+      console.log('Match finished, standings should update now');
+    }, 100);
     
     alert(message);
   };

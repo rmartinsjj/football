@@ -8,6 +8,15 @@ export const shuffleArray = (array) => {
 };
 
 export const calculateStandings = (matches) => {
+  console.log('Calculating standings for matches:', matches.map(m => ({ 
+    id: m.id, 
+    played: m.played, 
+    score1: m.score1, 
+    score2: m.score2, 
+    team1: m.team1, 
+    team2: m.team2 
+  })));
+  
   const standings = {
     'Vermelho': { points: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 },
     'Azul': { points: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 },
@@ -17,11 +26,13 @@ export const calculateStandings = (matches) => {
 
   matches.forEach(match => {
     // Só calcular pontos para jogos FINALIZADOS (played = true)
-    if (match.played === true && match.score1 !== null && match.score2 !== null && match.score1 !== '' && match.score2 !== '') {
+    if (match.played === true) {
       const team1 = match.team1;
       const team2 = match.team2;
-      const score1 = parseInt(match.score1) || 0;
-      const score2 = parseInt(match.score2) || 0;
+      const score1 = parseInt(match.score1 ?? 0) || 0;
+      const score2 = parseInt(match.score2 ?? 0) || 0;
+      
+      console.log(`Processing match ${match.id}: ${team1} ${score1} x ${score2} ${team2} (played: ${match.played})`);
 
       // Contabilizar gols
       standings[team1].goalsFor += score1;
@@ -49,6 +60,25 @@ export const calculateStandings = (matches) => {
       }
     }
   });
+  
+  const result = Object.entries(standings)
+    .map(([team, stats]) => ({ 
+      team, 
+      ...stats, 
+      goalDiff: stats.goalsFor - stats.goalsAgainst,
+      gamesPlayed: stats.wins + stats.draws + stats.losses
+    }))
+    .sort((a, b) => {
+      // Primeiro critério: pontos
+      if (b.points !== a.points) return b.points - a.points;
+      // Segundo critério: saldo de gols
+      if (b.goalDiff !== a.goalDiff) return b.goalDiff - a.goalDiff;
+      // Terceiro critério: gols marcados
+      return b.goalsFor - a.goalsFor;
+    });
+    
+  console.log('Final standings:', result);
+  return result;
 
   return Object.entries(standings)
     .map(([team, stats]) => ({ 
