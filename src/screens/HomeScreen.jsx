@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Shuffle, Trophy, Target } from 'lucide-react';
+import { Users, Shuffle, Trophy, Target, BarChart3 } from 'lucide-react';
 
 const HomeScreen = ({ 
   players, 
@@ -34,6 +34,7 @@ const HomeScreen = ({
     <div className="px-4">
       <h2 className="text-base font-semibold text-gray-900 mb-3">Menu Principal</h2>
       <div className="grid grid-cols-2 gap-3">
+        {/* Jogadores */}
         <button
           onClick={() => setCurrentScreen('players')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition-all duration-200"
@@ -45,6 +46,7 @@ const HomeScreen = ({
           <p className="text-sm text-gray-500">{players.length} cadastrados</p>
         </button>
 
+        {/* Times */}
         <button
           onClick={() => setCurrentScreen('teams')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition-all duration-200"
@@ -56,17 +58,7 @@ const HomeScreen = ({
           <p className="text-sm text-gray-500">Sortear equipes</p>
         </button>
 
-        <button
-          onClick={() => setCurrentScreen('scorers')}
-          className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition-all duration-200"
-        >
-          <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
-            <Target className="text-yellow-600" size={20} />
-          </div>
-          <h3 className="font-semibold text-gray-900 mb-1 text-sm">Artilheiros</h3>
-          <p className="text-sm text-gray-500">Ver goleadores</p>
-        </button>
-
+        {/* Jogos */}
         <button
           onClick={() => setCurrentScreen('matches')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition-all duration-200"
@@ -78,6 +70,7 @@ const HomeScreen = ({
           <p className="text-sm text-gray-500">Controlar partidas</p>
         </button>
 
+        {/* Classificação */}
         <button
           onClick={() => setCurrentScreen('standings')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition-all duration-200"
@@ -89,6 +82,19 @@ const HomeScreen = ({
           <p className="text-sm text-gray-500">Ver tabela</p>
         </button>
 
+        {/* Artilheiros */}
+        <button
+          onClick={() => setCurrentScreen('scorers')}
+          className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition-all duration-200"
+        >
+          <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
+            <BarChart3 className="text-yellow-600" size={20} />
+          </div>
+          <h3 className="font-semibold text-gray-900 mb-1 text-sm">Artilheiros</h3>
+          <p className="text-sm text-gray-500">Ver goleadores</p>
+        </button>
+
+        {/* Sorteio do Colete */}
         <button
           onClick={() => setCurrentScreen('colete')}
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition-all duration-200"
@@ -97,7 +103,7 @@ const HomeScreen = ({
             <span className="text-lg">🧽</span>
           </div>
           <h3 className="font-semibold text-gray-900 mb-1 text-sm">Sorteio do Colete</h3>
-          <p className="text-sm text-gray-500">Organizar disputa do colete</p>
+          <p className="text-sm text-gray-500">Organizar disputa</p>
         </button>
       </div>
     </div>
