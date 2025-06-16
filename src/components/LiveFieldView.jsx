@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Users } from 'lucide-react';
+import { Play, Pause, RotateCcw, Users, Goal } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
+import { calculateStandings } from '../utils/tournamentUtils';
 
 const LiveFieldView = ({ 
   matches,
@@ -33,77 +34,127 @@ const LiveFieldView = ({
   const team1Players = teams[currentMatch.team1] || [];
   const team2Players = teams[currentMatch.team2] || [];
 
+  // Calcular classificação rápida
+  const standings = calculateStandings(matches);
+
+  // Finalizar jogo com cálculo automático de pontos
+  const finishMatch = () => {
+    const score1 = currentMatch.score1 || 0;
+    const score2 = currentMatch.score2 || 0;
+    
+    let message = '';
+    if (score1 > score2) {
+      message = `🏆 ${currentMatch.team1} venceu! (+3 pontos)`;
+    } else if (score2 > score1) {
+      message = `🏆 ${currentMatch.team2} venceu! (+3 pontos)`;
+    } else {
+      message = `🤝 Empate! (+1 ponto para cada time)`;
+    }
+
+    const updatedMatch = { ...currentMatch, played: true };
+    setMatches(prev => prev.map(m => m.id === currentMatch.id ? updatedMatch : m));
+    setActiveMatch(null);
+    
+    alert(message);
+    
+    const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
+    if (nextMatch) {
+      setTimeout(() => startMatchTimer(nextMatch.id), 500);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Classificação Rápida */}
+      <div className="bg-gray-800 p-3 border-b border-gray-700">
+        <h4 className="text-white text-xs font-medium mb-2 text-center">Classificação Atual</h4>
+        <div className="grid grid-cols-2 gap-2">
+          {standings.slice(0, 4).map((team, index) => (
+            <div key={team.team} className="flex items-center justify-between bg-gray-700 rounded-md p-2">
+              <div className="flex items-center space-x-2">
+                <span className="text-white text-xs font-bold">{index + 1}º</span>
+                <div className={`w-3 h-3 ${TEAM_COLORS[team.team].bg} rounded-full`}></div>
+                <span className="text-white text-xs truncate">{team.team}</span>
+              </div>
+              <span className="text-white text-xs font-bold">{team.points}pts</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Header do Jogo */}
       <div className="bg-gray-800 p-3">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <div className={`w-6 h-6 ${TEAM_COLORS[currentMatch.team1].bg} rounded-full`}></div>
             <span className="text-white font-bold text-sm">{currentMatch.team1}</span>
           </div>
+          
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 text-white text-sm mb-1">
-              <span>Jogo {currentMatch.id}</span>
-              <span className="text-green-400 font-bold text-xs">
+              <span className="font-bold">Jogo {currentMatch.id}</span>
+              <span className="text-green-400 font-bold">
                 {activeMatch === currentMatch.id ? formatTime(timer) : '00:00'}
               </span>
+              {/* Ícone da Trave com Goleiros */}
+              <button
+                onClick={() => setShowGoalkeeperConfig(!showGoalkeeperConfig)}
+                className="text-yellow-400 hover:text-yellow-300 transition-colors"
+                title="Configurar goleiros"
+              >
+                <Goal size={16} />
+              </button>
             </div>
             <div className="text-2xl font-bold text-white">
               {currentMatch.score1 || 0} × {currentMatch.score2 || 0}
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          
+          <div className="flex items-center space-x-2">
             <span className="text-white font-bold text-sm">{currentMatch.team2}</span>
             <div className={`w-6 h-6 ${TEAM_COLORS[currentMatch.team2].bg} rounded-full`}></div>
           </div>
         </div>
 
-        <div className="flex justify-center space-x-1 flex-wrap gap-1">
+        {/* Controles do Jogo */}
+        <div className="flex justify-center space-x-2 mb-3">
           {activeMatch !== currentMatch.id ? (
             <button
               onClick={() => startMatchTimer(currentMatch.id)}
-              className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-2 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
+              className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-3 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
             >
-              <Play size={10} />
-              <span>Play</span>
+              <Play size={12} />
+              <span>Iniciar</span>
             </button>
           ) : (
             <>
               {!isTimerRunning ? (
                 <button
                   onClick={resumeTimer}
-                  className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-2 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
+                  className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-3 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
                 >
-                  <Play size={10} />
+                  <Play size={12} />
                   <span>Play</span>
                 </button>
               ) : (
                 <button
                   onClick={pauseTimer}
-                  className="bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white px-2 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
+                  className="bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white px-3 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
                 >
-                  <Pause size={10} />
+                  <Pause size={12} />
                   <span>Pause</span>
                 </button>
               )}
               <button
                 onClick={() => resetTimer()}
-                className="bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white px-2 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
+                className="bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white px-3 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
               >
-                <RotateCcw size={10} />
+                <RotateCcw size={12} />
                 <span>Reset</span>
               </button>
               <button
-                onClick={() => {
-                  const updatedMatch = { ...currentMatch, played: true };
-                  setMatches(prev => prev.map(m => m.id === currentMatch.id ? updatedMatch : m));
-                  setActiveMatch(null);
-                  const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
-                  if (nextMatch) {
-                    setTimeout(() => startMatchTimer(nextMatch.id), 500);
-                  }
-                }}
-                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-2 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
+                onClick={finishMatch}
+                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-3 py-1 rounded-md text-xs flex items-center space-x-1 transition-colors"
               >
                 <span>✓</span>
                 <span>Finalizar</span>
@@ -111,56 +162,48 @@ const LiveFieldView = ({
             </>
           )}
         </div>
-      </div>
 
-      <div className="bg-gray-800 mx-3 mb-2 rounded-lg p-2">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-white text-xs font-medium">Goleiros desta partida:</span>
-          <button
-            onClick={() => setShowGoalkeeperConfig(!showGoalkeeperConfig)}
-            className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
-          >
-            {showGoalkeeperConfig ? '▼' : '▶'} Editar nomes
-          </button>
-        </div>
-
+        {/* Configuração de Goleiros */}
         {showGoalkeeperConfig && (
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Goleiro Esquerdo:</label>
-              <input
-                type="text"
-                value={goalkeepers.left.name}
-                onChange={(e) => {
-                  setGoalkeepers(prev => ({
-                    ...prev,
-                    left: { name: e.target.value }
-                  }));
-                }}
-                className="w-full px-2 py-1 bg-gray-700 text-white text-xs rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
-                placeholder="Nome do goleiro"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Goleiro Direito:</label>
-              <input
-                type="text"
-                value={goalkeepers.right.name}
-                onChange={(e) => {
-                  setGoalkeepers(prev => ({
-                    ...prev,
-                    right: { name: e.target.value }
-                  }));
-                }}
-                className="w-full px-2 py-1 bg-gray-700 text-white text-xs rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
-                placeholder="Nome do goleiro"
-              />
+          <div className="bg-gray-700 rounded-lg p-3 mb-3">
+            <h5 className="text-white text-xs font-medium mb-2">Goleiros desta partida:</h5>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Goleiro Esquerdo:</label>
+                <input
+                  type="text"
+                  value={goalkeepers.left.name}
+                  onChange={(e) => {
+                    setGoalkeepers(prev => ({
+                      ...prev,
+                      left: { name: e.target.value }
+                    }));
+                  }}
+                  className="w-full px-2 py-1 bg-gray-600 text-white text-xs rounded border border-gray-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="Nome do goleiro"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Goleiro Direito:</label>
+                <input
+                  type="text"
+                  value={goalkeepers.right.name}
+                  onChange={(e) => {
+                    setGoalkeepers(prev => ({
+                      ...prev,
+                      right: { name: e.target.value }
+                    }));
+                  }}
+                  className="w-full px-2 py-1 bg-gray-600 text-white text-xs rounded border border-gray-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="Nome do goleiro"
+                />
+              </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Football Field */}
+      {/* Campo de Futebol */}
       <div className="relative bg-green-600 mx-3 my-3 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
         <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 225">
           <g opacity="0.7">
@@ -184,7 +227,7 @@ const LiveFieldView = ({
           <rect x="390" y="95" width="5" height="35" fill="white"/>
         </svg>
 
-        {/* Goalkeepers */}
+        {/* Goleiros */}
         <div
           className="absolute transform -translate-x-1/2 -translate-y-1/2"
           style={{ left: '6%', top: '50%' }}
@@ -209,7 +252,7 @@ const LiveFieldView = ({
           </div>
         </div>
 
-        {/* Team 1 Players */}
+        {/* Jogadores do Time 1 */}
         {team1Players.slice(0, 5).map((player, index) => {
           const positions = [
             { x: '18%', y: '25%' },
@@ -237,7 +280,7 @@ const LiveFieldView = ({
           );
         })}
 
-        {/* Team 2 Players */}
+        {/* Jogadores do Time 2 */}
         {team2Players.slice(0, 5).map((player, index) => {
           const positions = [
             { x: '82%', y: '25%' },
@@ -266,39 +309,70 @@ const LiveFieldView = ({
         })}
       </div>
 
-      {/* Match Goals */}
+      {/* Gols da Partida em Duas Colunas */}
       <div className="bg-gray-800 mx-3 mb-3 rounded-xl p-3">
-        <h3 className="text-white font-bold mb-2 text-sm">
+        <h3 className="text-white font-bold mb-2 text-sm text-center">
           Gols da Partida
         </h3>
-        <div className="space-y-1 max-h-24 overflow-y-auto">
-          {matchEvents
-            .filter(event => event.matchId === currentMatch.id)
-            .map((event) => (
-              <div key={event.id} className="flex items-center justify-between bg-gray-700 rounded-md p-2">
-                <div className="flex items-center space-x-2">
-                  <span className="text-white text-xs">⚽</span>
-                  <span className="text-white text-xs">{event.playerName}</span>
-                  <span className="text-gray-400 text-xs">({event.teamName})</span>
-                  <span className="text-gray-400 text-xs">{event.minute}'</span>
-                </div>
-                <button
-                  onClick={() => removeGoal(event.id)}
-                  className="text-red-400 hover:text-red-300 active:text-red-200 text-xs"
-                >
-                  ❌
-                </button>
-              </div>
-            ))}
-          {matchEvents.filter(event => event.matchId === currentMatch.id).length === 0 && (
-            <div className="text-center py-2">
-              <span className="text-gray-400 text-xs">Nenhum gol marcado ainda</span>
+        
+        {matchEvents.filter(event => event.matchId === currentMatch.id).length === 0 ? (
+          <div className="text-center py-3">
+            <span className="text-gray-400 text-xs">Nenhum gol marcado ainda</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+            {/* Gols do Time 1 */}
+            <div className="space-y-1">
+              <h4 className="text-xs font-medium text-center mb-1" style={{ color: TEAM_COLORS[currentMatch.team1]?.text?.replace('text-', '') || '#fff' }}>
+                {currentMatch.team1}
+              </h4>
+              {matchEvents
+                .filter(event => event.matchId === currentMatch.id && event.teamName === currentMatch.team1)
+                .map((event) => (
+                  <div key={event.id} className="flex items-center justify-between bg-gray-700 rounded-md p-2">
+                    <div className="flex items-center space-x-1">
+                      <span className="text-white text-xs">⚽</span>
+                      <span className="text-white text-xs truncate">{event.playerName}</span>
+                      <span className="text-gray-400 text-xs">{event.minute}'</span>
+                    </div>
+                    <button
+                      onClick={() => removeGoal(event.id)}
+                      className="text-red-400 hover:text-red-300 active:text-red-200 text-xs"
+                    >
+                      ❌
+                    </button>
+                  </div>
+                ))}
             </div>
-          )}
-        </div>
+
+            {/* Gols do Time 2 */}
+            <div className="space-y-1">
+              <h4 className="text-xs font-medium text-center mb-1" style={{ color: TEAM_COLORS[currentMatch.team2]?.text?.replace('text-', '') || '#fff' }}>
+                {currentMatch.team2}
+              </h4>
+              {matchEvents
+                .filter(event => event.matchId === currentMatch.id && event.teamName === currentMatch.team2)
+                .map((event) => (
+                  <div key={event.id} className="flex items-center justify-between bg-gray-700 rounded-md p-2">
+                    <div className="flex items-center space-x-1">
+                      <span className="text-white text-xs">⚽</span>
+                      <span className="text-white text-xs truncate">{event.playerName}</span>
+                      <span className="text-gray-400 text-xs">{event.minute}'</span>
+                    </div>
+                    <button
+                      onClick={() => removeGoal(event.id)}
+                      className="text-red-400 hover:text-red-300 active:text-red-200 text-xs"
+                    >
+                      ❌
+                    </button>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Score Update */}
+      {/* Atualizar Placar */}
       <div className="bg-gray-800 mx-3 mb-3 rounded-xl p-3">
         <h3 className="text-white font-bold mb-2 text-center text-sm">Atualizar Placar</h3>
         <div className="flex items-center justify-center space-x-4">
@@ -336,17 +410,17 @@ const LiveFieldView = ({
         </div>
       </div>
 
-      {/* Upcoming Matches */}
+      {/* Próximos Jogos */}
       <div className="bg-gray-800 mx-3 mb-3 rounded-xl p-3">
         <h3 className="text-white font-bold mb-2 text-sm">
           Próximos Jogos ({remainingMatches.length} restantes)
         </h3>
-        <div className="space-y-1" style={{ maxHeight: '150px', overflowY: 'auto', overflowX: 'hidden' }}>
-          {remainingMatches.length > 0 ? remainingMatches.map((match) => (
+        <div className="space-y-1" style={{ maxHeight: '120px', overflowY: 'auto', overflowX: 'hidden' }}>
+          {remainingMatches.length > 0 ? remainingMatches.slice(0, 3).map((match) => (
             <div key={match.id} className={`flex items-center justify-between rounded-lg p-2 ${
               match.played ? 'bg-green-700' : 'bg-gray-700'
             }`}>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                   match.played 
                     ? 'bg-green-600 text-white' 
@@ -363,7 +437,7 @@ const LiveFieldView = ({
               </div>
               <div className="flex items-center space-x-2">
                 {match.played ? (
-                  <span className="text-green-400 text-xs">✓ Finalizado</span>
+                  <span className="text-green-400 text-xs">✓</span>
                 ) : (
                   <button
                     onClick={(e) => {
@@ -380,34 +454,11 @@ const LiveFieldView = ({
               </div>
             </div>
           )) : (
-            <div className="text-center py-4">
+            <div className="text-center py-2">
               <span className="text-gray-400 text-xs">Este é o último jogo do torneio!</span>
             </div>
           )}
         </div>
-
-        {completedMatches.length > 0 && (
-          <>
-            <h4 className="text-white font-medium mt-3 mb-1 text-xs">
-              Jogos Anteriores ({completedMatches.length} finalizados)
-            </h4>
-            <div className="space-y-1" style={{ maxHeight: '80px', overflowY: 'auto', overflowX: 'hidden' }}>
-              {completedMatches.slice(-3).map((match) => (
-                <div key={match.id} className="flex items-center justify-between bg-gray-700 rounded-md p-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="bg-gray-600 text-white px-2 py-0.5 rounded text-xs">
-                      Jogo {match.id}
-                    </span>
-                    <span className="text-white text-xs">
-                      {match.team1} {match.score1 || 0} × {match.score2 || 0} {match.team2}
-                    </span>
-                  </div>
-                  <span className="text-green-400 text-xs">✓</span>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
