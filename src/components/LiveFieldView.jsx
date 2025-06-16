@@ -133,6 +133,12 @@ const LiveFieldView = ({
 
   // Check for ties that need resolution
   const checkForTiebreaker = (standings) => {
+    // Only check for tiebreaker after match 12 is complete
+    const match12 = matches.find(m => m.id === 12);
+    if (!match12 || !match12.played) {
+      return false;
+    }
+    
     // Check for ties that affect playoff positioning
     const ties = [];
     
@@ -331,7 +337,8 @@ const LiveFieldView = ({
     // Check if we need tiebreaker for final qualification
     if (currentMatch.id === 12) { // Last regular season match
       // Calculate final standings
-      const finalStandings = calculateStandings(matches.filter(m => m.type === 'regular'));
+      const updatedMatches = matches.map(m => m.id === currentMatch.id ? updatedMatch : m);
+      const finalStandings = calculateStandings(updatedMatches.filter(m => m.type === 'regular'));
       if (checkForTiebreaker(finalStandings)) {
         return;
       }
@@ -521,12 +528,21 @@ const LiveFieldView = ({
         </div>
       )}
 
-      {/* Tiebreaker Button - Only show for relevant ties */}
+      {/* Tiebreaker Button - Only show when match 12 is complete and there are ties affecting playoffs */}
       {(() => {
-        // Check for ties that need resolution (2nd vs 3rd, or 3rd vs 4th)
+        // Only show for championship mode
+        if (isWinnerStaysMode) return null;
+        
+        // Check if match 12 (last regular season match) is completed
+        const match12 = matches.find(m => m.id === 12);
+        if (!match12 || !match12.played) return null;
+        
+        // Check for ties that affect playoff positioning
         const needsTiebreaker = 
           (standings[1]?.points === standings[2]?.points && standings[0]?.points !== standings[1]?.points) ||
-          (standings[2]?.points === standings[3]?.points && standings[1]?.points !== standings[2]?.points);
+          (standings[2]?.points === standings[3]?.points && standings[1]?.points !== standings[2]?.points) ||
+          (standings[0]?.points === standings[1]?.points) ||
+          (standings[1]?.points === standings[2]?.points && standings[2]?.points === standings[3]?.points);
         
         if (!needsTiebreaker) return null;
         
@@ -534,13 +550,19 @@ const LiveFieldView = ({
           <div className="bg-gray-800 p-3 border-b border-gray-700">
             <button
               onClick={() => {
-                // Determine which teams are tied
-                if (standings[1]?.points === standings[2]?.points && standings[0]?.points !== standings[1]?.points) {
+                // Determine which teams are tied and set appropriate positions
+                if (standings[0]?.points === standings[1]?.points) {
+                  setTiebreakerTeams([standings[0].team, standings[1].team]);
+                  setTiebreakerPositions(['1º lugar (Final)', '2º lugar (Final)']);
+                } else if (standings[1]?.points === standings[2]?.points && standings[0]?.points !== standings[1]?.points) {
                   setTiebreakerTeams([standings[1].team, standings[2].team]);
                   setTiebreakerPositions(['2º lugar (Final)', '3º lugar (Disputa 3º)']);
                 } else if (standings[2]?.points === standings[3]?.points && standings[1]?.points !== standings[2]?.points) {
                   setTiebreakerTeams([standings[2].team, standings[3].team]);
                   setTiebreakerPositions(['3º lugar (Disputa 3º)', '4º lugar (Colete)']);
+                } else if (standings[1]?.points === standings[2]?.points && standings[2]?.points === standings[3]?.points) {
+                  setTiebreakerTeams([standings[1].team, standings[2].team, standings[3].team]);
+                  setTiebreakerPositions(['2º lugar (Final)', '3º lugar (Disputa 3º)', '4º lugar (Colete)']);
                 }
                 setShowTiebreaker(true);
               }}
