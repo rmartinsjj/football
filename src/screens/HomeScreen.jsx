@@ -12,14 +12,13 @@ const HomeScreen = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <img 
-            src="/logoespaçonovotempo.png" 
+            src="/logoespaçonovotempo copy.png" 
             alt="Espaço Novo Tempo" 
             className="w-12 h-12 rounded-lg object-cover"
           />
           <div>
             <h1 className="text-lg font-bold text-white">Torneio Futebol</h1>
-            <p className="text-gray-300 text-xs">Espaço Novo Tempo</p>
-            <p className="text-xs text-gray-400">Praia da Costa</p>
+            <p className="text-gray-300 text-xs">Espaço Novo Tempo - Praia da Costa</p>
           </div>
         </div>
         <button
