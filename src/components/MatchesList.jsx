@@ -75,7 +75,7 @@ const MatchesList = ({
             
             <div className="flex items-center justify-center">
               <div className="text-center flex-1">
-                <div className={`bg-gradient-to-r ${TEAM_COLORS[match.team1].gradient} text-white p-3 rounded-xl mb-3`}>
+                <div className={`bg-gradient-to-r ${TEAM_COLORS[match.team1]?.gradient || 'from-gray-500 to-gray-600'} text-white p-3 rounded-xl mb-3`}>
                   <span className="font-bold">{match.team1}</span>
                 </div>
                 <input
@@ -93,7 +93,7 @@ const MatchesList = ({
               </div>
               
               <div className="text-center flex-1">
-                <div className={`bg-gradient-to-r ${TEAM_COLORS[match.team2].gradient} text-white p-3 rounded-xl mb-3`}>
+                <div className={`bg-gradient-to-r ${TEAM_COLORS[match.team2]?.gradient || 'from-gray-500 to-gray-600'} text-white p-3 rounded-xl mb-3`}>
                   <span className="font-bold">{match.team2}</span>
                 </div>
                 <input
