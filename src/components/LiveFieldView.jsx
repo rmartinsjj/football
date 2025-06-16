@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Users, Goal } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
 import { calculateStandings, generatePlayoffMatches } from '../utils/tournamentUtils';
+import TiebreakerModal from './TiebreakerModal';
+import ToastMessage from './ToastMessage';
+import MatchHeader from './MatchHeader';
+import GoalkeeperConfig from './GoalkeeperConfig';
+import PenaltyShootout from './PenaltyShootout';
 
 const LiveFieldView = ({ 
   matches,
@@ -40,6 +45,9 @@ const LiveFieldView = ({
     fourthPlace: null
   });
   const [showNextGameButton, setShowNextGameButton] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState('success');
+  const [showToast, setShowToast] = useState(false);
 
   // Calculate standings and generate playoff matches
   const standings = calculateStandings(matches.filter(m => m.type === 'regular')); // Only regular season for standings
@@ -87,6 +95,13 @@ const LiveFieldView = ({
       });
     }
   }, [matches]);
+  // Show toast message
+  const showToastMessage = (message, type = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
   // Check for ties that need resolution
   const checkForTiebreaker = (standings) => {
     // Check for ties that affect playoff positioning
@@ -153,12 +168,11 @@ const LiveFieldView = ({
       });
       
       if (tiedTeams[0].goalDiff !== tiedTeams[1].goalDiff || tiedTeams[0].goalsFor !== tiedTeams[1].goalsFor) {
-        let message = `📊 Desempate por critérios técnicos:\n\n`;
+        let message = `📊 Desempate por critérios técnicos: `;
         tiedTeams.forEach((team, index) => {
-          message += `${tiebreakerPositions[index]}: ${team.team}\n`;
-          message += `   Saldo: ${team.goalDiff > 0 ? '+' : ''}${team.goalDiff} | Gols: ${team.goalsFor}\n\n`;
+          message += `${tiebreakerPositions[index]}: ${team.team} `;
         });
-        alert(message);
+        showToastMessage(message, 'info');
       } else {
         // Still tied, need to draw
         handleTiebreakerDecision('draw');
@@ -168,12 +182,12 @@ const LiveFieldView = ({
       // Random draw
       const shuffledTeams = [...tiebreakerTeams].sort(() => Math.random() - 0.5);
       
-      let message = `🎲 Resultado do sorteio:\n\n`;
+      let message = `🎲 Resultado do sorteio: `;
       shuffledTeams.forEach((team, index) => {
-        message += `${tiebreakerPositions[index]}: ${team}\n`;
+        message += `${tiebreakerPositions[index]}: ${team} `;
       });
       
-      alert(message);
+      showToastMessage(message, 'success');
     }
     
     setShowTiebreaker(false);
@@ -200,7 +214,7 @@ const LiveFieldView = ({
     const team2Name = currentMatch.team2;
     
     if (penaltyScore.team1 === penaltyScore.team2) {
-      alert('⚽ Disputa de pênaltis ainda está empatada! Continue marcando os gols.');
+      showToastMessage('⚽ Disputa de pênaltis ainda está empatada! Continue marcando os gols.', 'error');
       return;
     }
     
@@ -224,7 +238,7 @@ const LiveFieldView = ({
     setShowPenaltyShootout(false);
     setPenaltyScore({ team1: 0, team2: 0 });
     
-    alert(`🏆 ${winner} venceu nos pênaltis! (${penaltyScore.team1} x ${penaltyScore.team2})`);
+    showToastMessage(`🏆 ${winner} venceu nos pênaltis! (${penaltyScore.team1} x ${penaltyScore.team2})`, 'success');
   };
   // Finalizar jogo - playoffs não afetam pontuação regular
   const finishMatch = () => {
@@ -318,7 +332,7 @@ const LiveFieldView = ({
       console.log('Match finished, standings should update now');
     }, 100);
     
-    alert(message);
+    showToastMessage(message, 'success');
   };
 
   const goToNextGame = () => {
@@ -346,6 +360,14 @@ const LiveFieldView = ({
   }, [matches]);
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Toast Message */}
+      <ToastMessage
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
+
       {/* Tournament Results Modal */}
       {showPlayoffResults && playoffResults.champion && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
@@ -443,323 +465,55 @@ const LiveFieldView = ({
         )}
       </div>
 
-      {/* Header do Jogo */}
-      <div className="bg-gray-800 p-3">
-        {/* Header com Times, Jogo, Tempo e Controles */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <div className={`w-6 h-6 ${TEAM_COLORS[currentMatch.team1].bg} rounded-full`}></div>
-            <span className="text-white font-bold text-sm">{currentMatch.team1}</span>
-          </div>
-          
-          <div className="text-center">
-            <div className="text-2xl font-bold text-white">
-              {currentMatch.score1 || 0} × {currentMatch.score2 || 0}
-            </div>
-            {showPenaltyShootout && (
-              <div className="text-yellow-400 text-xs mt-1">
-                Pênaltis: {penaltyScore.team1} × {penaltyScore.team2}
-              </div>
-            )}
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <span className="text-white font-bold text-sm">{currentMatch.team2}</span>
-            <div className={`w-6 h-6 ${TEAM_COLORS[currentMatch.team2].bg} rounded-full`}></div>
-          </div>
-        </div>
+      {/* Match Header */}
+      <MatchHeader
+        currentMatch={currentMatch}
+        timer={timer}
+        formatTime={formatTime}
+        activeMatch={activeMatch}
+        isTimerRunning={isTimerRunning}
+        startMatchTimer={startMatchTimer}
+        pauseTimer={pauseTimer}
+        resumeTimer={resumeTimer}
+        resetTimer={resetTimer}
+        finishMatch={finishMatch}
+        showNextGameButton={showNextGameButton}
+        goToNextGame={goToNextGame}
+        showGoalkeeperConfig={showGoalkeeperConfig}
+        setShowGoalkeeperConfig={setShowGoalkeeperConfig}
+        showPenaltyShootout={showPenaltyShootout}
+        penaltyScore={penaltyScore}
+      />
 
-        {/* Linha com Jogo, Tempo, Goleiros e Controles */}
-        <div className="flex items-center justify-center space-x-3 mb-3">
-          <span className="text-white font-bold text-sm">Jogo {currentMatch.id}</span>
-          
-          <span className="text-green-400 font-bold text-sm">
-            {activeMatch === currentMatch.id ? formatTime(timer) : '00:00'}
-          </span>
-          
-          {/* Ícone da Trave com Goleiros */}
-          <button
-            onClick={() => setShowGoalkeeperConfig(!showGoalkeeperConfig)}
-            className="text-yellow-400 hover:text-yellow-300 transition-colors"
-            title="Configurar goleiros"
-          >
-            <Goal size={16} />
-          </button>
-          
-          {/* Controles do Jogo - Ultra Minimalistas */}
-          {activeMatch !== currentMatch.id ? (
-            <button
-              onClick={() => startMatchTimer(currentMatch.id)}
-              className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-              title="Iniciar"
-            >
-              <Play size={12} />
-            </button>
-          ) : (
-            <div className="flex items-center space-x-1">
-              {!isTimerRunning ? (
-                <button
-                  onClick={resumeTimer}
-                  className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-                  title="Play"
-                >
-                  <Play size={12} />
-                </button>
-              ) : (
-                <button
-                  onClick={pauseTimer}
-                  className="bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-                  title="Pause"
-                >
-                  <Pause size={12} />
-                </button>
-              )}
-              <button
-                onClick={() => resetTimer()}
-                className="bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-                title="Reset"
-              >
-                <RotateCcw size={12} />
-              </button>
-              <button
-                onClick={finishMatch}
-                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-2 h-6 rounded-full flex items-center justify-center transition-colors text-xs font-medium"
-                title="Finalizar"
-              >
-                ✓
-              </button>
-              {showNextGameButton && (
-                <button
-                  onClick={goToNextGame}
-                  className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-2 h-6 rounded-full flex items-center justify-center transition-colors text-xs font-medium"
-                  title="Próximo Jogo"
-                >
-                  ▶
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+      {/* Goalkeeper Configuration */}
+      <GoalkeeperConfig
+        goalkeepers={goalkeepers}
+        setGoalkeepers={setGoalkeepers}
+        isVisible={showGoalkeeperConfig}
+      />
 
-        {/* Configuração de Goleiros */}
-        {showGoalkeeperConfig && (
-          <div className="bg-gray-700 rounded-lg p-3 mb-3">
-            <h5 className="text-white text-xs font-medium mb-2">Goleiros desta partida:</h5>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">Goleiro Esquerdo:</label>
-                <input
-                  type="text"
-                  value={goalkeepers.left.name}
-                  onChange={(e) => {
-                    setGoalkeepers(prev => ({
-                      ...prev,
-                      left: { name: e.target.value }
-                    }));
-                  }}
-                  className="w-full px-2 py-1 bg-gray-600 text-white text-xs rounded border border-gray-500 focus:border-blue-500 focus:outline-none"
-                  placeholder="Nome do goleiro"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">Goleiro Direito:</label>
-                <input
-                  type="text"
-                  value={goalkeepers.right.name}
-                  onChange={(e) => {
-                    setGoalkeepers(prev => ({
-                      ...prev,
-                      right: { name: e.target.value }
-                    }));
-                  }}
-                  className="w-full px-2 py-1 bg-gray-600 text-white text-xs rounded border border-gray-500 focus:border-blue-500 focus:outline-none"
-                  placeholder="Nome do goleiro"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Penalty Shootout */}
+      <PenaltyShootout
+        isVisible={showPenaltyShootout}
+        currentMatch={currentMatch}
+        penaltyScore={penaltyScore}
+        addPenaltyGoal={addPenaltyGoal}
+        removePenaltyGoal={removePenaltyGoal}
+        finishPenaltyShootout={finishPenaltyShootout}
+        onCancel={() => {
+          setShowPenaltyShootout(false);
+          setPenaltyScore({ team1: 0, team2: 0 });
+        }}
+      />
 
-      {/* Disputa de Pênaltis */}
-      {showPenaltyShootout && (
-        <div className="bg-yellow-800 mx-3 mb-3 rounded-xl p-4 border-2 border-yellow-500">
-          <div className="text-center mb-3">
-            <h3 className="text-yellow-200 font-bold text-sm mb-1">⚽ DISPUTA DE PÊNALTIS</h3>
-            <p className="text-yellow-300 text-xs">Jogo empatado! Marque os gols dos pênaltis:</p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            {/* Time 1 Penalties */}
-            <div className="text-center">
-              <h4 className="text-white font-bold text-sm mb-2">{currentMatch.team1}</h4>
-              <div className="flex items-center justify-center space-x-2 mb-2">
-                <button
-                  onClick={() => removePenaltyGoal('team1')}
-                  className="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                >
-                  -
-                </button>
-                <div className="bg-gray-700 text-white font-bold text-xl w-12 h-12 rounded-full flex items-center justify-center">
-                  {penaltyScore.team1}
-                </div>
-                <button
-                  onClick={() => addPenaltyGoal('team1')}
-                  className="bg-green-600 hover:bg-green-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            
-            {/* Time 2 Penalties */}
-            <div className="text-center">
-              <h4 className="text-white font-bold text-sm mb-2">{currentMatch.team2}</h4>
-              <div className="flex items-center justify-center space-x-2 mb-2">
-                <button
-                  onClick={() => removePenaltyGoal('team2')}
-                  className="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                >
-                  -
-                </button>
-                <div className="bg-gray-700 text-white font-bold text-xl w-12 h-12 rounded-full flex items-center justify-center">
-                  {penaltyScore.team2}
-                </div>
-                <button
-                  onClick={() => addPenaltyGoal('team2')}
-                  className="bg-green-600 hover:bg-green-700 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex space-x-2">
-            <button
-              onClick={finishPenaltyShootout}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-medium transition-colors"
-            >
-              🏆 Finalizar Pênaltis
-            </button>
-            <button
-              onClick={() => {
-                setShowPenaltyShootout(false);
-                setPenaltyScore({ team1: 0, team2: 0 });
-              }}
-              className="bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-lg transition-colors"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Sistema de Desempate */}
-      {showTiebreaker && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-          <div className="bg-purple-800 rounded-2xl max-w-sm w-full p-6 border-2 border-purple-500 shadow-2xl">
-            <div className="text-center mb-4">
-              <h3 className="text-purple-200 font-bold text-lg mb-2">🤝 DESEMPATE NECESSÁRIO</h3>
-              <p className="text-purple-300 text-sm mb-3">
-                {tiebreakerTeams.length} times estão empatados em pontos!
-              </p>
-              
-              {/* Show tied teams and their stats */}
-              <div className="bg-purple-900 rounded-lg p-3 mb-4">
-                <h4 className="text-purple-200 text-xs font-medium mb-2">Times Empatados:</h4>
-                {tiebreakerTeams.map((teamName, index) => {
-                  const teamStats = standings.find(s => s.team === teamName);
-                  return (
-                    <div key={teamName} className="flex items-center justify-between text-purple-100 text-xs mb-1">
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-3 h-3 ${TEAM_COLORS[teamName].bg} rounded-full`}></div>
-                        <span>{teamName}</span>
-                      </div>
-                      <div className="text-right">
-                        <span>{teamStats.points}pts | Saldo: {teamStats.goalDiff > 0 ? '+' : ''}{teamStats.goalDiff}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <p className="text-purple-300 text-sm">
-                Como deseja definir as posições para os playoffs?
-              </p>
-            </div>
-            
-            <div className="space-y-3">
-              <button
-                onClick={() => handleTiebreakerDecision('goals')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl font-medium transition-colors flex items-center justify-center space-x-2"
-              >
-                <span>📊</span>
-                <div className="text-left">
-                  <div className="font-bold">Saldo de Gols</div>
-                  <div className="text-xs opacity-90">Usar saldo de gols e gols marcados</div>
-                </div>
-              </button>
-              
-              <button
-                onClick={() => handleTiebreakerDecision('draw')}
-                className="w-full bg-orange-600 hover:bg-orange-700 text-white p-4 rounded-xl font-medium transition-colors flex items-center justify-center space-x-2"
-              >
-                <span>🎲</span>
-                <div className="text-left">
-                  <div className="font-bold">Sortear</div>
-                  <div className="text-xs opacity-90">Sorteio aleatório das posições</div>
-                </div>
-              </button>
-            </div>
-            
-            <div className="mt-4 text-center">
-              <p className="text-purple-300 text-xs">
-                ⚠️ Esta decisão definirá quem vai para a Final e quem disputa o 3º lugar
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Old tiebreaker code - keeping for reference but should be removed */}
-      {false && showTiebreaker && (
-        <div className="bg-purple-800 mx-3 mb-3 rounded-xl p-4 border-2 border-purple-500">
-          <div className="text-center mb-3">
-            <h3 className="text-purple-200 font-bold text-sm mb-1">🤝 DESEMPATE PARA A FINAL</h3>
-            <p className="text-purple-300 text-xs">
-              {standings[0].team} e {standings[1].team} estão empatados em pontos!
-            </p>
-            <p className="text-purple-300 text-xs mt-1">Como deseja decidir a classificação?</p>
-          </div>
-          
-          <div className="space-y-2">
-            <button
-              onClick={() => handleTiebreakerDecision('goals')}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
-            >
-              <span>📊</span>
-              <span>Por Saldo de Gols</span>
-            </button>
-            <button
-              onClick={() => handleTiebreakerDecision('draw')}
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
-            >
-              <span>🎲</span>
-              <span>Por Sorteio</span>
-            </button>
-          </div>
-          
-          <div className="mt-3 text-center">
-            <button
-              onClick={() => setShowTiebreaker(false)}
-              className="text-purple-300 hover:text-purple-200 text-xs transition-colors"
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Tiebreaker Modal */}
+      <TiebreakerModal
+        isOpen={showTiebreaker}
+        onClose={() => setShowTiebreaker(false)}
+        tiebreakerTeams={tiebreakerTeams}
+        standings={standings}
+        onDecision={handleTiebreakerDecision}
+      />
       {/* Campo de Futebol */}
       <div className="relative bg-green-600 mx-3 my-3 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
         <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 225">

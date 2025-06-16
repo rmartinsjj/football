@@ -1,10 +1,14 @@
 import React from 'react';
-import { Medal } from 'lucide-react';
+import { Medal, Settings } from 'lucide-react';
 import Header from '../components/Header';
 import { TEAM_COLORS } from '../constants';
 import { calculateStandings } from '../utils/tournamentUtils';
+import TiebreakerModal from '../components/TiebreakerModal';
 
 const StandingsScreen = ({ matches, onBack }) => {
+  const [showTiebreaker, setShowTiebreaker] = React.useState(false);
+  const [tiebreakerTeams, setTiebreakerTeams] = React.useState([]);
+  
   // Only calculate standings for regular season matches
   const standings = calculateStandings(matches.filter(m => m.type === 'regular'));
   
@@ -35,11 +39,40 @@ const StandingsScreen = ({ matches, onBack }) => {
     };
   }
   
+  // Check if there are any ties that could be resolved
+  const checkForTies = () => {
+    // Check for ties between any adjacent teams
+    for (let i = 0; i < standings.length - 1; i++) {
+      if (standings[i].points === standings[i + 1].points) {
+        const tiedTeams = [standings[i].team, standings[i + 1].team];
+        setTiebreakerTeams(tiedTeams);
+        setShowTiebreaker(true);
+        return;
+      }
+    }
+  };
+  
+  const handleTiebreakerDecision = (method) => {
+    // This is just for demonstration - in a real app you'd update the standings
+    console.log(`Tiebreaker resolved using ${method} for teams:`, tiebreakerTeams);
+    setShowTiebreaker(false);
+    setTiebreakerTeams([]);
+  };
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title="Classificação" showBack={true} onBack={onBack} />
       
       <div className="p-6">
+        {/* Tiebreaker Modal */}
+        <TiebreakerModal
+          isOpen={showTiebreaker}
+          onClose={() => setShowTiebreaker(false)}
+          tiebreakerTeams={tiebreakerTeams}
+          standings={standings}
+          onDecision={handleTiebreakerDecision}
+        />
+        
         {/* Final Tournament Results */}
         {playoffsComplete && finalResults && (
           <div className="bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl p-6 text-center shadow-lg mb-6">
@@ -84,9 +117,20 @@ const StandingsScreen = ({ matches, onBack }) => {
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
           <div className="p-6 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {playoffsComplete ? 'Classificação da Fase Regular' : 'Tabela de Classificação'}
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {playoffsComplete ? 'Classificação da Fase Regular' : 'Tabela de Classificação'}
+              </h3>
+              {!playoffsComplete && (
+                <button
+                  onClick={checkForTies}
+                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 text-sm transition-colors"
+                >
+                  <Settings size={16} />
+                  <span>Resolver Empate</span>
+                </button>
+              )}
+            </div>
             {playoffsComplete && (
               <p className="text-sm text-gray-600 mt-1">
                 Pontuação baseada apenas nos 12 jogos da fase regular
