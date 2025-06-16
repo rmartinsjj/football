@@ -60,7 +60,7 @@ const StandingsScreen = ({ matches, onBack }) => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Header title="Classificação" showBack={true} onBack={onBack} />
       
       <div className="p-6">
