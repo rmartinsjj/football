@@ -255,7 +255,8 @@ const LiveFieldView = ({
       const newStandings = calculateStandings(updated.filter(m => m.type === 'regular'));
       return generatePlayoffMatches(updated, newStandings);
     });
-    setActiveMatch(null);
+    
+    // NÃO limpar o activeMatch ainda - manter para mostrar o botão "Próximo Jogo"
     setShowNextGameButton(true);
     
     // Force re-render after a small delay to ensure state is updated
@@ -268,6 +269,7 @@ const LiveFieldView = ({
 
   const goToNextGame = () => {
     setShowNextGameButton(false);
+    setActiveMatch(null); // Agora sim limpar o activeMatch
     const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
     if (nextMatch) {
       setTimeout(() => startMatchTimer(nextMatch.id), 500);
