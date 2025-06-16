@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TIMER_DURATION } from '../constants';
 
+// Timer finished callback will be handled by the component using this hook
 export const useTimer = () => {
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [activeMatch, setActiveMatch] = useState(null);
+  const [onTimerFinished, setOnTimerFinished] = useState(null);
 
   useEffect(() => {
     let interval;
@@ -13,7 +15,10 @@ export const useTimer = () => {
         setTimer(prev => {
           if (prev <= 1) {
             setIsTimerRunning(false);
-            alert('Tempo esgotado!');
+            // Call the callback instead of showing alert
+            if (onTimerFinished) {
+              onTimerFinished();
+            }
             return 0;
           }
           return prev - 1;
@@ -21,7 +26,7 @@ export const useTimer = () => {
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isTimerRunning, timer]);
+  }, [isTimerRunning, timer, onTimerFinished]);
 
   const startMatchTimer = (matchId, isFinal = false) => {
     setActiveMatch(matchId);
@@ -55,6 +60,7 @@ export const useTimer = () => {
     isTimerRunning,
     activeMatch,
     setActiveMatch,
+    setOnTimerFinished,
     startMatchTimer,
     pauseTimer,
     resumeTimer,

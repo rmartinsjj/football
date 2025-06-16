@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Users, Plus, Minus } from 'lucide-react';
 import Header from '../components/Header';
+import LiveFieldViewToastMessage from '../components/LiveFieldView-ToastMessage';
 import { parsePlayerList } from '../utils/tournamentUtils';
 
 const PlayersScreen = ({ 
@@ -10,12 +11,21 @@ const PlayersScreen = ({
 }) => {
   const [playerListText, setPlayerListText] = useState('');
   const [newPlayerName, setNewPlayerName] = useState('');
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState('success');
+  const [showToast, setShowToast] = useState(false);
+
+  const showToastMessage = (message, type = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const handleParsePlayerList = () => {
     const newPlayers = parsePlayerList(playerListText);
     setPlayers(newPlayers);
     setPlayerListText('');
-    alert(`${newPlayers.length} jogadores adicionados!`);
+    showToastMessage(`${newPlayers.length} jogadores adicionados!`, 'success');
   };
 
   const addPlayer = () => {
@@ -37,6 +47,14 @@ const PlayersScreen = ({
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title="Jogadores" showBack={true} onBack={onBack} />
+      
+      {/* Toast Message */}
+      <LiveFieldViewToastMessage
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
       
       <div className="p-4">
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-4">

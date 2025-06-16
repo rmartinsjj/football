@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shuffle, Plus, Minus, UserPlus, UserMinus, Edit3, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import Header from '../components/Header';
+import LiveFieldViewToastMessage from '../components/LiveFieldView-ToastMessage';
 import { TEAM_COLORS } from '../constants';
 import { drawTeams } from '../utils/tournamentUtils';
 
@@ -23,6 +24,16 @@ const TeamsScreen = ({
     'Brasil': false,
     'Verde Branco': false
   });
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState('success');
+  const [showToast, setShowToast] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  const showToastMessage = (message, type = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const drawingMessages = [
     "🎲 Estamos sorteando os times...",
@@ -56,7 +67,11 @@ const TeamsScreen = ({
   };
 
   const handleReDraw = async () => {
-    if (confirm('Tem certeza que deseja re-sortear os times? Isso irá redistribuir todos os jogadores novamente.')) {
+    setShowConfirmDialog(true);
+  };
+
+  const confirmReDraw = async () => {
+    setShowConfirmDialog(false);
       setIsDrawing(true);
       setDrawingStep(0);
 
@@ -78,7 +93,6 @@ const TeamsScreen = ({
       // Finalizar loading
       setIsDrawing(false);
       setDrawingStep(0);
-    }
   };
 
   const getAvailablePlayersForTeam = (teamName) => {
@@ -134,6 +148,40 @@ const TeamsScreen = ({
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title="Times" showBack={true} onBack={onBack} />
+      
+      {/* Toast Message */}
+      <LiveFieldViewToastMessage
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
+
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-sm w-full p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Confirmar Re-sorteio</h3>
+            <p className="text-gray-600 mb-6 text-sm">
+              Tem certeza que deseja re-sortear os times? Isso irá redistribuir todos os jogadores novamente.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowConfirmDialog(false)}
+                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-lg font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmReDraw}
+                className="flex-1 bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-lg font-medium transition-colors"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="p-4">
         {/* Seção de Sorteio/Re-sortear */}

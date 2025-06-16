@@ -13,6 +13,7 @@ const MatchesScreen = ({
   isTimerRunning,
   activeMatch,
   setActiveMatch,
+  setOnTimerFinished,
   startMatchTimer,
   pauseTimer,
   resumeTimer,
@@ -121,6 +122,7 @@ const MatchesScreen = ({
           isTimerRunning={isTimerRunning}
           activeMatch={activeMatch}
           setActiveMatch={setActiveMatch}
+          setOnTimerFinished={setOnTimerFinished}
           startMatchTimer={startMatchTimer}
           pauseTimer={pauseTimer}
           resumeTimer={resumeTimer}

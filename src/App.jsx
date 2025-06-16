@@ -30,6 +30,7 @@ const App = () => {
     isTimerRunning,
     activeMatch,
     setActiveMatch,
+    setOnTimerFinished,
     startMatchTimer,
     pauseTimer,
     resumeTimer,
@@ -86,6 +87,7 @@ const App = () => {
             isTimerRunning={isTimerRunning}
             activeMatch={activeMatch}
             setActiveMatch={setActiveMatch}
+            setOnTimerFinished={setOnTimerFinished}
             startMatchTimer={startMatchTimer}
             pauseTimer={pauseTimer}
             resumeTimer={resumeTimer}

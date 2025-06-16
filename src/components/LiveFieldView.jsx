@@ -49,6 +49,13 @@ const LiveFieldView = ({
   const [toastType, setToastType] = useState('success');
   const [showToast, setShowToast] = useState(false);
 
+  // Set up timer finished callback
+  React.useEffect(() => {
+    setOnTimerFinished(() => () => {
+      showToastMessage('⏰ Tempo esgotado!', 'info');
+    });
+  }, [setOnTimerFinished]);
+
   // Calculate standings and generate playoff matches
   const standings = calculateStandings(matches.filter(m => m.type === 'regular')); // Only regular season for standings
   const updatedMatches = generatePlayoffMatches(matches, standings);

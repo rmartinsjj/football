@@ -1,6 +1,7 @@
 import React from 'react';
 import { Users, Plus, Minus, Shuffle } from 'lucide-react';
 import Header from '../components/Header';
+import LiveFieldViewToastMessage from '../components/LiveFieldView-ToastMessage';
 import { TEAM_COLORS } from '../constants';
 import { calculateStandings } from '../utils/tournamentUtils';
 
@@ -16,6 +17,16 @@ const ColeteScreen = ({
   setColeteWinner,
   onBack 
 }) => {
+  const [toastMessage, setToastMessage] = React.useState('');
+  const [toastType, setToastType] = React.useState('success');
+  const [showToast, setShowToast] = React.useState(false);
+
+  const showToastMessage = (message, type = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
   const standings = calculateStandings(matches);
   const championTeam = standings.length > 0 ? standings[0].team : null;
   const championPlayers = championTeam ? teams[championTeam] || [] : [];
@@ -26,9 +37,9 @@ const ColeteScreen = ({
     if (eligiblePlayers.length > 0) {
       const randomPlayer = eligiblePlayers[Math.floor(Math.random() * eligiblePlayers.length)];
       setColeteWinner(randomPlayer);
-      alert(`🧽 ${randomPlayer.name} foi sorteado para lavar o colete!`);
+      showToastMessage(`🧽 ${randomPlayer.name} foi sorteado para lavar o colete!`, 'success');
     } else {
-      alert('Adicione jogadores para o sorteio!');
+      showToastMessage('Adicione jogadores para o sorteio!', 'error');
     }
   };
 
@@ -79,6 +90,14 @@ const ColeteScreen = ({
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title="Sorteio do Colete" showBack={true} onBack={onBack} />
+      
+      {/* Toast Message */}
+      <LiveFieldViewToastMessage
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
       
       <div className="p-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
