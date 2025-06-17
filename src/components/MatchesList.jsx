@@ -18,10 +18,15 @@ const MatchesList = ({
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   
-  // Filter matches based on tournament type
-  const filteredMatches = matches.filter(match => 
-    activeTeams.includes(match.team1) && activeTeams.includes(match.team2)
-  );
+  // Filter matches to only include active teams, but keep playoff structure
+  const filteredMatches = matches.filter(match => {
+    // Always keep playoff matches (they will be populated with correct teams)
+    if (match.type === 'final' || match.type === 'third_place') {
+      return true;
+    }
+    // For regular matches, only include if both teams are active
+    return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
+  });
   
   const displayMatches = isWinnerStaysMode 
     ? filteredMatches.filter(m => m.type === 'winner-stays' || !m.type) // Show winner-stays matches or matches without type (for backward compatibility)
