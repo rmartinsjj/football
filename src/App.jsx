@@ -92,6 +92,7 @@ const App = () => {
             matches={matches}
             setCurrentScreen={setCurrentScreen}
             coleteWinner={coleteWinner}
+            settings={settings}
           />
         );
       
@@ -190,6 +191,7 @@ const App = () => {
             matches={matches}
             setCurrentScreen={setCurrentScreen}
             coleteWinner={coleteWinner}
+            settings={settings}
           />
         );
     }
