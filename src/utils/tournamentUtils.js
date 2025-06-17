@@ -80,22 +80,6 @@ export const calculateStandings = (matches) => {
     
   console.log('Final standings:', result);
   return result;
-
-  return Object.entries(standings)
-    .map(([team, stats]) => ({ 
-      team, 
-      ...stats, 
-      goalDiff: stats.goalsFor - stats.goalsAgainst,
-      gamesPlayed: stats.wins + stats.draws + stats.losses
-    }))
-    .sort((a, b) => {
-      // Primeiro critério: pontos
-      if (b.points !== a.points) return b.points - a.points;
-      // Segundo critério: saldo de gols
-      if (b.goalDiff !== a.goalDiff) return b.goalDiff - a.goalDiff;
-      // Terceiro critério: gols marcados
-      return b.goalsFor - a.goalsFor;
-    });
 };
 
 export const parsePlayerList = (playerListText) => {
@@ -125,12 +109,18 @@ export const drawTeams = (players, activeTeams = ['Vermelho', 'Azul', 'Brasil', 
 };
 
 export const generatePlayoffMatches = (matches, standings) => {
+  console.log('generatePlayoffMatches called with standings:', standings);
+  
   // Only generate playoff matches if all regular season matches are completed
   const activeTeams = [...new Set(matches.filter(m => m.type === 'regular').flatMap(m => [m.team1, m.team2]))];
   const regularMatches = matches.filter(m => m.type === 'regular' && activeTeams.includes(m.team1) && activeTeams.includes(m.team2));
   const allRegularMatchesCompleted = regularMatches.every(m => m.played);
   
+  console.log('Regular matches completed:', allRegularMatchesCompleted);
+  console.log('Standings length:', standings.length);
+  
   if (!allRegularMatchesCompleted || standings.length < 4) {
+    console.log('Not ready for playoffs yet');
     return matches;
   }
   
@@ -138,18 +128,21 @@ export const generatePlayoffMatches = (matches, standings) => {
   
   // 3rd place match (3rd vs 4th)
   const thirdPlaceMatch = updatedMatches.find(m => m.id === 13);
-  if (thirdPlaceMatch && thirdPlaceMatch.team1 === 'TBD') {
+  if (thirdPlaceMatch && (thirdPlaceMatch.team1 === 'TBD' || thirdPlaceMatch.team2 === 'TBD')) {
+    console.log('Setting up 3rd place match:', standings[2].team, 'vs', standings[3].team);
     thirdPlaceMatch.team1 = standings[2].team; // 3rd place
     thirdPlaceMatch.team2 = standings[3].team; // 4th place
   }
   
   // Final (1st vs 2nd)
   const finalMatch = updatedMatches.find(m => m.id === 14);
-  if (finalMatch && finalMatch.team1 === 'TBD') {
+  if (finalMatch && (finalMatch.team1 === 'TBD' || finalMatch.team2 === 'TBD')) {
+    console.log('Setting up final match:', standings[0].team, 'vs', standings[1].team);
     finalMatch.team1 = standings[0].team; // 1st place
     finalMatch.team2 = standings[1].team; // 2nd place
   }
   
+  console.log('Updated matches with playoffs:', updatedMatches.filter(m => m.id >= 13));
   return updatedMatches;
 };
 

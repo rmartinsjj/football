@@ -345,15 +345,38 @@ const LiveFieldView = ({
       return;
     }
     
-    // Check if we need tiebreaker for final qualification
-    if (currentMatch.id === 12) { // Last regular season match
-      // Calculate final standings
-      const updatedMatches = matches.map(m => m.id === currentMatch.id ? updatedMatch : m);
-      const finalStandings = calculateStandings(updatedMatches.filter(m => m.type === 'regular'));
-      if (checkForTiebreaker(finalStandings)) {
-        return;
+    // Mark match as played first
+    const updatedMatch = { 
+      ...currentMatch, 
+      played: true,
+      score1: score1,
+      score2: score2
+    };
+    
+    console.log('Finishing match:', updatedMatch);
+    
+    // Update matches and generate playoffs if needed
+    setMatches(prev => {
+      const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
+      
+      // If this is match 12 (last regular season match), generate playoff matches
+      if (currentMatch.id === 12) {
+        console.log('Match 12 completed, generating playoffs...');
+        const regularMatches = updated.filter(m => m.type === 'regular');
+        const finalStandings = calculateStandings(regularMatches);
+        console.log('Final standings for playoffs:', finalStandings);
+        
+        // Check for tiebreaker first
+        if (checkForTiebreaker(finalStandings)) {
+          return updated; // Don't generate playoffs yet, wait for tiebreaker
+        }
+        
+        // Generate playoff matches
+        return generatePlayoffMatches(updated, finalStandings);
       }
-    }
+      
+      return updated;
+    });
     
     let message = '';
     
@@ -395,22 +418,6 @@ const LiveFieldView = ({
       // message already set above
     }
 
-    const updatedMatch = { 
-      ...currentMatch, 
-      played: true,
-      score1: score1,
-      score2: score2
-    };
-    
-    console.log('Finishing match:', updatedMatch);
-    
-    setMatches(prev => {
-      const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
-      // Generate playoff matches if this was the last regular season match
-      const newStandings = calculateStandings(updated.filter(m => m.type === 'regular'));
-      return generatePlayoffMatches(updated, newStandings);
-    });
-    
     // NÃO limpar o activeMatch ainda - manter para mostrar o botão "Próximo Jogo"
     setShowNextGameButton(true);
     
