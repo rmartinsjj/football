@@ -56,16 +56,9 @@ const Header = ({ title, showBack = false, onBack, setCurrentScreen }) => {
           <div className="bg-gray-900 w-80 max-w-[90vw] h-full shadow-xl">
             {/* Menu Header */}
             <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <img 
-                  src="/logoespaco.png" 
-                  alt="Espaço Novo Tempo" 
-                  className="h-8 w-auto object-contain"
-                />
-                <div>
-                  <h2 className="text-white font-bold text-lg">Menu</h2>
-                  <p className="text-gray-400 text-sm">Navegação</p>
-                </div>
+              <div>
+                <h2 className="text-white font-bold text-lg">Menu</h2>
+                <p className="text-gray-400 text-sm">Navegação</p>
               </div>
               <button
                 onClick={() => setShowMenu(false)}

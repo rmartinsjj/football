@@ -23,8 +23,22 @@ const HomeScreen = ({
   
   return (
   <div className="min-h-screen pb-4 overflow-x-hidden">
-    {/* Use consistent header */}
-    <Header title="Espaço Novo Tempo" setCurrentScreen={setCurrentScreen} />
+    {/* Custom header for home screen with logo and settings */}
+    <div className="dark-card shadow-sm border-b border-gray-700 px-4 py-3 flex items-center justify-between sticky top-0 z-10 h-16">
+      <img 
+        src="/logoespaco.png" 
+        alt="Espaço Novo Tempo" 
+        className="h-8 w-auto object-contain"
+        title="Espaço Novo Tempo"
+      />
+      <button
+        onClick={() => setCurrentScreen('settings')}
+        className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
+        title="Configurações"
+      >
+        <Settings size={22} className="text-gray-300" />
+      </button>
+    </div>
     
     <div className="px-4 pt-4 pb-4">
       <div 
