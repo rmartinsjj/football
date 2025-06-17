@@ -96,7 +96,7 @@ const PlayersScreen = ({
                   onClick={addPlayer}
                   className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white p-4 rounded-lg transition-colors"
                 >
-                  <Plus size={20} />
+                  +
                 </button>
               </div>
             </div>
