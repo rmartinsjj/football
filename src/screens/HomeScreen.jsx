@@ -100,8 +100,8 @@ const HomeScreen = ({
           onClick={() => setCurrentScreen('matches')}
           className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
         >
-          <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center mb-2">
-            <Target className="text-white" size={20} />
+          <div className="mb-3">
+            <img src="/classifcacao1.png" alt="Jogos" className="w-8 h-8 filter brightness-0 invert opacity-80" />
           </div>
           <h3 className="font-semibold text-white text-sm mb-1">Jogos</h3>
           <p className="text-xs text-gray-400">Controlar partidas</p>
@@ -112,8 +112,8 @@ const HomeScreen = ({
           onClick={() => setCurrentScreen('standings')}
           className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
         >
-          <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mb-2">
-            <Trophy className="text-white" size={20} />
+          <div className="mb-3">
+            <img src="/throphy.png" alt="Classificação" className="w-8 h-8 filter brightness-0 invert opacity-80" />
           </div>
           <h3 className="font-semibold text-white text-sm mb-1">Classificação</h3>
           <p className="text-xs text-gray-400">Ver tabela</p>
@@ -124,8 +124,8 @@ const HomeScreen = ({
           onClick={() => setCurrentScreen('scorers')}
           className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
         >
-          <div className="w-10 h-10 bg-yellow-600 rounded-lg flex items-center justify-center mb-2">
-            <BarChart3 className="text-white" size={20} />
+          <div className="mb-3">
+            <img src="/artilheirosicon.png" alt="Artilheiros" className="w-8 h-8 filter brightness-0 invert opacity-80" />
           </div>
           <h3 className="font-semibold text-white text-sm mb-1">Artilheiros</h3>
           <p className="text-xs text-gray-400">Ver goleadores</p>
@@ -136,8 +136,8 @@ const HomeScreen = ({
           onClick={() => setCurrentScreen('colete')}
           className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
         >
-          <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center mb-2">
-            <span className="text-lg">🧽</span>
+          <div className="mb-3">
+            <img src="/tshirtcolete.png" alt="Sorteio do Colete" className="w-8 h-8 filter brightness-0 invert opacity-80" />
           </div>
           <h3 className="font-semibold text-white text-sm mb-1">Sorteio do Colete</h3>
           <p className="text-xs text-gray-400">Organizar disputa</p>
