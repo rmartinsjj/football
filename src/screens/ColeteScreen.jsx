@@ -141,7 +141,7 @@ const ColeteScreen = ({
                 className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3 rounded-xl flex items-center justify-center space-x-2"
               >
                 <Users size={16} />
-                <span>+ Todos (Exceto Campeão {championTeam})</span>
+                <span>+ Todos (Exceto Campeão)</span>
               </button>
             )}
             
@@ -151,11 +151,16 @@ const ColeteScreen = ({
               ).map(([teamName, teamPlayers]) => (
                 <button
                   key={teamName}
-                  onClick={() => addTeamToColete(teamName)}
-                  className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} text-white p-3 rounded-xl text-sm flex items-center justify-center space-x-2`}
+                  onClick={() => championTeam !== teamName && addTeamToColete(teamName)}
+                  disabled={championTeam === teamName}
+                  className={`p-3 rounded-xl text-sm flex items-center justify-center space-x-2 transition-all ${
+                    championTeam === teamName
+                      ? 'bg-gray-600 text-gray-400 opacity-50 cursor-not-allowed'
+                      : `bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} text-white hover:opacity-90`
+                  }`}
                 >
                   <Users size={14} />
-                  <span>{teamName}</span>
+                  <span>{teamName} {championTeam === teamName ? '🏆' : ''}</span>
                 </button>
               ))}
             </div>
