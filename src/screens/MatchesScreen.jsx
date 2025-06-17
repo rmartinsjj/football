@@ -109,7 +109,7 @@ const MatchesScreen = ({
     }}>
       <Header title="Jogos" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
-      <div className="p-3 bg-gray-800 border-b border-gray-700">
+      <div className="p-3 dark-card border-b border-gray-700 mx-3 mt-3 rounded-t-xl">
         <div className="flex bg-gray-700 rounded-lg p-1">
           <button
             onClick={() => setViewMode('field')}

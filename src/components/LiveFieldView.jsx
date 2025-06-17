@@ -455,7 +455,14 @@ const LiveFieldView = ({
     showTournamentResults();
   }, [matches]);
   return (
-    <div className="min-h-screen overflow-x-hidden pb-20">
+    <div className="min-h-screen overflow-x-hidden pb-20" style={{
+      backgroundImage: 'url(/1245151 copy.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      backgroundColor: '#1a1b23'
+    }}>
       {/* Toast Message */}
       <LiveFieldViewToastMessage
         message={toastMessage}
