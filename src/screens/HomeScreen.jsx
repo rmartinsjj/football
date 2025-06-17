@@ -173,7 +173,7 @@ const HomeScreen = ({
             }}
           >
             Mais que futebol, é comunhão<br />
-            e Jesus é nosso capitão!
+            e Jesus é o nosso capitão!
           </p>
         </div>
         <div className="ml-4">
