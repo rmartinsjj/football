@@ -99,7 +99,7 @@ const MatchesScreen = ({
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden" style={{
+    <div className="min-h-screen overflow-x-hidden pb-20" style={{
       backgroundImage: 'url(/1245151 copy.png)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
