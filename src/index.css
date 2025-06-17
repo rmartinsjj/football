@@ -6,41 +6,92 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    position: fixed;
+    overflow-y: auto;
+    position: relative;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   
   body {
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
     overscroll-behavior: none;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
     background-image: url('/1245151 copy.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    min-height: 100vh;
     background-color: #1a1b23;
     overflow-x: hidden;
     position: relative;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   
   #root {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    touch-action: pan-y;
   }
   
   * {
     -webkit-tap-highlight-color: transparent;
     box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection only for inputs and textareas */
+  input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  /* Prevent zoom on double tap */
+  * {
+    touch-action: manipulation;
+  }
+  
+  /* Prevent pinch zoom */
+  html {
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+  }
+  
+  /* Disable zoom on iOS Safari */
+  @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    select, textarea, input[type="text"], input[type="password"], 
+    input[type="datetime"], input[type="datetime-local"], 
+    input[type="date"], input[type="month"], input[type="time"], 
+    input[type="week"], input[type="number"], input[type="email"], 
+    input[type="url"], input[type="search"], input[type="tel"], 
+    input[type="color"] {
+      font-size: 16px !important;
+    }
   }
 }
 

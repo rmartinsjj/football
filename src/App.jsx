@@ -49,6 +49,36 @@ const App = () => {
     formatTime
   } = useTimer(settings);
 
+  // Prevent zoom on mount
+  React.useEffect(() => {
+    // Disable zoom on iOS
+    const preventDefault = (e) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+    
+    const preventZoom = (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+      }
+    };
+    
+    // Add event listeners
+    document.addEventListener('touchstart', preventDefault, { passive: false });
+    document.addEventListener('touchmove', preventDefault, { passive: false });
+    document.addEventListener('wheel', preventZoom, { passive: false });
+    document.addEventListener('keydown', preventZoom);
+    
+    // Cleanup
+    return () => {
+      document.removeEventListener('touchstart', preventDefault);
+      document.removeEventListener('touchmove', preventDefault);
+      document.removeEventListener('wheel', preventZoom);
+      document.removeEventListener('keydown', preventZoom);
+    };
+  }, []);
+
   const handleBackToHome = () => {
     setCurrentScreen('home');
   };
@@ -166,7 +196,7 @@ const App = () => {
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto min-h-screen relative overflow-x-hidden">
+    <div className="w-full max-w-sm mx-auto min-h-screen relative overflow-x-hidden" style={{ touchAction: 'pan-y' }}>
       {renderCurrentScreen()}
     </div>
   );
