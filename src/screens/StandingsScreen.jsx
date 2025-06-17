@@ -126,15 +126,6 @@ const StandingsScreen = ({ matches, settings, onBack }) => {
                 {isWinnerStaysMode ? 'Ranking de Vitórias' :
                  playoffsComplete ? 'Classificação da Fase Regular' : 'Tabela de Classificação'}
               </h3>
-              {!playoffsComplete && !isWinnerStaysMode && (
-                <button
-                  onClick={checkForTies}
-                  className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 text-sm transition-colors"
-                >
-                  <Settings size={16} />
-                  <span>Resolver Empate</span>
-                </button>
-              )}
             </div>
             {playoffsComplete && !isWinnerStaysMode && (
               <p className="text-sm text-gray-400 mt-1">
