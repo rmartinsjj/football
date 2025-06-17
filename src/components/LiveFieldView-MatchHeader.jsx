@@ -66,12 +66,7 @@ const LiveFieldViewMatchHeader = ({
         {/* Controles do Jogo - Ultra Minimalistas */}
         {activeMatch !== currentMatch.id ? (
           <button
-            onClick={() => {
-              if (!currentMatch.played) {
-                startMatchTimer(currentMatch.id, currentMatch.type === 'final' || currentMatch.type === 'third_place' || currentMatch.type === 'winner-stays');
-              }
-            }}
-            disabled={currentMatch.played}
+            onClick={() => startMatchTimer(currentMatch.id)}
             className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
             title="Iniciar"
           >
@@ -82,7 +77,6 @@ const LiveFieldViewMatchHeader = ({
             {!isTimerRunning ? (
               <button
                 onClick={resumeTimer}
-                disabled={timer <= 0}
                 className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
                 title="Play"
               >
@@ -98,9 +92,7 @@ const LiveFieldViewMatchHeader = ({
               </button>
             )}
             <button
-              onClick={() => {
-                resetTimer(currentMatch.type === 'final' || currentMatch.type === 'third_place' || currentMatch.type === 'winner-stays');
-              }}
+              onClick={() => resetTimer()}
               className="bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
               title="Reset"
             >
@@ -108,7 +100,6 @@ const LiveFieldViewMatchHeader = ({
             </button>
             <button
               onClick={finishMatch}
-              disabled={currentMatch.played || showNextGameButton}
               className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-2 h-6 rounded-full flex items-center justify-center transition-colors text-xs font-medium"
               title="Finalizar"
             >

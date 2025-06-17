@@ -39,11 +39,6 @@ export const useTimer = (settings = null) => {
   }, [isTimerRunning, timer, onTimerFinished]);
 
   const startMatchTimer = (matchId, isFinal = false) => {
-    // Prevent starting timer if already running for this match
-    if (activeMatch === matchId && isTimerRunning) {
-      return;
-    }
-    
     setActiveMatch(matchId);
     const duration = getTimerDuration(isFinal);
     setTimer(duration);
@@ -55,19 +50,13 @@ export const useTimer = (settings = null) => {
   };
 
   const resumeTimer = () => {
-    // Only resume if there's an active match and timer > 0
-    if (activeMatch && timer > 0) {
-      setIsTimerRunning(true);
-    }
+    setIsTimerRunning(true);
   };
 
   const resetTimer = (isFinal = false) => {
-    // Stop timer first
-    setIsTimerRunning(false);
-    
-    // Reset timer value
     const duration = getTimerDuration(isFinal);
     setTimer(duration);
+    setIsTimerRunning(false);
   };
 
   const formatTime = (seconds) => {
