@@ -51,6 +51,7 @@ const LiveFieldView = ({
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');
   const [showToast, setShowToast] = useState(false);
+  const [hasShownResults, setHasShownResults] = useState(false);
 
   // Set up timer finished callback
   React.useEffect(() => {
@@ -113,7 +114,7 @@ const LiveFieldView = ({
     const finalMatch = allMatches.find(m => m.id === 14);
     const thirdPlaceMatch = allMatches.find(m => m.id === 13);
     
-    if (finalMatch?.played && thirdPlaceMatch?.played) {
+    if (finalMatch?.played && thirdPlaceMatch?.played && !hasShownResults) {
       // Determine final positions
       const finalWinner = finalMatch.score1 > finalMatch.score2 ? finalMatch.team1 : 
                          finalMatch.score2 > finalMatch.score1 ? finalMatch.team2 :
@@ -133,8 +134,11 @@ const LiveFieldView = ({
         thirdPlace: thirdWinner,
         fourthPlace: thirdLoser
       });
+      
+      setHasShownResults(true);
+      setShowPlayoffResults(true);
     }
-  }, [matches]);
+  }, [matches, hasShownResults]);
   // Show toast message
   const showToastMessage = (message, type = 'success') => {
     setToastMessage(message);
@@ -453,18 +457,21 @@ const LiveFieldView = ({
     const finalMatch = matches.find(m => m.id === 14);
     const thirdPlaceMatch = matches.find(m => m.id === 13);
     
-    if (finalMatch?.played && thirdPlaceMatch?.played && !showPlayoffResults) {
+    if (finalMatch?.played && thirdPlaceMatch?.played && !showPlayoffResults && !hasShownResults) {
       setShowPlayoffResults(true);
+      setHasShownResults(true);
     }
   };
   
-  React.useEffect(() => {
-    showTournamentResults();
-  }, [matches]);
+  // Remove this useEffect as it's causing the modal to reopen
+  // React.useEffect(() => {
+  //   showTournamentResults();
+  // }, [matches]);
 
   // Prevent automatic reopening of results modal
   const handleCloseResults = () => {
     setShowPlayoffResults(false);
+    // Don't reset hasShownResults here - keep it true so modal doesn't reopen
   };
 
   return (
