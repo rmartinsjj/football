@@ -156,6 +156,31 @@ const HomeScreen = ({
         </div>
       </div>
     )}
+
+    {/* Bottom section with Jesus image and phrase */}
+    <div className="px-4 mt-6 mb-4">
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <p 
+            className="text-white text-lg leading-relaxed"
+            style={{ 
+              fontFamily: 'Brush Script MT, cursive, fantasy',
+              fontStyle: 'italic'
+            }}
+          >
+            Mais que futebol,<br />é comunhão.
+          </p>
+        </div>
+        <div className="ml-4">
+          <img 
+            src="/jesus soccer.png" 
+            alt="Jesus" 
+            className="w-16 h-16 object-contain filter brightness-0 invert opacity-80"
+            title="Jesus"
+          />
+        </div>
+      </div>
+    </div>
   </div>
   );
 };
