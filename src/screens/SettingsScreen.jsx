@@ -225,7 +225,7 @@ const SettingsScreen = ({
                       'bg-green-500'
                     ) : 'bg-gray-600'
                   }`}></div>
-                  <span className="truncate">{teamName}</span>
+                  <span>{teamName}</span>
                   {isActive && localSettings.activeTeams.length > 2 && (
                     <X size={10} className="opacity-60" />
                   )}

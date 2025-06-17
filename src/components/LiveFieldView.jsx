@@ -605,7 +605,7 @@ const LiveFieldView = ({
               <div className="flex items-center space-x-2">
                 <span className="text-white text-xs font-bold">{index + 1}º</span>
                 <div className={`w-3 h-3 ${TEAM_COLORS[team.team].bg} rounded-full`}></div>
-                <span className="text-white text-xs truncate max-w-14">{team.team}</span>
+                <span className="text-white text-xs truncate">{team.team}</span>
               </div>
               <span className="text-white text-xs font-bold">
                 {isWinnerStaysMode ? `${team.wins}v` : `${team.points}pts`}

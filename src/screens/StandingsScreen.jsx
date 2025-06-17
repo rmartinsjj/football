@@ -193,7 +193,7 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
                       )}
                     </div>
                     <div className={`w-4 h-4 ${TEAM_COLORS[team.team].bg} rounded-full`}></div>
-                    <span className="font-bold text-white truncate max-w-20">{team.team}</span>
+                    <span className="font-bold text-white truncate">{team.team}</span>
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-white">

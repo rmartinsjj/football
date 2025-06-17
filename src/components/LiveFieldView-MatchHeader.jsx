@@ -26,7 +26,7 @@ const LiveFieldViewMatchHeader = ({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
           <div className={`w-6 h-6 ${TEAM_COLORS[currentMatch.team1].bg} rounded-full`}></div>
-          <span className="text-white font-bold text-sm truncate max-w-16">{currentMatch.team1}</span>
+          <span className="text-white font-bold text-sm truncate">{currentMatch.team1}</span>
         </div>
         
         <div className="text-center">
@@ -41,7 +41,7 @@ const LiveFieldViewMatchHeader = ({
         </div>
         
         <div className="flex items-center space-x-2">
-          <span className="text-white font-bold text-sm truncate max-w-16">{currentMatch.team2}</span>
+          <span className="text-white font-bold text-sm truncate">{currentMatch.team2}</span>
           <div className={`w-6 h-6 ${TEAM_COLORS[currentMatch.team2].bg} rounded-full`}></div>
         </div>
       </div>
