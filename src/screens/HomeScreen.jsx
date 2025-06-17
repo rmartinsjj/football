@@ -172,7 +172,7 @@ const HomeScreen = ({
               fontSize: '16px'
             }}
           >
-            Mais que futebol é comunhão<br />
+            Mais que futebol, é comunhão<br />
             e Jesus é nosso capitão!
           </p>
         </div>
