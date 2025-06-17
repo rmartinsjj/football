@@ -45,7 +45,7 @@ const PlayersScreen = ({
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Header title="Jogadores" showBack={true} onBack={onBack} />
       
       {/* Toast Message */}

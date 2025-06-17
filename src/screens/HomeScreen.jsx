@@ -7,7 +7,7 @@ const HomeScreen = ({
   setCurrentScreen, 
   coleteWinner 
 }) => (
-  <div className="min-h-screen pb-4">
+  <div className="min-h-screen pb-4 overflow-x-hidden">
     <div className="dark-card px-4 pt-6 pb-4">
       <div className="flex items-center justify-between">
         <img 

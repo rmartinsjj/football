@@ -146,7 +146,7 @@ const TeamsScreen = ({
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Header title="Times" showBack={true} onBack={onBack} />
       
       {/* Toast Message */}

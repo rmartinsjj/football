@@ -444,7 +444,7 @@ const LiveFieldView = ({
     showTournamentResults();
   }, [matches]);
   return (
-    <div className="min-h-screen" style={{
+    <div className="min-h-screen overflow-x-hidden" style={{
       backgroundImage: 'url(/1245151 copy.png)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',

@@ -36,7 +36,7 @@ const SettingsScreen = ({
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 overflow-x-hidden">
       <Header title="Configurações" showBack={true} onBack={onBack} />
       
       {/* Toast Message */}
