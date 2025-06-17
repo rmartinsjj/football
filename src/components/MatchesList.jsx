@@ -17,6 +17,11 @@ const MatchesList = ({
 }) => {
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
   
+  // Filter matches based on tournament type
+  const displayMatches = isWinnerStaysMode 
+    ? matches.filter(m => m.type === 'winner-stays' || !m.type) // Show winner-stays matches or matches without type (for backward compatibility)
+    : matches; // Show all matches for championship mode
+  
   return (
     <div className="p-4 bg-gray-900 min-h-screen">
       {activeMatch && (
@@ -63,8 +68,20 @@ const MatchesList = ({
         </div>
       )}
 
+      {/* Show message if no matches available for winner-stays */}
+      {isWinnerStaysMode && displayMatches.length === 0 && (
+        <div className="bg-gray-800 rounded-xl p-6 text-center">
+          <div className="text-4xl mb-3">⚡</div>
+          <h3 className="text-white font-bold text-lg mb-2">Modo Quem Ganha Fica</h3>
+          <p className="text-gray-400 mb-4">Nenhum desafio ativo no momento.</p>
+          <p className="text-gray-500 text-sm">
+            Os desafios são gerados automaticamente quando um jogo é finalizado.
+          </p>
+        </div>
+      )}
+
       <div className="space-y-3">
-        {matches.filter(match => !isWinnerStaysMode || !match.played).map((match) => (
+        {displayMatches.filter(match => !isWinnerStaysMode || !match.played).map((match) => (
           <div key={match.id} className="bg-gray-800 rounded-xl border border-gray-700 p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
