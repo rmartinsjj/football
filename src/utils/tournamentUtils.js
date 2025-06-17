@@ -125,8 +125,9 @@ export const drawTeams = (players, activeTeams = ['Vermelho', 'Azul', 'Brasil', 
 };
 
 export const generatePlayoffMatches = (matches, standings) => {
-  // Only generate playoff matches if all 12 regular season matches are completed
-  const regularMatches = matches.filter(m => m.type === 'regular');
+  // Only generate playoff matches if all regular season matches are completed
+  const activeTeams = [...new Set(matches.filter(m => m.type === 'regular').flatMap(m => [m.team1, m.team2]))];
+  const regularMatches = matches.filter(m => m.type === 'regular' && activeTeams.includes(m.team1) && activeTeams.includes(m.team2));
   const allRegularMatchesCompleted = regularMatches.every(m => m.played);
   
   if (!allRegularMatchesCompleted || standings.length < 4) {
