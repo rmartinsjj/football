@@ -381,7 +381,7 @@ const ColeteScreen = ({
                 <img 
                   src="/lavarcolete.png" 
                   alt="Jesus" 
-                  className="w-40 h-40 object-contain filter brightness-0 invert"
+                  className="w-72 h-72 object-contain filter brightness-0 invert"
                   title="Jesus"
                 />
               </div>
