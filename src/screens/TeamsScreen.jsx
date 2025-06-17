@@ -292,7 +292,7 @@ const TeamsScreen = ({
               <div className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} p-4`}>
                 <div className="flex items-center justify-between text-white">
                   <div className="flex items-center space-x-3">
-                    <h3 className="font-bold text-lg">{teamName}</h3>
+                    <h3 className="font-bold text-lg truncate max-w-32">{teamName}</h3>
                     <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
                       {teamPlayers.length}
                     </span>
