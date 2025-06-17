@@ -33,21 +33,16 @@ const MatchesList = ({
     : filteredMatches; // Show all matches for championship mode
   
   return (
-    <div className="p-4 bg-gray-900 min-h-screen">
+    <div className="p-4 min-h-screen pb-20" style={{
+      backgroundImage: 'url(/1245151 copy.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      backgroundColor: '#1a1b23'
+    }}>
       {activeMatch && (
-        <div 
-          className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
-          style={{
-            backgroundImage: 'url(/1245151 copy.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'top center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
-          {/* Dark overlay for better text readability */}
-          <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl"></div>
-          
-          <div className="relative z-10">
+        <div className="dark-card rounded-xl p-4 text-white mb-4 shadow-lg">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-base font-semibold mb-1">⏱️ Jogo {activeMatch}</h3>
@@ -59,34 +54,33 @@ const MatchesList = ({
                   {!isTimerRunning ? (
                     <button
                       onClick={resumeTimer}
-                      className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                      className="bg-green-600 hover:bg-green-700 w-6 h-6 rounded-full flex items-center justify-center transition-all"
                     >
                       <Play size={12} />
                     </button>
                   ) : (
                     <button
                       onClick={pauseTimer}
-                      className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                      className="bg-yellow-600 hover:bg-yellow-700 w-6 h-6 rounded-full flex items-center justify-center transition-all"
                     >
                       <Pause size={12} />
                     </button>
                   )}
                   <button
                     onClick={() => resetTimer()}
-                    className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                    className="bg-gray-600 hover:bg-gray-700 w-6 h-6 rounded-full flex items-center justify-center transition-all"
                   >
                     <RotateCcw size={12} />
                   </button>
                 </div>
               </div>
             </div>
-          </div>
         </div>
       )}
 
       {/* Winner-stays mode info */}
       {isWinnerStaysMode && settings.currentWinnerTeam && (
-        <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl p-4 text-white mb-4">
+        <div className="dark-card rounded-xl p-4 text-white mb-4 border-l-4 border-purple-500">
           <div className="text-center">
             <h3 className="font-bold text-lg mb-1">🏆 Time que Fica</h3>
             <p className="text-purple-200">{settings.currentWinnerTeam}</p>
@@ -96,7 +90,7 @@ const MatchesList = ({
 
       {/* Show message if no matches available for winner-stays */}
       {isWinnerStaysMode && displayMatches.length === 0 && (
-        <div className="bg-gray-800 rounded-xl p-6 text-center">
+        <div className="dark-card rounded-xl p-6 text-center">
           <div className="text-4xl mb-3">⚡</div>
           <h3 className="text-white font-bold text-lg mb-2">Modo Quem Ganha Fica</h3>
           <p className="text-gray-400 mb-4">Nenhum desafio ativo no momento.</p>
@@ -108,7 +102,7 @@ const MatchesList = ({
 
       <div className="space-y-3">
         {displayMatches.filter(match => !isWinnerStaysMode || !match.played).map((match) => (
-          <div key={match.id} className="bg-gray-800 rounded-xl border border-gray-700 p-4">
+          <div key={match.id} className="dark-card rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
