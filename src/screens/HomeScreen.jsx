@@ -164,18 +164,21 @@ const HomeScreen = ({
           <p 
             className="text-white text-lg leading-relaxed"
             style={{ 
-              fontFamily: 'Brush Script MT, cursive, fantasy',
-              fontStyle: 'italic'
+              fontFamily: 'Dancing Script, Brush Script MT, Kalam, cursive, fantasy',
+              fontStyle: 'italic',
+              fontWeight: '600',
+              letterSpacing: '0.5px'
             }}
           >
-            Mais que futebol,<br />é comunhão.
+            Mais que futebol,<br />
+            é comunhão.
           </p>
         </div>
         <div className="ml-4">
           <img 
-            src="/jesus soccer.png" 
+            src="/jesussoccer-Photoroom.png" 
             alt="Jesus" 
-            className="w-16 h-16 object-contain filter brightness-0 invert opacity-80"
+            className="w-20 h-20 object-contain filter brightness-0 invert opacity-90"
             title="Jesus"
           />
         </div>
