@@ -99,14 +99,7 @@ const MatchesScreen = ({
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden pb-20" style={{
-      backgroundImage: 'url(/1245151 copy.png)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed',
-      backgroundColor: '#1a1b23'
-    }}>
+    <div className="min-h-screen overflow-x-hidden pb-20">
       <Header title="Jogos" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       <div className="p-3 dark-card border-b border-gray-700 mx-3 mt-3 rounded-t-xl">

@@ -33,14 +33,7 @@ const MatchesList = ({
     : filteredMatches; // Show all matches for championship mode
   
   return (
-    <div className="p-4 min-h-screen pb-20" style={{
-      backgroundImage: 'url(/1245151 copy.png)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed',
-      backgroundColor: '#1a1b23'
-    }}>
+    <div className="p-4 min-h-screen pb-20">
       {activeMatch && (
         <div className="dark-card rounded-xl p-4 text-white mb-4 shadow-lg">
             <div className="flex justify-between items-center">
