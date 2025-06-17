@@ -21,7 +21,7 @@ const LiveFieldViewMatchHeader = ({
   penaltyScore
 }) => {
   return (
-    <div className="bg-gray-800 p-3">
+    <div className="p-3">
       {/* Header com Times, Jogo, Tempo e Controles */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">

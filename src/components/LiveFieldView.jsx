@@ -455,14 +455,7 @@ const LiveFieldView = ({
     showTournamentResults();
   }, [matches]);
   return (
-    <div className="min-h-screen overflow-x-hidden" style={{
-      backgroundImage: 'url(/1245151 copy.png)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed',
-      backgroundColor: '#1a1b23'
-    }}>
+    <div className="min-h-screen overflow-x-hidden pb-20">
       {/* Toast Message */}
       <LiveFieldViewToastMessage
         message={toastMessage}
@@ -589,7 +582,7 @@ const LiveFieldView = ({
       })()}
 
       {/* Classificação Rápida */}
-      <div className="bg-gray-800 p-3 border-b border-gray-700">
+      <div className="dark-card mx-3 mt-3 rounded-xl p-3 shadow-sm">
         <h4 className="text-white text-xs font-medium mb-2 text-center">
           {isWinnerStaysMode ? 'Ranking de Vitórias' : 'Classificação Atual'}
         </h4>
@@ -633,45 +626,55 @@ const LiveFieldView = ({
       </div>
 
       {/* Match Header */}
-      <LiveFieldViewMatchHeader
-        currentMatch={currentMatch}
-        timer={timer}
-        formatTime={formatTime}
-        activeMatch={activeMatch}
-        isTimerRunning={isTimerRunning}
-        startMatchTimer={startMatchTimer}
-        pauseTimer={pauseTimer}
-        resumeTimer={resumeTimer}
-        resetTimer={resetTimer}
-        finishMatch={finishMatch}
-        showNextGameButton={showNextGameButton}
-        goToNextGame={goToNextGame}
-        showGoalkeeperConfig={showGoalkeeperConfig}
-        setShowGoalkeeperConfig={setShowGoalkeeperConfig}
-        showPenaltyShootout={showPenaltyShootout}
-        penaltyScore={penaltyScore}
-      />
+      <div className="dark-card mx-3 mt-3 rounded-xl shadow-sm overflow-hidden">
+        <LiveFieldViewMatchHeader
+          currentMatch={currentMatch}
+          timer={timer}
+          formatTime={formatTime}
+          activeMatch={activeMatch}
+          isTimerRunning={isTimerRunning}
+          startMatchTimer={startMatchTimer}
+          pauseTimer={pauseTimer}
+          resumeTimer={resumeTimer}
+          resetTimer={resetTimer}
+          finishMatch={finishMatch}
+          showNextGameButton={showNextGameButton}
+          goToNextGame={goToNextGame}
+          showGoalkeeperConfig={showGoalkeeperConfig}
+          setShowGoalkeeperConfig={setShowGoalkeeperConfig}
+          showPenaltyShootout={showPenaltyShootout}
+          penaltyScore={penaltyScore}
+        />
+      </div>
 
       {/* Goalkeeper Configuration */}
-      <LiveFieldViewGoalkeeperConfig
-        goalkeepers={goalkeepers}
-        setGoalkeepers={setGoalkeepers}
-        isVisible={showGoalkeeperConfig}
-      />
+      {showGoalkeeperConfig && (
+        <div className="mx-3 mt-3">
+          <LiveFieldViewGoalkeeperConfig
+            goalkeepers={goalkeepers}
+            setGoalkeepers={setGoalkeepers}
+            isVisible={showGoalkeeperConfig}
+          />
+        </div>
+      )}
 
       {/* Penalty Shootout */}
-      <LiveFieldViewPenaltyShootout
-        isVisible={showPenaltyShootout}
-        currentMatch={currentMatch}
-        penaltyScore={penaltyScore}
-        addPenaltyGoal={addPenaltyGoal}
-        removePenaltyGoal={removePenaltyGoal}
-        finishPenaltyShootout={finishPenaltyShootout}
-        onCancel={() => {
-          setShowPenaltyShootout(false);
-          setPenaltyScore({ team1: 0, team2: 0 });
-        }}
-      />
+      {showPenaltyShootout && (
+        <div className="mx-3 mt-3">
+          <LiveFieldViewPenaltyShootout
+            isVisible={showPenaltyShootout}
+            currentMatch={currentMatch}
+            penaltyScore={penaltyScore}
+            addPenaltyGoal={addPenaltyGoal}
+            removePenaltyGoal={removePenaltyGoal}
+            finishPenaltyShootout={finishPenaltyShootout}
+            onCancel={() => {
+              setShowPenaltyShootout(false);
+              setPenaltyScore({ team1: 0, team2: 0 });
+            }}
+          />
+        </div>
+      )}
 
       {/* Tiebreaker Modal */}
       <LiveFieldViewTiebreakerModal
@@ -682,113 +685,115 @@ const LiveFieldView = ({
         onDecision={handleTiebreakerDecision}
       />
       {/* Campo de Futebol */}
-      <div className="relative bg-green-600 mx-3 my-3 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 225">
-          <g opacity="0.7">
-            <line x1="0" y1="0" x2="380" y2="45" stroke="#FCD34D" strokeWidth="3" strokeLinecap="round"/>
-            <line x1="0" y1="15" x2="400" y2="60" stroke="#FCD34D" strokeWidth="2.5" strokeLinecap="round"/>
-            <line x1="0" y1="30" x2="400" y2="75" stroke="#FCD34D" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="0" y1="45" x2="400" y2="90" stroke="#FCD34D" strokeWidth="1.5" strokeLinecap="round"/>
-            <line x1="0" y1="60" x2="400" y2="105" stroke="#FCD34D" strokeWidth="1" strokeLinecap="round"/>
-          </g>
-        </svg>
+      <div className="dark-card mx-3 mt-3 rounded-xl shadow-sm overflow-hidden">
+        <div className="relative bg-green-600 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 225">
+            <g opacity="0.7">
+              <line x1="0" y1="0" x2="380" y2="45" stroke="#FCD34D" strokeWidth="3" strokeLinecap="round"/>
+              <line x1="0" y1="15" x2="400" y2="60" stroke="#FCD34D" strokeWidth="2.5" strokeLinecap="round"/>
+              <line x1="0" y1="30" x2="400" y2="75" stroke="#FCD34D" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="0" y1="45" x2="400" y2="90" stroke="#FCD34D" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="0" y1="60" x2="400" y2="105" stroke="#FCD34D" strokeWidth="1" strokeLinecap="round"/>
+            </g>
+          </svg>
 
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 225">
-          <rect x="10" y="10" width="380" height="205" fill="none" stroke="white" strokeWidth="2"/>
-          <line x1="200" y1="10" x2="200" y2="215" stroke="white" strokeWidth="2"/>
-          <circle cx="200" cy="112.5" r="25" fill="none" stroke="white" strokeWidth="2"/>
-          <rect x="10" y="60" width="40" height="105" fill="none" stroke="white" strokeWidth="2"/>
-          <rect x="350" y="60" width="40" height="105" fill="none" stroke="white" strokeWidth="2"/>
-          <rect x="10" y="85" width="15" height="55" fill="none" stroke="white" strokeWidth="2"/>
-          <rect x="375" y="85" width="15" height="55" fill="none" stroke="white" strokeWidth="2"/>
-          <rect x="5" y="95" width="5" height="35" fill="white"/>
-          <rect x="390" y="95" width="5" height="35" fill="white"/>
-        </svg>
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 225">
+            <rect x="10" y="10" width="380" height="205" fill="none" stroke="white" strokeWidth="2"/>
+            <line x1="200" y1="10" x2="200" y2="215" stroke="white" strokeWidth="2"/>
+            <circle cx="200" cy="112.5" r="25" fill="none" stroke="white" strokeWidth="2"/>
+            <rect x="10" y="60" width="40" height="105" fill="none" stroke="white" strokeWidth="2"/>
+            <rect x="350" y="60" width="40" height="105" fill="none" stroke="white" strokeWidth="2"/>
+            <rect x="10" y="85" width="15" height="55" fill="none" stroke="white" strokeWidth="2"/>
+            <rect x="375" y="85" width="15" height="55" fill="none" stroke="white" strokeWidth="2"/>
+            <rect x="5" y="95" width="5" height="35" fill="white"/>
+            <rect x="390" y="95" width="5" height="35" fill="white"/>
+          </svg>
 
-        {/* Goleiros */}
-        <div
-          className="absolute transform -translate-x-1/2 -translate-y-1/2"
-          style={{ left: '6%', top: '50%' }}
-        >
-          <div className="w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
-            <span className="text-white text-[8px] font-bold">G</span>
-          </div>
-          <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
-            {goalkeepers.left.name}
-          </div>
-        </div>
-        
-        <div
-          className="absolute transform -translate-x-1/2 -translate-y-1/2"
-          style={{ left: '94%', top: '50%' }}
-        >
-          <div className="w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
-            <span className="text-white text-[8px] font-bold">G</span>
-          </div>
-          <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
-            {goalkeepers.right.name}
-          </div>
-        </div>
-
-        {/* Jogadores do Time 1 */}
-        {team1Players.slice(0, 5).map((player, index) => {
-          const positions = [
-            { x: '18%', y: '25%' },
-            { x: '18%', y: '75%' },
-            { x: '30%', y: '40%' },
-            { x: '30%', y: '60%' },
-            { x: '42%', y: '50%' }
-          ];
-          const pos = positions[index] || { x: '20%', y: '50%' };
-          
-          return (
-            <div
-              key={player.id}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-              style={{ left: pos.x, top: pos.y }}
-              onClick={() => addGoal(player.id, player.name, currentMatch.team1, currentMatch.id)}
-            >
-              <div className={`w-5 h-5 ${TEAM_COLORS[currentMatch.team1].bg} rounded-full border-2 border-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-transform`}>
-                <Users size={10} className="text-white" />
-              </div>
-              <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
-                {player.name}
-              </div>
+          {/* Goleiros */}
+          <div
+            className="absolute transform -translate-x-1/2 -translate-y-1/2"
+            style={{ left: '6%', top: '50%' }}
+          >
+            <div className="w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+              <span className="text-white text-[8px] font-bold">G</span>
             </div>
-          );
-        })}
-
-        {/* Jogadores do Time 2 */}
-        {team2Players.slice(0, 5).map((player, index) => {
-          const positions = [
-            { x: '82%', y: '25%' },
-            { x: '82%', y: '75%' },
-            { x: '70%', y: '40%' },
-            { x: '70%', y: '60%' },
-            { x: '58%', y: '50%' }
-          ];
-          const pos = positions[index] || { x: '80%', y: '50%' };
-          
-          return (
-            <div
-              key={player.id}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-              style={{ left: pos.x, top: pos.y }}
-              onClick={() => addGoal(player.id, player.name, currentMatch.team2, currentMatch.id)}
-            >
-              <div className={`w-5 h-5 ${TEAM_COLORS[currentMatch.team2].bg} rounded-full border-2 border-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95  transition-transform`}>
-                <Users size={10} className="text-white" />
-              </div>
-              <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
-                {player.name}
-              </div>
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
+              {goalkeepers.left.name}
             </div>
-          );
-        })}
+          </div>
+          
+          <div
+            className="absolute transform -translate-x-1/2 -translate-y-1/2"
+            style={{ left: '94%', top: '50%' }}
+          >
+            <div className="w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+              <span className="text-white text-[8px] font-bold">G</span>
+            </div>
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
+              {goalkeepers.right.name}
+            </div>
+          </div>
+
+          {/* Jogadores do Time 1 */}
+          {team1Players.slice(0, 5).map((player, index) => {
+            const positions = [
+              { x: '18%', y: '25%' },
+              { x: '18%', y: '75%' },
+              { x: '30%', y: '40%' },
+              { x: '30%', y: '60%' },
+              { x: '42%', y: '50%' }
+            ];
+            const pos = positions[index] || { x: '20%', y: '50%' };
+            
+            return (
+              <div
+                key={player.id}
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                style={{ left: pos.x, top: pos.y }}
+                onClick={() => addGoal(player.id, player.name, currentMatch.team1, currentMatch.id)}
+              >
+                <div className={`w-5 h-5 ${TEAM_COLORS[currentMatch.team1].bg} rounded-full border-2 border-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-transform`}>
+                  <Users size={10} className="text-white" />
+                </div>
+                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
+                  {player.name}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Jogadores do Time 2 */}
+          {team2Players.slice(0, 5).map((player, index) => {
+            const positions = [
+              { x: '82%', y: '25%' },
+              { x: '82%', y: '75%' },
+              { x: '70%', y: '40%' },
+              { x: '70%', y: '60%' },
+              { x: '58%', y: '50%' }
+            ];
+            const pos = positions[index] || { x: '80%', y: '50%' };
+            
+            return (
+              <div
+                key={player.id}
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                style={{ left: pos.x, top: pos.y }}
+                onClick={() => addGoal(player.id, player.name, currentMatch.team2, currentMatch.id)}
+              >
+                <div className={`w-5 h-5 ${TEAM_COLORS[currentMatch.team2].bg} rounded-full border-2 border-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95  transition-transform`}>
+                  <Users size={10} className="text-white" />
+                </div>
+                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
+                  {player.name}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Gols da Partida em Duas Colunas */}
-      <div className="bg-gray-800 mx-3 mb-3 rounded-xl p-3">
+      <div className="dark-card mx-3 mt-3 rounded-xl p-3 shadow-sm">
         <h3 className="text-white font-bold mb-2 text-sm text-center">
           Gols da Partida
         </h3>
@@ -851,7 +856,7 @@ const LiveFieldView = ({
       </div>
 
       {/* Atualizar Placar */}
-      <div className="bg-gray-800 mx-3 mb-3 rounded-xl p-3">
+      <div className="dark-card mx-3 mt-3 rounded-xl p-3 shadow-sm">
         <h3 className="text-white font-bold mb-2 text-center text-sm">Atualizar Placar</h3>
         <div className="flex items-center justify-center space-x-4">
           <div className="text-center">
@@ -889,7 +894,7 @@ const LiveFieldView = ({
       </div>
 
       {/* Próximos Jogos */}
-      <div className="bg-gray-800 mx-3 mb-3 rounded-xl p-3">
+      <div className="dark-card mx-3 mt-3 rounded-xl p-3 shadow-sm">
         <h3 className="text-white font-bold mb-2 text-sm">
           {isWinnerStaysMode ? 'Próximo Desafio' : 
            remainingMatches.some(m => m.type === 'regular') ? 'Próximos Jogos' : 'Playoffs'} 

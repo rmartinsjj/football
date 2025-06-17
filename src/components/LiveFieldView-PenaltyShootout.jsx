@@ -12,7 +12,7 @@ const LiveFieldViewPenaltyShootout = ({
   if (!isVisible) return null;
 
   return (
-    <div className="bg-yellow-800 mx-3 mb-3 rounded-xl p-4 border-2 border-yellow-500">
+    <div className="dark-card rounded-xl p-4 shadow-sm border-2 border-yellow-500">
       <div className="text-center mb-3">
         <h3 className="text-yellow-200 font-bold text-sm mb-1">⚽ DISPUTA DE PÊNALTIS</h3>
         <p className="text-yellow-300 text-xs">Jogo empatado! Marque os gols dos pênaltis:</p>
