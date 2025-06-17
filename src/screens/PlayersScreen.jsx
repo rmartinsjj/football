@@ -69,7 +69,7 @@ const PlayersScreen = ({
               <textarea
                 value={playerListText}
                 onChange={(e) => setPlayerListText(e.target.value)}
-                placeholder="1. PV ( Lavou os coletes)&#10;2. Artulino&#10;3. Henrique..."
+                placeholder="1. Jesus &#10;2. João Batista&#10;3. Pedro..."
                 className="w-full p-4 bg-gray-800 border border-gray-600 rounded-lg h-32 text-base text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               />
               <button
