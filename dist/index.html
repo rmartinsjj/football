@@ -3,10 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover, interactive-widget=resizes-content" />
     <title>Football Tournament App</title>
-    <script type="module" crossorigin src="/assets/index-131219a3.js"></script>
-    <link rel="stylesheet" href="/assets/index-dd4093cc.css">
+    <style>
+      /* Ensure full width on all devices */
+      html, body {
+        width: 100vw !important;
+        min-width: 100vw !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+      }
+      
+      /* Prevent any container from being smaller than viewport */
+      #root {
+        width: 100vw !important;
+        min-width: 100vw !important;
+        max-width: 100vw !important;
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-993911ab.js"></script>
+    <link rel="stylesheet" href="/assets/index-eaf4e9d6.css">
   </head>
   <body>
     <div id="root"></div>
