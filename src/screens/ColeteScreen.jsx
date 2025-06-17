@@ -131,6 +131,79 @@ const ColeteScreen = ({
       />
       
       <div className="p-6">
+        {championPlayers.length > 0 && (
+          <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              🏆 Imunidade do Campeão
+            </h3>
+            <p className="text-gray-300 text-sm mb-4">
+              O campeão ({championTeam}) pode escolher uma pessoa do último colocado para imunizar do sorteio:
+            </p>
+            
+            {standings.length >= 4 && (
+              <div className="mb-3 p-3 bg-red-900 rounded-lg border border-red-600">
+                <div className="text-center">
+                  <span className="text-red-200 text-sm font-medium">Último Colocado:</span>
+                  <div className="text-white font-bold">{standings[3].team}</div>
+                </div>
+              </div>
+            )}
+            
+            {standings.length >= 4 && teams[standings[3].team] && (
+              <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                {teams[standings[3].team].map((player) => (
+                  <button
+                    key={player.id}
+                    onClick={() => setImmunePlayer(immunePlayer?.id === player.id ? null : player)}
+                    className={`p-3 rounded-xl text-left transition-colors ${
+                      immunePlayer?.id === player.id
+                        ? 'bg-green-900 border-2 border-green-500 text-green-200'
+                        : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{player.name}</span>
+                      {immunePlayer?.id === player.id && (
+                        <span className="text-green-600 text-sm font-bold">IMUNE ✓</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            {(!standings.length || standings.length < 4 || !teams[standings[3]?.team] || teams[standings[3]?.team].length === 0) && (
+              <div className="text-center py-4">
+                <span className="text-gray-400 text-sm">
+                  {!standings.length || standings.length < 4 
+                    ? "Aguardando classificação completa..." 
+                    : "Nenhum jogador no último colocado"}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {championPlayers.length === 0 && standings.length > 0 && (
+          <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              🏆 Imunidade do Campeão
+            </h3>
+            <p className="text-gray-300 text-sm mb-4">
+              Aguardando definição do campeão para liberar a escolha da imunidade.
+            </p>
+            
+            <div className="text-center py-4">
+              <span className="text-gray-400 text-sm">Termine o torneio para liberar esta função</span>
+            </div>
+          </div>
+        )}
+        
+        {championPlayers.length > 0 && standings.length >= 4 && teams[standings[3]?.team] && (
+          <div className="dark-card rounded-2xl p-6 shadow-sm mb-6" style={{ display: 'none' }}>
+          </div>
+        )}
+        
         <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
           <h3 className="text-lg font-semibold text-white mb-4">Ações Rápidas</h3>
           
@@ -166,38 +239,6 @@ const ColeteScreen = ({
             </div>
           </div>
         </div>
-
-        {championPlayers.length > 0 && (
-          <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              🏆 Imunidade do Campeão ({championTeam})
-            </h3>
-            <p className="text-gray-300 text-sm mb-4">
-              O campeão pode escolher uma pessoa para imunizar do sorteio:
-            </p>
-            
-            <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
-              {championPlayers.map((player) => (
-                <button
-                  key={player.id}
-                  onClick={() => setImmunePlayer(immunePlayer?.id === player.id ? null : player)}
-                  className={`p-3 rounded-xl text-left transition-colors ${
-                    immunePlayer?.id === player.id
-                      ? 'bg-green-900 border-2 border-green-500 text-green-200'
-                      : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{player.name}</span>
-                    {immunePlayer?.id === player.id && (
-                      <span className="text-green-600 text-sm font-bold">IMUNE ✓</span>
-                    )}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
           <h3 className="text-lg font-semibold text-white mb-4">Adicionar Jogadores Individuais</h3>
