@@ -195,47 +195,33 @@ const SettingsScreen = ({
             </div>
           </div>
           
-          {/* Times Ativos */}
-          <div className="space-y-2 mb-4">
-            {localSettings.activeTeams.map((teamName) => (
-              <div
-                key={teamName}
-                className={`flex items-center justify-between p-3 rounded-lg bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} text-white`}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={`w-4 h-4 ${TEAM_COLORS[teamName].bg} rounded-full border-2 border-white`}></div>
-                  <span className="font-medium">{teamName}</span>
-                </div>
+          {/* Times como Tags Minimalistas */}
+          <div className="flex flex-wrap gap-2">
+            {AVAILABLE_TEAMS.map((teamName) => {
+              const isActive = localSettings.activeTeams.includes(teamName);
+              return (
                 <button
-                  onClick={() => removeTeam(teamName)}
-                  disabled={localSettings.activeTeams.length <= 2}
-                  className="bg-white bg-opacity-20 hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed p-1 rounded-full transition-colors"
-                  title="Remover time"
+                  key={teamName}
+                  onClick={() => isActive ? removeTeam(teamName) : addTeam(teamName)}
+                  disabled={isActive && localSettings.activeTeams.length <= 2}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? `${TEAM_COLORS[teamName].bg} text-white shadow-md hover:shadow-lg active:scale-95`
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'
+                  } ${isActive && localSettings.activeTeams.length <= 2 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  title={isActive ? 'Clique para remover' : 'Clique para adicionar'}
                 >
-                  <X size={16} />
+                  <div className={`w-3 h-3 rounded-full ${
+                    isActive ? 'bg-white bg-opacity-30' : TEAM_COLORS[teamName].bg
+                  }`}></div>
+                  <span>{teamName}</span>
+                  {isActive && localSettings.activeTeams.length > 2 && (
+                    <X size={14} className="opacity-70" />
+                  )}
                 </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
-          
-          {/* Times Disponíveis para Adicionar */}
-          {availableTeamsToAdd.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium text-gray-300 mb-2">Adicionar Times:</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {availableTeamsToAdd.map((teamName) => (
-                  <button
-                    key={teamName}
-                    onClick={() => addTeam(teamName)}
-                    className={`flex items-center space-x-2 p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors text-left`}
-                  >
-                    <div className={`w-3 h-3 ${TEAM_COLORS[teamName].bg} rounded-full`}></div>
-                    <span className="text-white text-sm">{teamName}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Informações Adicionais */}
