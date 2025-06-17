@@ -32,7 +32,8 @@ const ScorersScreen = ({ matchEvents, setMatchEvents, setCurrentScreen, onBack }
     <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Artilheiros" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
-      <div className="p-6">
+      {/* Content with proper top padding to account for fixed header */}
+      <div className="pt-20 p-6">
         <div className="dark-card rounded-2xl shadow-sm overflow-hidden mb-6">
           <div className="p-6 border-b border-gray-600">
             <h3 className="text-lg font-semibold text-white">Tabela de Artilheiros</h3>

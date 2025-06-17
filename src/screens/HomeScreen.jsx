@@ -24,23 +24,26 @@ const HomeScreen = ({
   return (
   <div className="min-h-screen overflow-x-hidden pb-24">
     {/* Custom header for home screen with logo and settings */}
-    <div className="dark-card shadow-sm border-b border-gray-700 px-4 py-3 flex items-center justify-between sticky top-0 z-10 h-16">
-      <img 
-        src="/logoespacoappfootball.png" 
-        alt="Espaço Novo Tempo" 
-        className="h-8 w-auto object-contain"
-        title="Espaço Novo Tempo"
-      />
-      <button
-        onClick={() => setCurrentScreen('settings')}
-        className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
-        title="Configurações"
-      >
-        <Settings size={22} className="text-gray-300" />
-      </button>
+    <div className="fixed top-0 left-0 right-0 z-[9999] w-full">
+      <div className="bg-gray-900/95 backdrop-blur-md border-b border-gray-700 px-4 py-3 flex items-center justify-between h-16 shadow-lg">
+        <img 
+          src="/logoespacoappfootball.png" 
+          alt="Espaço Novo Tempo" 
+          className="h-8 w-auto object-contain"
+          title="Espaço Novo Tempo"
+        />
+        <button
+          onClick={() => setCurrentScreen('settings')}
+          className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
+          title="Configurações"
+        >
+          <Settings size={22} className="text-gray-300" />
+        </button>
+      </div>
     </div>
     
-    <div className="px-4 pt-4 pb-4">
+    {/* Content with proper top padding to account for fixed header */}
+    <div className="pt-20 px-4 pb-4">
       <div 
         className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
         style={{

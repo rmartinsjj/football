@@ -57,7 +57,8 @@ const PlayersScreen = ({
         onClose={() => setShowToast(false)}
       />
       
-      <div className="p-4">
+      {/* Content with proper top padding to account for fixed header */}
+      <div className="pt-20 p-4">
         <div className="dark-card rounded-xl p-4 shadow-sm mb-4">
           <h3 className="text-lg font-semibold text-white mb-4">Adicionar Jogadores</h3>
           

@@ -130,7 +130,8 @@ const ColeteScreen = ({
         onClose={() => setShowToast(false)}
       />
       
-      <div className="p-6">
+      {/* Content with proper top padding to account for fixed header */}
+      <div className="pt-20 p-6">
         {championPlayers.length > 0 && (
           <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
             <h3 className="text-lg font-semibold text-white mb-4">

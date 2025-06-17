@@ -78,7 +78,8 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
     <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Classificação" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
-      <div className="p-6">
+      {/* Content with proper top padding to account for fixed header */}
+      <div className="pt-20 p-6">
         {/* Tiebreaker Modal */}
         <TiebreakerModal
           isOpen={showTiebreaker}

@@ -22,37 +22,39 @@ const Header = ({ title, showBack = false, onBack, setCurrentScreen }) => {
 
   return (
     <>
-      {/* Header with consistent height */}
-      <div className="dark-card shadow-sm border-b border-gray-700 px-4 py-3 flex items-center justify-between sticky top-0 z-10 h-16">
-        <div className="flex items-center space-x-3">
-          {showBack && (
-            <button 
-              onClick={onBack}
+      {/* Header with fixed positioning and high z-index */}
+      <div className="fixed top-0 left-0 right-0 z-[9999] w-full">
+        <div className="bg-gray-900/95 backdrop-blur-md border-b border-gray-700 px-4 py-3 flex items-center justify-between h-16 shadow-lg">
+          <div className="flex items-center space-x-3">
+            {showBack && (
+              <button 
+                onClick={onBack}
+                className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
+              >
+                <ArrowLeft size={22} className="text-gray-300" />
+              </button>
+            )}
+            <h1 className="text-lg font-bold text-white truncate">{title}</h1>
+          </div>
+          
+          {setCurrentScreen && (
+            <button
+              onClick={() => setShowMenu(!showMenu)}
               className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
             >
-              <ArrowLeft size={22} className="text-gray-300" />
+              {showMenu ? (
+                <X size={22} className="text-gray-300" />
+              ) : (
+                <Menu size={22} className="text-gray-300" />
+              )}
             </button>
           )}
-          <h1 className="text-lg font-bold text-white truncate">{title}</h1>
         </div>
-        
-        {setCurrentScreen && (
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
-          >
-            {showMenu ? (
-              <X size={22} className="text-gray-300" />
-            ) : (
-              <Menu size={22} className="text-gray-300" />
-            )}
-          </button>
-        )}
       </div>
 
-      {/* Menu Overlay */}
+      {/* Menu Overlay with even higher z-index */}
       {showMenu && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[10000] flex justify-end">
           <div className="bg-gray-900 w-80 max-w-[90vw] h-full shadow-xl">
             {/* Menu Header */}
             <div className="p-4 border-b border-gray-700 flex items-center justify-between">
