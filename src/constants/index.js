@@ -2,8 +2,14 @@ export const TEAM_COLORS = {
   'Vermelho': { bg: 'bg-red-500', gradient: 'from-red-500 to-red-600', text: 'text-red-600' },
   'Azul': { bg: 'bg-blue-500', gradient: 'from-blue-500 to-blue-600', text: 'text-blue-600' },
   'Brasil': { bg: 'bg-yellow-500', gradient: 'from-yellow-500 to-yellow-600', text: 'text-yellow-600' },
-  'Verde Branco': { bg: 'bg-green-500', gradient: 'from-green-500 to-green-600', text: 'text-green-600' }
+  'Verde Branco': { bg: 'bg-green-500', gradient: 'from-green-500 to-green-600', text: 'text-green-600' },
+  'Roxo': { bg: 'bg-purple-500', gradient: 'from-purple-500 to-purple-600', text: 'text-purple-600' },
+  'Laranja': { bg: 'bg-orange-500', gradient: 'from-orange-500 to-orange-600', text: 'text-orange-600' },
+  'Rosa': { bg: 'bg-pink-500', gradient: 'from-pink-500 to-pink-600', text: 'text-pink-600' },
+  'Cinza': { bg: 'bg-gray-500', gradient: 'from-gray-500 to-gray-600', text: 'text-gray-600' }
 };
+
+export const AVAILABLE_TEAMS = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco', 'Roxo', 'Laranja', 'Rosa', 'Cinza'];
 
 export const INITIAL_MATCHES = [
   // Regular season matches (1-12)

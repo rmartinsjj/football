@@ -9,6 +9,7 @@ const ColeteScreen = ({
   players,
   teams,
   matches,
+  settings,
   coleteParticipants,
   setColeteParticipants,
   immunePlayer,
@@ -144,7 +145,9 @@ const ColeteScreen = ({
             )}
             
             <div className="grid grid-cols-2 gap-2">
-              {Object.entries(teams).map(([teamName, teamPlayers]) => (
+              {Object.entries(teams).filter(([teamName]) => 
+                settings?.activeTeams?.includes(teamName) || !settings?.activeTeams
+              ).map(([teamName, teamPlayers]) => (
                 <button
                   key={teamName}
                   onClick={() => addTeamToColete(teamName)}

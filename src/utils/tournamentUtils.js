@@ -109,19 +109,15 @@ export const parsePlayerList = (playerListText) => {
   }).filter(player => player.name);
 };
 
-export const drawTeams = (players) => {
+export const drawTeams = (players, activeTeams = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco']) => {
   const shuffledPlayers = shuffleArray(players);
-  const teamNames = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   const newTeams = {
-    Vermelho: [],
-    Azul: [],
-    Brasil: [],
-    'Verde Branco': []
+    ...Object.fromEntries(activeTeams.map(team => [team, []]))
   };
 
   shuffledPlayers.forEach((player, index) => {
-    const teamIndex = index % 4;
-    newTeams[teamNames[teamIndex]].push(player);
+    const teamIndex = index % activeTeams.length;
+    newTeams[activeTeams[teamIndex]].push(player);
   });
 
   return newTeams;
@@ -156,8 +152,8 @@ export const generatePlayoffMatches = (matches, standings) => {
 };
 
 // Generate next match for winner-stays mode
-export const generateNextWinnerStaysMatch = (matches, currentWinnerTeam, teams) => {
-  const teamNames = Object.keys(teams);
+export const generateNextWinnerStaysMatch = (matches, currentWinnerTeam, teams, activeTeams = null) => {
+  const teamNames = activeTeams || Object.keys(teams);
   const availableTeams = teamNames.filter(team => team !== currentWinnerTeam);
   
   if (availableTeams.length === 0) {

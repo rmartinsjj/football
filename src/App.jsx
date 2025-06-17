@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { INITIAL_MATCHES, INITIAL_TEAMS } from './constants';
+import { INITIAL_MATCHES, INITIAL_TEAMS, AVAILABLE_TEAMS } from './constants';
 import { useTimer } from './hooks/useTimer';
 import { TIMER_DURATION } from './constants';
 
@@ -31,6 +31,7 @@ const App = () => {
     normalMatchTime: TIMER_DURATION.NORMAL_MATCH / 60, // Convert to minutes
     finalMatchTime: TIMER_DURATION.FINAL_MATCH / 60, // Convert to minutes
     numberOfTeams: 4,
+    activeTeams: AVAILABLE_TEAMS.slice(0, 4), // First 4 teams by default
     tournamentType: 'championship', // 'championship' or 'winner-stays'
     currentWinnerTeam: null, // For winner-stays mode
   });
@@ -113,6 +114,7 @@ const App = () => {
             setTeams={setTeams}
             tournamentStarted={tournamentStarted}
             setTournamentStarted={setTournamentStarted}
+            settings={settings}
             onBack={handleBackToHome}
           />
         );
@@ -165,6 +167,7 @@ const App = () => {
             players={players}
             teams={teams}
             matches={matches}
+            settings={settings}
             coleteParticipants={coleteParticipants}
             setColeteParticipants={setColeteParticipants}
             immunePlayer={immunePlayer}

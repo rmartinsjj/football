@@ -63,14 +63,15 @@ const LiveFieldView = ({
 
   // Calculate standings and generate playoff matches
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
+  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   
   let standings, updatedMatches;
   
   if (isWinnerStaysMode) {
-    standings = calculateWinnerStaysStandings(matches);
+    standings = calculateWinnerStaysStandings(matches).filter(team => activeTeams.includes(team.team));
     updatedMatches = matches; // No playoff generation for winner-stays
   } else {
-    standings = calculateStandings(matches.filter(m => m.type === 'regular')); // Only regular season for standings
+    standings = calculateStandings(matches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
     updatedMatches = generatePlayoffMatches(matches, standings);
   }
   
@@ -302,7 +303,7 @@ const LiveFieldView = ({
         const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
         
         // Generate next match
-        const nextMatch = generateNextWinnerStaysMatch(updated, result.newWinnerTeam, teams);
+        const nextMatch = generateNextWinnerStaysMatch(updated, result.newWinnerTeam, teams, activeTeams);
         if (nextMatch) {
           return [...updated, nextMatch];
         }
@@ -891,7 +892,7 @@ const LiveFieldView = ({
               <div className="mt-2">
                 <button
                   onClick={() => {
-                    const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams);
+                    const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
                     if (nextMatch) {
                       setMatches(prev => [...prev, nextMatch]);
                     }

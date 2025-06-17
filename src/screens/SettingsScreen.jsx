@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Clock, Users, Trophy, RotateCcw, Save } from 'lucide-react';
+import { Clock, Users, Trophy, RotateCcw, Save, X } from 'lucide-react';
 import Header from '../components/Header';
 import LiveFieldViewToastMessage from '../components/LiveFieldView-ToastMessage';
+import { AVAILABLE_TEAMS, TEAM_COLORS } from '../constants';
 
 const SettingsScreen = ({ 
   settings, 
@@ -29,11 +30,38 @@ const SettingsScreen = ({
       normalMatchTime: 7,
       finalMatchTime: 10,
       numberOfTeams: 4,
+      activeTeams: AVAILABLE_TEAMS.slice(0, 4),
       tournamentType: 'championship',
     };
     setLocalSettings(defaultSettings);
     showToastMessage('🔄 Configurações restauradas para o padrão', 'info');
   };
+
+  const addTeam = (teamName) => {
+    if (!localSettings.activeTeams.includes(teamName)) {
+      const newActiveTeams = [...localSettings.activeTeams, teamName];
+      setLocalSettings(prev => ({
+        ...prev,
+        activeTeams: newActiveTeams,
+        numberOfTeams: newActiveTeams.length
+      }));
+    }
+  };
+
+  const removeTeam = (teamName) => {
+    if (localSettings.activeTeams.length > 2) { // Minimum 2 teams
+      const newActiveTeams = localSettings.activeTeams.filter(team => team !== teamName);
+      setLocalSettings(prev => ({
+        ...prev,
+        activeTeams: newActiveTeams,
+        numberOfTeams: newActiveTeams.length
+      }));
+    } else {
+      showToastMessage('⚠️ Mínimo de 2 times necessário!', 'error');
+    }
+  };
+
+  const availableTeamsToAdd = AVAILABLE_TEAMS.filter(team => !localSettings.activeTeams.includes(team));
 
   return (
     <div className="min-h-screen pb-20 overflow-x-hidden">
@@ -152,34 +180,69 @@ const SettingsScreen = ({
                 </label>
               </div>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Número de Times:
-              </label>
-              <div className="flex items-center space-x-3">
-                <input
-                  type="number"
-                  min="2"
-                  max="8"
-                  value={localSettings.numberOfTeams}
-                  onChange={(e) => setLocalSettings(prev => ({
-                    ...prev,
-                    numberOfTeams: parseInt(e.target.value) || 4
-                  }))}
-                  className="w-20 p-3 bg-gray-800 border border-gray-600 rounded-lg text-white text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <span className="text-gray-400 text-sm">times</span>
-              </div>
+          </div>
+        </div>
+
+        {/* Times Ativos */}
+        <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+              <Users className="text-white" size={20} />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-white">Times do Torneio</h3>
+              <p className="text-sm text-gray-400">{localSettings.activeTeams.length} times selecionados</p>
             </div>
           </div>
+          
+          {/* Times Ativos */}
+          <div className="space-y-2 mb-4">
+            {localSettings.activeTeams.map((teamName) => (
+              <div
+                key={teamName}
+                className={`flex items-center justify-between p-3 rounded-lg bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} text-white`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className={`w-4 h-4 ${TEAM_COLORS[teamName].bg} rounded-full border-2 border-white`}></div>
+                  <span className="font-medium">{teamName}</span>
+                </div>
+                <button
+                  onClick={() => removeTeam(teamName)}
+                  disabled={localSettings.activeTeams.length <= 2}
+                  className="bg-white bg-opacity-20 hover:bg-opacity-30 disabled:opacity-50 disabled:cursor-not-allowed p-1 rounded-full transition-colors"
+                  title="Remover time"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          {/* Times Disponíveis para Adicionar */}
+          {availableTeamsToAdd.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-300 mb-2">Adicionar Times:</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {availableTeamsToAdd.map((teamName) => (
+                  <button
+                    key={teamName}
+                    onClick={() => addTeam(teamName)}
+                    className={`flex items-center space-x-2 p-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors text-left`}
+                  >
+                    <div className={`w-3 h-3 ${TEAM_COLORS[teamName].bg} rounded-full`}></div>
+                    <span className="text-white text-sm">{teamName}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Informações Adicionais */}
         <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-              <Users className="text-white" size={20} />
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Trophy className="text-white" size={20} />
             </div>
             <h3 className="text-lg font-semibold text-white">Sobre o Formato</h3>
           </div>

@@ -11,6 +11,7 @@ const TeamsScreen = ({
   setTeams, 
   tournamentStarted, 
   setTournamentStarted, 
+  settings,
   onBack 
 }) => {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -57,7 +58,7 @@ const TeamsScreen = ({
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Sortear os times
-    const newTeams = drawTeams(players);
+    const newTeams = drawTeams(players, settings?.activeTeams);
     setTeams(newTeams);
     setTournamentStarted(true);
     
@@ -87,7 +88,7 @@ const TeamsScreen = ({
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Re-sortear os times
-      const newTeams = drawTeams(players);
+      const newTeams = drawTeams(players, settings?.activeTeams);
       setTeams(newTeams);
       
       // Finalizar loading
@@ -283,7 +284,9 @@ const TeamsScreen = ({
 
         {/* Times */}
         <div className="grid grid-cols-1 gap-3">
-          {Object.entries(teams).map(([teamName, teamPlayers]) => (
+          {Object.entries(teams).filter(([teamName]) => 
+            settings?.activeTeams?.includes(teamName) || !settings?.activeTeams
+          ).map(([teamName, teamPlayers]) => (
             <div key={teamName} className="dark-card rounded-xl shadow-sm overflow-hidden">
               <div className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} p-4`}>
                 <div className="flex items-center justify-between text-white">
