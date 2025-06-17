@@ -52,6 +52,7 @@
     overflow-x: hidden;
     position: relative;
     touch-action: pan-y;
+    z-index: 1;
   }
   
   * {
@@ -116,6 +117,24 @@
   .dark-card-solid {
     background: #1e202a;
     border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Header specific fixes */
+  .header-fixed {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000 !important;
+    width: 100% !important;
+    background: rgba(30, 32, 42, 0.95) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .content-with-header {
+    padding-top: 64px !important; /* Height of header */
   }
 }
 
