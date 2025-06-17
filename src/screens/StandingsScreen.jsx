@@ -197,10 +197,10 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-white">
-                      {isWinnerStaysMode ? team.wins : team.points || 0}
+                      {isWinnerStaysMode ? team.wins : team.points}
                     </div>
                     <div className="text-sm text-gray-400">
-                      {isWinnerStaysMode ? 'vitórias' : (team.points === 1 ? 'ponto' : 'pontos')}
+                      {isWinnerStaysMode ? 'vitórias' : 'pontos'}
                     </div>
                   </div>
                 </div>
