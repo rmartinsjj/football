@@ -288,6 +288,12 @@ const LiveFieldView = ({
   };
   // Finalizar jogo - playoffs não afetam pontuação regular
   const finishMatch = () => {
+    // Prevent multiple clicks
+    if (currentMatch.played) {
+      showToastMessage('⚠️ Este jogo já foi finalizado!', 'error');
+      return;
+    }
+    
     const score1 = currentMatch.score1 || 0;
     const score2 = currentMatch.score2 || 0;
     
@@ -320,7 +326,7 @@ const LiveFieldView = ({
         return updated;
       });
       
-      setActiveMatch(null);
+      // Don't clear activeMatch immediately, wait for next game button
       setShowNextGameButton(true);
       showToastMessage(result.message, 'success');
       
@@ -418,7 +424,7 @@ const LiveFieldView = ({
       // message already set above
     }
 
-    // NÃO limpar o activeMatch ainda - manter para mostrar o botão "Próximo Jogo"
+    // Don't clear activeMatch immediately, wait for next game button
     setShowNextGameButton(true);
     
     // Force re-render after a small delay to ensure state is updated
@@ -431,7 +437,12 @@ const LiveFieldView = ({
 
   const goToNextGame = () => {
     setShowNextGameButton(false);
-    setActiveMatch(null); // Limpar o activeMatch
+    
+    // Clear timer state first
+    resetTimer();
+    
+    // Clear activeMatch
+    setActiveMatch(null);
     
     if (isWinnerStaysMode) {
       // For winner-stays, the next match should already be generated
@@ -442,7 +453,7 @@ const LiveFieldView = ({
     } else {
       const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
       if (nextMatch) {
-        // NÃO iniciar o timer automaticamente - apenas definir como próximo jogo ativo
+        // Don't start timer automatically - just set as next active game
         setTimeout(() => setActiveMatch(nextMatch.id), 100);
       }
     }
