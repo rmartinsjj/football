@@ -453,7 +453,7 @@ const LiveFieldView = ({
     const finalMatch = matches.find(m => m.id === 14);
     const thirdPlaceMatch = matches.find(m => m.id === 13);
     
-    if (finalMatch?.played && thirdPlaceMatch?.played) {
+    if (finalMatch?.played && thirdPlaceMatch?.played && !showPlayoffResults) {
       setShowPlayoffResults(true);
     }
   };
@@ -461,6 +461,12 @@ const LiveFieldView = ({
   React.useEffect(() => {
     showTournamentResults();
   }, [matches]);
+
+  // Prevent automatic reopening of results modal
+  const handleCloseResults = () => {
+    setShowPlayoffResults(false);
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden pb-24">
       {/* Toast Message */}
@@ -529,7 +535,7 @@ const LiveFieldView = ({
             
             <div className="mt-6">
               <button
-                onClick={() => setShowPlayoffResults(false)}
+                onClick={handleCloseResults}
                 className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-xl font-medium transition-colors"
               >
                 Fechar Resultados
