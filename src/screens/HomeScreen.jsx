@@ -77,7 +77,7 @@ const HomeScreen = ({
           className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
         >
           <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mb-2">
-            <Users className="text-white" size={20} />
+            <img src="/soccer-player1.png" alt="Jogador" className="w-6 h-6 filter brightness-0 invert" />
           </div>
           <h3 className="font-semibold text-white text-sm mb-1">Jogadores</h3>
           <p className="text-xs text-gray-400">{players.length} cadastrados</p>
@@ -89,7 +89,7 @@ const HomeScreen = ({
           className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
         >
           <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mb-2">
-            <Shuffle className="text-white" size={20} />
+            <img src="/ball3.png" alt="Bola" className="w-6 h-6 filter brightness-0 invert" />
           </div>
           <h3 className="font-semibold text-white text-sm mb-1">Times</h3>
           <p className="text-xs text-gray-400">Sortear equipes</p>
