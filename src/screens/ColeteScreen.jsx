@@ -373,7 +373,6 @@ const ColeteScreen = ({
           <div className="mt-6 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-2xl p-6 text-center shadow-2xl border-2 border-red-400">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-white mb-1">RESULTADO DO SORTEIO</h2>
-              <p className="text-red-100 text-sm">Quem vai lavar o colete</p>
             </div>
             
             <div className="bg-white bg-opacity-10 rounded-xl p-6 mb-6">
@@ -382,7 +381,7 @@ const ColeteScreen = ({
                 <img 
                   src="/lavarcolete.png" 
                   alt="Jesus" 
-                  className="w-32 h-32 object-contain filter brightness-0 invert"
+                  className="w-40 h-40 object-contain filter brightness-0 invert"
                   title="Jesus"
                 />
               </div>
@@ -394,15 +393,6 @@ const ColeteScreen = ({
                   Lembre-se: amaciante Downy, porque tem muitos alérgicos!
                 </p>
               </div>
-            </div>
-            
-            <div className="mt-4">
-              <button
-                onClick={() => setColeteWinner(null)}
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-xl font-medium transition-colors"
-              >
-                Fechar Resultado
-              </button>
             </div>
           </div>
         )}
