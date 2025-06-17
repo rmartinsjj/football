@@ -102,6 +102,7 @@ const App = () => {
           <PlayersScreen
             players={players}
             setPlayers={setPlayers}
+            setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
           />
         );
@@ -115,6 +116,7 @@ const App = () => {
             tournamentStarted={tournamentStarted}
             setTournamentStarted={setTournamentStarted}
             settings={settings}
+            setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
           />
         );
@@ -139,6 +141,7 @@ const App = () => {
             formatTime={formatTime}
             settings={settings}
             setSettings={setSettings}
+            setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
           />
         );
@@ -148,6 +151,7 @@ const App = () => {
           <StandingsScreen
             matches={matches}
             settings={settings}
+            setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
           />
         );
@@ -157,6 +161,7 @@ const App = () => {
           <ScorersScreen
             matchEvents={matchEvents}
             setMatchEvents={setMatchEvents}
+            setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
           />
         );
@@ -174,6 +179,7 @@ const App = () => {
             setImmunePlayer={setImmunePlayer}
             coleteWinner={coleteWinner}
             setColeteWinner={setColeteWinner}
+            setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
           />
         );
@@ -183,6 +189,7 @@ const App = () => {
           <SettingsScreen
             settings={settings}
             setSettings={setSettings}
+            setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
           />
         );

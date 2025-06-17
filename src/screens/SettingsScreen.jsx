@@ -7,6 +7,7 @@ import { AVAILABLE_TEAMS, TEAM_COLORS } from '../constants';
 const SettingsScreen = ({ 
   settings, 
   setSettings, 
+  setCurrentScreen,
   onBack 
 }) => {
   const [localSettings, setLocalSettings] = useState(settings);
@@ -65,7 +66,7 @@ const SettingsScreen = ({
 
   return (
     <div className="min-h-screen pb-20 overflow-x-hidden">
-      <Header title="Configurações" showBack={true} onBack={onBack} />
+      <Header title="Configurações" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Toast Message */}
       <LiveFieldViewToastMessage

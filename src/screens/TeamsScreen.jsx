@@ -12,6 +12,7 @@ const TeamsScreen = ({
   tournamentStarted, 
   setTournamentStarted, 
   settings,
+  setCurrentScreen,
   onBack 
 }) => {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -148,7 +149,7 @@ const TeamsScreen = ({
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Header title="Times" showBack={true} onBack={onBack} />
+      <Header title="Times" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Toast Message */}
       <LiveFieldViewToastMessage

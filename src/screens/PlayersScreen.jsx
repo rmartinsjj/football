@@ -7,6 +7,7 @@ import { parsePlayerList } from '../utils/tournamentUtils';
 const PlayersScreen = ({ 
   players, 
   setPlayers, 
+  setCurrentScreen,
   onBack 
 }) => {
   const [playerListText, setPlayerListText] = useState('');
@@ -46,7 +47,7 @@ const PlayersScreen = ({
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Header title="Jogadores" showBack={true} onBack={onBack} />
+      <Header title="Jogadores" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Toast Message */}
       <LiveFieldViewToastMessage

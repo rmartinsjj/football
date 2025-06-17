@@ -16,6 +16,7 @@ const ColeteScreen = ({
   setImmunePlayer,
   coleteWinner,
   setColeteWinner,
+  setCurrentScreen,
   onBack 
 }) => {
   const [toastMessage, setToastMessage] = React.useState('');
@@ -119,7 +120,7 @@ const ColeteScreen = ({
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Header title="Sorteio do Colete" showBack={true} onBack={onBack} />
+      <Header title="Sorteio do Colete" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Toast Message */}
       <LiveFieldViewToastMessage

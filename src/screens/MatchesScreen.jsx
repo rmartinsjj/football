@@ -22,6 +22,7 @@ const MatchesScreen = ({
   formatTime,
   settings,
   setSettings,
+  setCurrentScreen,
   onBack 
 }) => {
   const [viewMode, setViewMode] = useState('field');
@@ -106,7 +107,7 @@ const MatchesScreen = ({
       backgroundAttachment: 'fixed',
       backgroundColor: '#1a1b23'
     }}>
-      <Header title="Jogos" showBack={true} onBack={onBack} />
+      <Header title="Jogos" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       <div className="p-3 bg-gray-800 border-b border-gray-700">
         <div className="flex bg-gray-700 rounded-lg p-1">

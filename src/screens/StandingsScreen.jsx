@@ -5,7 +5,7 @@ import { TEAM_COLORS } from '../constants';
 import { calculateStandings, calculateWinnerStaysStandings } from '../utils/tournamentUtils';
 import TiebreakerModal from '../components/LiveFieldView-TiebreakerModal';
 
-const StandingsScreen = ({ matches, settings, onBack }) => {
+const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
   const [showTiebreaker, setShowTiebreaker] = React.useState(false);
   const [tiebreakerTeams, setTiebreakerTeams] = React.useState([]);
   
@@ -76,7 +76,7 @@ const StandingsScreen = ({ matches, settings, onBack }) => {
   
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Header title="Classificação" showBack={true} onBack={onBack} />
+      <Header title="Classificação" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       <div className="p-6">
         {/* Tiebreaker Modal */}

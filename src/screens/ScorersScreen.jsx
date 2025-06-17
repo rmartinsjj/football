@@ -3,7 +3,7 @@ import { Target, Minus } from 'lucide-react';
 import Header from '../components/Header';
 import { TEAM_COLORS } from '../constants';
 
-const ScorersScreen = ({ matchEvents, setMatchEvents, onBack }) => {
+const ScorersScreen = ({ matchEvents, setMatchEvents, setCurrentScreen, onBack }) => {
   const getGoalScorers = () => {
     const scorers = {};
     matchEvents.forEach(event => {
@@ -30,7 +30,7 @@ const ScorersScreen = ({ matchEvents, setMatchEvents, onBack }) => {
   
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Header title="Artilheiros" showBack={true} onBack={onBack} />
+      <Header title="Artilheiros" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       <div className="p-6">
         <div className="dark-card rounded-2xl shadow-sm overflow-hidden mb-6">

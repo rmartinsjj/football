@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, Shuffle, Trophy, Target, BarChart3, Settings } from 'lucide-react';
+import Header from '../components/Header';
 
 const HomeScreen = ({ 
   players, 
@@ -22,25 +23,10 @@ const HomeScreen = ({
   
   return (
   <div className="min-h-screen pb-4 overflow-x-hidden">
-    <div className="dark-card px-4 pt-6 pb-4">
-      <div className="flex items-center justify-between">
-        <img 
-          src="/logoespaco.png" 
-          alt="Espaço Novo Tempo" 
-          className="h-12 w-auto object-contain"
-          title="Espaço Novo Tempo"
-        />
-        <button
-          onClick={() => setCurrentScreen('settings')}
-          className="p-3 hover:bg-gray-700 rounded-xl transition-colors"
-          title="Configurações"
-        >
-          <Settings className="text-gray-300" size={20} />
-        </button>
-      </div>
-    </div>
-
-    <div className="px-4 py-3">
+    {/* Use consistent header */}
+    <Header title="Espaço Novo Tempo" setCurrentScreen={setCurrentScreen} />
+    
+    <div className="px-4 pt-4 pb-4">
       <div 
         className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
         style={{
