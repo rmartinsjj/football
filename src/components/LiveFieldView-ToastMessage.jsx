@@ -46,7 +46,7 @@ const LiveFieldViewToastMessage = ({
   };
 
   return (
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 max-w-sm w-full px-4">
+    <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 max-w-sm w-full px-4">
       <div className={`${getBgColor()} border rounded-lg p-3 shadow-lg flex items-center space-x-3`}>
         {getIcon()}
         <span className="text-white text-sm flex-1">{message}</span>
