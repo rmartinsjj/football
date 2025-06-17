@@ -164,11 +164,12 @@ const HomeScreen = ({
           <p 
             className="text-white text-lg leading-relaxed"
             style={{ 
-              fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              fontWeight: '600',
-              letterSpacing: '0.5px',
+              fontFamily: 'Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              fontWeight: '500',
+              letterSpacing: '0.3px',
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-              lineHeight: '1.4'
+              lineHeight: '1.3',
+              fontSize: '16px'
             }}
           >
             Mais que futebol é comunhão<br />
