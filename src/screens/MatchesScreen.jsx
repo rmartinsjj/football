@@ -99,7 +99,7 @@ const MatchesScreen = ({
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden pb-20">
+    <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Jogos" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       <div className="p-3 dark-card border-b border-gray-700 mx-3 mt-3 rounded-t-xl">

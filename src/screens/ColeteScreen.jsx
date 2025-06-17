@@ -119,7 +119,7 @@ const ColeteScreen = ({
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden pb-20">
+    <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Sorteio do Colete" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Toast Message */}

@@ -29,7 +29,7 @@ const ScorersScreen = ({ matchEvents, setMatchEvents, setCurrentScreen, onBack }
   const goalScorers = getGoalScorers();
   
   return (
-    <div className="min-h-screen overflow-x-hidden pb-20">
+    <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Artilheiros" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       <div className="p-6">

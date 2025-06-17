@@ -33,7 +33,7 @@ const MatchesList = ({
     : filteredMatches; // Show all matches for championship mode
   
   return (
-    <div className="p-4 min-h-screen pb-20">
+    <div className="p-4 min-h-screen pb-24">
       {activeMatch && (
         <div className="dark-card rounded-xl p-4 text-white mb-4 shadow-lg">
             <div className="flex justify-between items-center">

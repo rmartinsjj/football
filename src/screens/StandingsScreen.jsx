@@ -75,7 +75,7 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
   };
   
   return (
-    <div className="min-h-screen overflow-x-hidden pb-20">
+    <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Classificação" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       <div className="p-6">

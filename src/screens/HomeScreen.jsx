@@ -22,7 +22,7 @@ const HomeScreen = ({
   });
   
   return (
-  <div className="min-h-screen overflow-x-hidden pb-20">
+  <div className="min-h-screen overflow-x-hidden pb-24">
     {/* Custom header for home screen with logo and settings */}
     <div className="dark-card shadow-sm border-b border-gray-700 px-4 py-3 flex items-center justify-between sticky top-0 z-10 h-16">
       <img 
