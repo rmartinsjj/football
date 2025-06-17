@@ -141,7 +141,7 @@ const ColeteScreen = ({
                 className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3 rounded-xl flex items-center justify-center space-x-2"
               >
                 <Users size={16} />
-                <span>Adicionar Todos (Exceto Campeão {championTeam})</span>
+                <span>+ Todos (Exceto Campeão {championTeam})</span>
               </button>
             )}
             
