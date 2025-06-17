@@ -25,6 +25,12 @@ const MatchesScreen = ({
   onBack 
 }) => {
   const [viewMode, setViewMode] = useState('field');
+  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+  
+  // Filter matches to only include active teams
+  const filteredMatches = matches.filter(match => 
+    activeTeams.includes(match.team1) && activeTeams.includes(match.team2)
+  );
 
   const updateMatchScore = (matchId, team, score) => {
     setMatches(prev => prev.map(match => {
@@ -61,7 +67,7 @@ const MatchesScreen = ({
     setMatchEvents(prev => [...prev, goalEvent]);
     
     // Atualizar placar
-    const currentMatch = matches.find(m => m.id === matchId);
+    const currentMatch = filteredMatches.find(m => m.id === matchId);
     if (currentMatch) {
       if (currentMatch.team1 === teamName) {
         updateMatchScore(matchId, teamName, (currentMatch.score1 || 0) + 1);
@@ -124,7 +130,7 @@ const MatchesScreen = ({
 
       {viewMode === 'field' ? (
         <LiveFieldView 
-          matches={matches}
+          matches={filteredMatches}
           setMatches={setMatches}
           teams={teams}
           matchEvents={matchEvents}
@@ -146,7 +152,7 @@ const MatchesScreen = ({
         />
       ) : (
         <MatchesList 
-          matches={matches}
+          matches={filteredMatches}
           timer={timer}
           isTimerRunning={isTimerRunning}
           activeMatch={activeMatch}

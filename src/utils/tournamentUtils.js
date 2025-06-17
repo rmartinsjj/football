@@ -17,12 +17,13 @@ export const calculateStandings = (matches) => {
     team2: m.team2 
   })));
   
-  const standings = {
-    'Vermelho': { points: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 },
-    'Azul': { points: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 },
-    'Brasil': { points: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 },
-    'Verde Branco': { points: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 }
-  };
+  // Get unique teams from matches to create dynamic standings
+  const teams = [...new Set(matches.flatMap(m => [m.team1, m.team2]))];
+  const standings = {};
+  
+  teams.forEach(team => {
+    standings[team] = { points: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 };
+  });
 
   matches.forEach(match => {
     // Só calcular pontos para jogos FINALIZADOS (played = true) E que sejam da temporada regular
@@ -179,12 +180,13 @@ export const generateNextWinnerStaysMatch = (matches, currentWinnerTeam, teams, 
 
 // Get winner-stays standings (just track wins for each team)
 export const calculateWinnerStaysStandings = (matches) => {
-  const standings = {
-    'Vermelho': { wins: 0, matches: 0 },
-    'Azul': { wins: 0, matches: 0 },
-    'Brasil': { wins: 0, matches: 0 },
-    'Verde Branco': { wins: 0, matches: 0 }
-  };
+  // Get unique teams from matches to create dynamic standings
+  const teams = [...new Set(matches.flatMap(m => [m.team1, m.team2]))];
+  const standings = {};
+  
+  teams.forEach(team => {
+    standings[team] = { wins: 0, matches: 0 };
+  });
 
   matches.forEach(match => {
     if (match.played === true && match.type === 'winner-stays') {

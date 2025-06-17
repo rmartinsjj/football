@@ -65,14 +65,19 @@ const LiveFieldView = ({
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   
+  // Filter matches to only include active teams
+  const filteredMatches = matches.filter(match => 
+    activeTeams.includes(match.team1) && activeTeams.includes(match.team2)
+  );
+  
   let standings, updatedMatches;
   
   if (isWinnerStaysMode) {
-    standings = calculateWinnerStaysStandings(matches).filter(team => activeTeams.includes(team.team));
-    updatedMatches = matches; // No playoff generation for winner-stays
+    standings = calculateWinnerStaysStandings(filteredMatches).filter(team => activeTeams.includes(team.team));
+    updatedMatches = filteredMatches; // No playoff generation for winner-stays
   } else {
-    standings = calculateStandings(matches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
-    updatedMatches = generatePlayoffMatches(matches, standings);
+    standings = calculateStandings(filteredMatches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
+    updatedMatches = generatePlayoffMatches(filteredMatches, standings);
   }
   
   const currentMatch = updatedMatches.find(m => m.id === activeMatch) || updatedMatches.find(m => !m.played) || updatedMatches[0];
@@ -85,7 +90,7 @@ const LiveFieldView = ({
     remainingMatches = updatedMatches.filter(m => m.id > currentMatch.id && !m.played);
   }
   
-  const completedMatches = matches.filter(m => m.id < currentMatch.id && m.played);
+  const completedMatches = filteredMatches.filter(m => m.id < currentMatch.id && m.played);
   
   const team1Players = teams[currentMatch.team1] || [];
   const team2Players = teams[currentMatch.team2] || [];

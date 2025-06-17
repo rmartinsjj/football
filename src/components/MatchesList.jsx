@@ -16,11 +16,16 @@ const MatchesList = ({
   settings
 }) => {
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
+  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   
   // Filter matches based on tournament type
+  const filteredMatches = matches.filter(match => 
+    activeTeams.includes(match.team1) && activeTeams.includes(match.team2)
+  );
+  
   const displayMatches = isWinnerStaysMode 
-    ? matches.filter(m => m.type === 'winner-stays' || !m.type) // Show winner-stays matches or matches without type (for backward compatibility)
-    : matches; // Show all matches for championship mode
+    ? filteredMatches.filter(m => m.type === 'winner-stays' || !m.type) // Show winner-stays matches or matches without type (for backward compatibility)
+    : filteredMatches; // Show all matches for championship mode
   
   return (
     <div className="p-4 bg-gray-900 min-h-screen">

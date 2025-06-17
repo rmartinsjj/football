@@ -7,7 +7,15 @@ const HomeScreen = ({
   setCurrentScreen, 
   coleteWinner,
   settings
-}) => (
+}) => {
+  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+  
+  // Filter matches to only include active teams
+  const filteredMatches = matches.filter(match => 
+    activeTeams.includes(match.team1) && activeTeams.includes(match.team2)
+  );
+  
+  return (
   <div className="min-h-screen pb-4 overflow-x-hidden">
     <div className="dark-card px-4 pt-6 pb-4">
       <div className="flex items-center justify-between">
@@ -47,7 +55,7 @@ const HomeScreen = ({
             <p className="text-gray-200 text-sm">{players.length} jogadores • {settings?.numberOfTeams || 4} times</p>
           </div>
           <div className="text-right">
-            <div className="text-xl font-bold">{matches.filter(m => m.played).length}/{matches.length}</div>
+            <div className="text-xl font-bold">{filteredMatches.filter(m => m.played).length}/{filteredMatches.length}</div>
             <p className="text-gray-200 text-sm">jogos</p>
           </div>
         </div>
@@ -144,6 +152,7 @@ const HomeScreen = ({
       </div>
     )}
   </div>
-);
+  );
+};
 
 export default HomeScreen;

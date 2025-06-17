@@ -10,15 +10,21 @@ const StandingsScreen = ({ matches, settings, onBack }) => {
   const [tiebreakerTeams, setTiebreakerTeams] = React.useState([]);
   
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
+  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+  
+  // Filter matches to only include active teams
+  const filteredMatches = matches.filter(match => 
+    activeTeams.includes(match.team1) && activeTeams.includes(match.team2)
+  );
   
   // Calculate standings based on tournament type
   const standings = isWinnerStaysMode 
-    ? calculateWinnerStaysStandings(matches)
-    : calculateStandings(matches.filter(m => m.type === 'regular'));
+    ? calculateWinnerStaysStandings(filteredMatches)
+    : calculateStandings(filteredMatches.filter(m => m.type === 'regular'));
   
   // Check if playoffs are complete to show final results
-  const finalMatch = matches.find(m => m.id === 14);
-  const thirdPlaceMatch = matches.find(m => m.id === 13);
+  const finalMatch = filteredMatches.find(m => m.id === 14);
+  const thirdPlaceMatch = filteredMatches.find(m => m.id === 13);
   const playoffsComplete = !isWinnerStaysMode && finalMatch?.played && thirdPlaceMatch?.played;
   
   let finalResults = null;
