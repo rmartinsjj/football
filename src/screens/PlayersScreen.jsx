@@ -58,9 +58,9 @@ const PlayersScreen = ({
       
       <div className="p-4">
         <div className="dark-card rounded-xl p-4 shadow-sm mb-4">
-          <h3 className="text-base font-semibold text-white mb-3">Adicionar Jogadores</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">Adicionar Jogadores</h3>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Lista completa (formato: 1. Nome):
@@ -69,34 +69,34 @@ const PlayersScreen = ({
                 value={playerListText}
                 onChange={(e) => setPlayerListText(e.target.value)}
                 placeholder="1. PV ( Lavou os coletes)&#10;2. Artulino&#10;3. Henrique..."
-                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg h-28 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full p-4 bg-gray-800 border border-gray-600 rounded-lg h-32 text-base text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               />
               <button
                 onClick={handleParsePlayerList}
                 disabled={!playerListText.trim()}
-                className="w-full mt-2 bg-gradient-to-r from-green-500 to-green-600 disabled:from-gray-600 disabled:to-gray-700 text-white p-3 rounded-lg font-medium transition-all duration-200 active:scale-95"
+                className="w-full mt-3 bg-gradient-to-r from-green-500 to-green-600 disabled:from-gray-600 disabled:to-gray-700 text-white p-4 rounded-lg font-medium text-base transition-all duration-200 active:scale-95"
               >
                 Adicionar Lista Completa
               </button>
             </div>
             
-            <div className="border-t border-gray-600 pt-3">
+            <div className="border-t border-gray-600 pt-4">
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Ou adicione individualmente:
               </label>
-              <div className="flex space-x-2">
+              <div className="flex space-x-3">
                 <input
                   type="text"
                   value={newPlayerName}
                   onChange={(e) => setNewPlayerName(e.target.value)}
                   placeholder="Nome do jogador"
-                  className="flex-1 p-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="flex-1 p-4 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                 />
                 <button
                   onClick={addPlayer}
-                  className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white p-3 rounded-lg transition-colors"
+                  className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white p-4 rounded-lg transition-colors"
                 >
-                  <Plus size={18} />
+                  <Plus size={20} />
                 </button>
               </div>
             </div>
@@ -104,36 +104,36 @@ const PlayersScreen = ({
         </div>
 
         <div className="dark-card rounded-xl shadow-sm">
-          <div className="p-4 border-b border-gray-600">
+          <div className="p-6 border-b border-gray-600">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-white">Lista de Jogadores</h3>
-              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+              <h3 className="text-lg font-semibold text-white">Lista de Jogadores</h3>
+              <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-base font-medium">
                 {players.length} jogadores
               </span>
             </div>
           </div>
           
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto">
             {players.length === 0 ? (
-              <div className="p-6 text-center">
-                <Users size={40} className="text-gray-500 mx-auto mb-3" />
-                <p className="text-gray-400">Nenhum jogador cadastrado</p>
+              <div className="p-8 text-center">
+                <Users size={48} className="text-gray-500 mx-auto mb-4" />
+                <p className="text-gray-400 text-base">Nenhum jogador cadastrado</p>
               </div>
             ) : (
-              <div className="space-y-1 p-3">
+              <div className="space-y-2 p-4">
                 {players.map((player, index) => (
-                  <div key={player.id} className="flex items-center justify-between p-3 hover:bg-gray-700 rounded-lg transition-colors">
+                  <div key={player.id} className="flex items-center justify-between p-4 hover:bg-gray-700 rounded-lg transition-colors">
                     <div className="flex items-center space-x-4">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-base">
                         {index + 1}
                       </div>
-                      <span className="font-medium text-white text-sm">{player.name}</span>
+                      <span className="font-medium text-white text-base flex-1 min-w-0">{player.name}</span>
                     </div>
                     <button
                       onClick={() => removePlayer(player.id)}
-                      className="text-red-400 hover:bg-red-900 active:bg-red-800 p-2 rounded-lg transition-colors"
+                      className="text-red-400 hover:bg-red-900 active:bg-red-800 p-3 rounded-lg transition-colors flex-shrink-0"
                     >
-                      <Minus size={14} />
+                      <Minus size={16} />
                     </button>
                   </div>
                 ))}

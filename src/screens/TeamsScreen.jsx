@@ -187,8 +187,8 @@ const TeamsScreen = ({
         {/* Seção de Sorteio/Re-sortear */}
         {!tournamentStarted ? (
           <div className="dark-card rounded-xl p-4 shadow-sm mb-4">
-            <h3 className="text-base font-semibold text-white mb-3">Sortear Times</h3>
-            <p className="text-gray-300 mb-4 text-sm">Distribua os {players.length} jogadores em 4 times automaticamente.</p>
+            <h3 className="text-lg font-semibold text-white mb-4">Sortear Times</h3>
+            <p className="text-gray-300 mb-6 text-base">Distribua os {players.length} jogadores em 4 times automaticamente.</p>
             
             {isDrawing ? (
               <div className="text-center py-8">
@@ -219,9 +219,9 @@ const TeamsScreen = ({
               <button
                 onClick={handleDrawTeams}
                 disabled={players.length === 0}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 disabled:from-gray-600 disabled:to-gray-700 text-white p-4 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all duration-200 active:scale-95"
+                className="w-full bg-gradient-to-r from-green-500 to-green-600 disabled:from-gray-600 disabled:to-gray-700 text-white p-5 rounded-lg font-medium text-base flex items-center justify-center space-x-3 transition-all duration-200 active:scale-95"
               >
-                <Shuffle size={20} />
+                <Shuffle size={24} />
                 <span>Sortear Times Automaticamente</span>
               </button>
             )}
@@ -229,7 +229,7 @@ const TeamsScreen = ({
         ) : (
           <div className="dark-card rounded-xl p-4 shadow-sm mb-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base font-semibold text-white">Controles dos Times</h3>
+              <h3 className="text-lg font-semibold text-white">Controles dos Times</h3>
               <button
                 onClick={toggleAllTeams}
                 className="text-gray-400 hover:text-gray-200 p-1 rounded transition-colors"
@@ -271,9 +271,9 @@ const TeamsScreen = ({
               ) : (
                 <button
                   onClick={handleReDraw}
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all duration-200 active:scale-95"
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-lg font-medium text-base flex items-center justify-center space-x-3 transition-all duration-200 active:scale-95"
                 >
-                  <RotateCcw size={18} />
+                  <RotateCcw size={20} />
                   <span>Re-sortear Times</span>
                 </button>
               )}
@@ -285,11 +285,11 @@ const TeamsScreen = ({
         <div className="grid grid-cols-1 gap-3">
           {Object.entries(teams).map(([teamName, teamPlayers]) => (
             <div key={teamName} className="dark-card rounded-xl shadow-sm overflow-hidden">
-              <div className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} p-3`}>
+              <div className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} p-4`}>
                 <div className="flex items-center justify-between text-white">
                   <div className="flex items-center space-x-3">
-                    <h3 className="font-bold text-base">{teamName}</h3>
-                    <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full text-xs">
+                    <h3 className="font-bold text-lg">{teamName}</h3>
+                    <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
                       {teamPlayers.length}
                     </span>
                   </div>
@@ -297,21 +297,21 @@ const TeamsScreen = ({
                     {tournamentStarted && (
                       <button
                         onClick={() => openPlayerManagement(teamName)}
-                        className="bg-white bg-opacity-20 hover:bg-opacity-30 p-1.5 rounded-full transition-colors"
+                        className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full transition-colors"
                         title="Editar jogadores"
                       >
-                        <Edit3 size={14} />
+                        <Edit3 size={16} />
                       </button>
                     )}
                     <button
                       onClick={() => toggleTeamExpansion(teamName)}
-                      className="bg-white bg-opacity-20 hover:bg-opacity-30 p-1.5 rounded-full transition-colors"
+                      className="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full transition-colors"
                       title={expandedTeams[teamName] ? "Recolher" : "Expandir"}
                     >
                       {expandedTeams[teamName] ? (
-                        <ChevronUp size={14} />
+                        <ChevronUp size={16} />
                       ) : (
-                        <ChevronDown size={14} />
+                        <ChevronDown size={16} />
                       )}
                     </button>
                   </div>
@@ -319,26 +319,26 @@ const TeamsScreen = ({
               </div>
               
               {expandedTeams[teamName] && (
-                <div className="p-3">
+                <div className="p-4">
                   {teamPlayers.length === 0 ? (
-                    <p className="text-gray-400 text-center py-4 text-sm">Nenhum jogador sorteado</p>
+                    <p className="text-gray-400 text-center py-6 text-base">Nenhum jogador sorteado</p>
                   ) : (
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       {teamPlayers.map((player, index) => (
-                        <div key={player.id} className="flex items-center justify-between p-2 bg-gray-700 rounded-lg">
+                        <div key={player.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
                           <div className="flex items-center space-x-3">
-                            <div className={`w-6 h-6 ${TEAM_COLORS[teamName].bg} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
+                            <div className={`w-8 h-8 ${TEAM_COLORS[teamName].bg} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
                               {index + 1}
                             </div>
-                            <span className="font-medium text-white text-sm">{player.name}</span>
+                            <span className="font-medium text-white text-base flex-1 min-w-0">{player.name}</span>
                           </div>
                           {tournamentStarted && (
                             <button
                               onClick={() => removePlayerFromTeam(player.id, teamName)}
-                              className="text-red-400 hover:bg-red-900 p-1 rounded transition-colors"
+                              className="text-red-400 hover:bg-red-900 p-2 rounded transition-colors flex-shrink-0"
                               title="Remover jogador"
                             >
-                              <UserMinus size={14} />
+                              <UserMinus size={16} />
                             </button>
                           )}
                         </div>

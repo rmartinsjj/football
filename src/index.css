@@ -108,6 +108,19 @@
       min-width: 100vw !important;
       max-width: 100vw !important;
     }
+    
+    /* Ensure proper text rendering and prevent truncation */
+    * {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+    
+    /* Fix container widths to prevent text cutoff */
+    .container, .dark-card, .rounded-xl, .rounded-lg {
+      min-width: 0 !important;
+      flex-shrink: 0;
+    }
   }
 }
 
