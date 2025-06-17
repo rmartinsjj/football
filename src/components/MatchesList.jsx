@@ -35,34 +35,50 @@ const MatchesList = ({
   return (
     <div className="p-4 bg-gray-900 min-h-screen">
       {activeMatch && (
-        <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-xl p-4 text-white mb-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-3">
-              <span className="font-bold">⏱️ Jogo {activeMatch}</span>
-              <span className="text-xl font-bold">{formatTime(timer)}</span>
-            </div>
-            <div className="flex space-x-2">
-              {!isTimerRunning ? (
-                <button
-                  onClick={resumeTimer}
-                  className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
-                >
-                  <Play size={12} />
-                </button>
-              ) : (
-                <button
-                  onClick={pauseTimer}
-                  className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
-                >
-                  <Pause size={12} />
-                </button>
-              )}
-              <button
-                onClick={() => resetTimer()}
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
-              >
-                <RotateCcw size={12} />
-              </button>
+        <div 
+          className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
+          style={{
+            backgroundImage: 'url(/1245151 copy.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'top center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl"></div>
+          
+          <div className="relative z-10">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-base font-semibold mb-1">⏱️ Jogo {activeMatch}</h3>
+                <p className="text-gray-200 text-sm">Partida em andamento</p>
+              </div>
+              <div className="text-right">
+                <div className="text-xl font-bold">{formatTime(timer)}</div>
+                <div className="flex space-x-1 mt-1 justify-end">
+                  {!isTimerRunning ? (
+                    <button
+                      onClick={resumeTimer}
+                      className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                    >
+                      <Play size={12} />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={pauseTimer}
+                      className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                    >
+                      <Pause size={12} />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => resetTimer()}
+                    className="bg-white bg-opacity-20 hover:bg-opacity-30 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                  >
+                    <RotateCcw size={12} />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
