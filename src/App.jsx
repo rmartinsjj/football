@@ -196,7 +196,7 @@ const App = () => {
   };
 
   return (
-    <div className="w-full min-w-full max-w-full min-h-screen relative overflow-x-hidden" style={{ touchAction: 'pan-y', minWidth: '100vw' }}>
+    <div className="w-full min-h-screen relative overflow-x-hidden" style={{ touchAction: 'pan-y' }}>
       {renderCurrentScreen()}
     </div>
   );
