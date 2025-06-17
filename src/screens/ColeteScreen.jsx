@@ -370,9 +370,41 @@ const ColeteScreen = ({
         )}
 
         {coleteWinner && (
-          <div className="mt-6 bg-red-900 border-l-4 border-red-500 p-4 rounded-lg">
-            <h4 className="font-bold text-red-200">🧽 Resultado do Sorteio</h4>
-            <p className="text-red-300">{coleteWinner.name} foi sorteado para lavar o colete!</p>
+          <div className="mt-6 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-2xl p-6 text-center shadow-2xl border-2 border-red-400">
+            <div className="mb-4">
+              <div className="text-3xl mb-2">🧽</div>
+              <h2 className="text-xl font-bold text-white mb-1">RESULTADO DO SORTEIO</h2>
+              <p className="text-red-100 text-sm">Quem vai lavar o colete</p>
+            </div>
+            
+            <div className="flex items-center justify-between bg-white bg-opacity-10 rounded-xl p-4 mb-4">
+              {/* Imagem do Jesus */}
+              <div className="flex-shrink-0">
+                <img 
+                  src="/lavarcolete.png" 
+                  alt="Jesus" 
+                  className="w-16 h-16 object-contain filter brightness-0 invert"
+                  title="Jesus"
+                />
+              </div>
+              
+              {/* Frase personalizada */}
+              <div className="flex-1 ml-4 text-left">
+                <p className="text-white text-base leading-relaxed font-medium">
+                  O colete é seu, <span className="font-bold text-yellow-200 text-lg">{coleteWinner.name}</span>. 
+                  Lembre-se: amaciante Downy, porque tem muitos alérgicos!
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <button
+                onClick={() => setColeteWinner(null)}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+              >
+                Fechar Resultado
+              </button>
+            </div>
           </div>
         )}
       </div>
