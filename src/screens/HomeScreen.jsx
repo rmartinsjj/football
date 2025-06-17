@@ -5,7 +5,8 @@ const HomeScreen = ({
   players, 
   matches, 
   setCurrentScreen, 
-  coleteWinner 
+  coleteWinner,
+  settings
 }) => (
   <div className="min-h-screen pb-4 overflow-x-hidden">
     <div className="dark-card px-4 pt-6 pb-4">
@@ -43,7 +44,7 @@ const HomeScreen = ({
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-base font-semibold mb-1">Torneio Ativo</h3>
-            <p className="text-gray-200 text-sm">{players.length} jogadores • 4 times</p>
+            <p className="text-gray-200 text-sm">{players.length} jogadores • {settings?.numberOfTeams || 4} times</p>
           </div>
           <div className="text-right">
             <div className="text-xl font-bold">{matches.filter(m => m.played).length}/{matches.length}</div>
