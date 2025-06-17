@@ -383,13 +383,13 @@ const ColeteScreen = ({
                 <img 
                   src="/lavarcolete.png" 
                   alt="Jesus" 
-                  className="w-16 h-16 object-contain filter brightness-0 invert"
+                  className="w-24 h-24 object-contain filter brightness-0 invert"
                   title="Jesus"
                 />
               </div>
               
               {/* Frase personalizada */}
-              <div className="flex-1 ml-4 text-left">
+              <div className="flex-1 ml-3 text-left">
                 <p className="text-white text-base leading-relaxed font-medium">
                   O colete é seu, <span className="font-bold text-yellow-200 text-lg">{coleteWinner.name}</span>. 
                   Lembre-se: amaciante Downy, porque tem muitos alérgicos!
