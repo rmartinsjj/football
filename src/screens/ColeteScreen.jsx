@@ -388,7 +388,7 @@ const ColeteScreen = ({
               
               {/* Frase personalizada - Menor e Centralizada */}
               <div className="text-center">
-                <p className="text-white text-sm leading-relaxed font-medium">
+                <p className="text-white text-sm leading-relaxed font-medium break-words px-2">
                   O colete é seu, <span className="font-bold text-yellow-200 text-lg">{coleteWinner.name}</span>. 
                   Lembre-se: amaciante Downy, porque tem muitos alérgicos!
                 </p>
