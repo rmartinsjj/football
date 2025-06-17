@@ -65,7 +65,7 @@ const SettingsScreen = ({
   const availableTeamsToAdd = AVAILABLE_TEAMS.filter(team => !localSettings.activeTeams.includes(team));
 
   return (
-    <div className="min-h-screen pb-20 overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden pb-20">
       <Header title="Configurações" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Toast Message */}
