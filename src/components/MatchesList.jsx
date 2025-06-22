@@ -8,6 +8,7 @@ const MatchesList = ({
   isTimerRunning,
   activeMatch,
   startMatchTimer,
+  setTimerForMatch,
   pauseTimer,
   resumeTimer,
   resetTimer,

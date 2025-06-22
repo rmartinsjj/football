@@ -18,6 +18,7 @@ const LiveFieldView = ({
   activeMatch,
   setActiveMatch,
   startMatchTimer,
+  setTimerForMatch,
   pauseTimer,
   resumeTimer,
   resetTimer,
@@ -695,6 +696,7 @@ const LiveFieldView = ({
           activeMatch={activeMatch}
           isTimerRunning={isTimerRunning}
           startMatchTimer={startMatchTimer}
+          setTimerForMatch={setTimerForMatch}
           pauseTimer={pauseTimer}
           resumeTimer={resumeTimer}
           resetTimer={resetTimer}
@@ -1068,8 +1070,9 @@ const LiveFieldView = ({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setActiveMatch(match.id);
-                      // Don't auto-start timer, just set as active
+                      // Set as active match and reset timer to correct duration
+                      const isFinal = match.id > 12 || match.type === 'final' || match.type === 'third_place' || match.type === 'winner-stays';
+                      setTimerForMatch(match.id, isFinal);
                     }}
                     className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-2 py-1 rounded-lg text-xs transition-colors"
                   >
