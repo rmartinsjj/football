@@ -24,8 +24,8 @@ const HomeScreen = ({
   return (
   <div className="min-h-screen overflow-x-hidden pb-24">
     {/* Custom header for home screen with logo and settings */}
-    <div className="fixed top-0 left-0 right-0 z-[9999] w-full">
-      <div className="bg-gray-900/95 backdrop-blur-md border-b border-gray-700 px-4 py-3 flex items-center justify-between h-16 shadow-lg">
+    <div className="fixed top-0 left-0 right-0 z-[9999] w-full bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-lg">
+      <div className="px-4 py-3 flex items-center justify-between h-16" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
         <img 
           src="/logoespacoappfootball.png" 
           alt="Espaço Novo Tempo" 
@@ -43,7 +43,7 @@ const HomeScreen = ({
     </div>
     
     {/* Content with proper top padding to account for fixed header */}
-    <div className="pt-20 px-4 pb-4">
+    <div className="px-4 pb-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
       <div 
         className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
         style={{

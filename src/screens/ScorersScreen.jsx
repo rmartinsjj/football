@@ -33,7 +33,7 @@ const ScorersScreen = ({ matchEvents, setMatchEvents, setCurrentScreen, onBack }
       <Header title="Artilheiros" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Content with proper top padding to account for fixed header */}
-      <div className="pt-20 p-6">
+      <div className="p-6" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
         <div className="dark-card rounded-2xl shadow-sm overflow-hidden mb-6">
           <div className="p-6 border-b border-gray-600">
             <h3 className="text-lg font-semibold text-white">Tabela de Artilheiros</h3>

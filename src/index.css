@@ -19,6 +19,8 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    /* Support for safe area insets */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
   
   body {
@@ -119,22 +121,13 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  /* Header specific fixes */
-  .header-fixed {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000 !important;
-    width: 100% !important;
-    background: rgba(30, 32, 42, 0.95) !important;
-    backdrop-filter: blur(15px) !important;
-    -webkit-backdrop-filter: blur(15px) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  /* Safe area and header utilities */
+  .header-safe-area {
+    padding-top: max(12px, env(safe-area-inset-top));
   }
   
-  .content-with-header {
-    padding-top: 64px !important; /* Height of header */
+  .content-safe-area {
+    padding-top: max(80px, calc(64px + env(safe-area-inset-top)));
   }
 }
 

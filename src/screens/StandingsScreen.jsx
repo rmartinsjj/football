@@ -79,7 +79,7 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
       <Header title="Classificação" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Content with proper top padding to account for fixed header */}
-      <div className="pt-20 p-6">
+      <div className="p-6" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
         {/* Tiebreaker Modal */}
         <TiebreakerModal
           isOpen={showTiebreaker}

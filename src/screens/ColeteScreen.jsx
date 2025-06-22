@@ -131,7 +131,7 @@ const ColeteScreen = ({
       />
       
       {/* Content with proper top padding to account for fixed header */}
-      <div className="pt-20 p-6">
+      <div className="p-6" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
         {championPlayers.length > 0 && (
           <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
             <h3 className="text-lg font-semibold text-white mb-4">

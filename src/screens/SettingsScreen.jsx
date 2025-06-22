@@ -167,7 +167,7 @@ const SettingsScreen = ({
       )}
       
       {/* Content with proper top padding to account for fixed header */}
-      <div className="pt-20 p-6">
+      <div className="p-6" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
         {/* Tempo das Partidas */}
         <div className="dark-card rounded-2xl p-6 shadow-sm mb-6">
           <div className="flex items-center space-x-3 mb-4">
