@@ -340,15 +340,6 @@ const LiveFieldView = ({
       setShowNextGameButton(true);
       showToastMessage(result.message, 'success');
       
-      // Generate next match after a delay to ensure state is updated
-      setTimeout(() => {
-        const nextMatch = generateNextWinnerStaysMatch(updated, result.newWinnerTeam, teams, activeTeams);
-        if (nextMatch) {
-          console.log('Generated next match:', nextMatch);
-          setMatches(prev => [...prev, nextMatch]);
-        }
-      }, 500);
-      
       return;
     }
     
@@ -455,13 +446,16 @@ const LiveFieldView = ({
     setActiveMatch(null); // Limpar o activeMatch
     
     if (isWinnerStaysMode) {
-      // For winner-stays, find the next unplayed match
-      const nextMatch = filteredMatches.find(m => !m.played);
-      if (nextMatch) {
-        console.log('Going to next winner-stays match:', nextMatch);
-        setTimeout(() => setActiveMatch(nextMatch.id), 100);
-      } else {
-        console.log('No next match available in winner-stays mode');
+      // Generate next match for winner-stays mode
+      if (settings.currentWinnerTeam) {
+        const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
+        if (nextMatch) {
+          console.log('🎲 Generated next winner-stays match:', nextMatch);
+          setMatches(prev => [...prev, nextMatch]);
+          setTimeout(() => setActiveMatch(nextMatch.id), 100);
+        } else {
+          showToastMessage('❌ Não foi possível gerar próximo desafio!', 'error');
+        }
       }
     } else {
       const nextMatch = filteredMatches.find(m => currentMatch && m.id > currentMatch.id && !m.played);
@@ -716,8 +710,11 @@ const LiveFieldView = ({
               onClick={() => {
                 const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
                 if (nextMatch) {
+                  console.log('🎲 Manual generation of next match:', nextMatch);
                   setMatches(prev => [...prev, nextMatch]);
                   setActiveMatch(nextMatch.id);
+                } else {
+                  showToastMessage('❌ Não foi possível gerar próximo desafio!', 'error');
                 }
               }}
               className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
@@ -997,15 +994,18 @@ const LiveFieldView = ({
                     if (settings.currentWinnerTeam) {
                       const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
                       if (nextMatch) {
+                        console.log('🎲 Quick generation of next match:', nextMatch);
                         setMatches(prev => [...prev, nextMatch]);
                         setActiveMatch(nextMatch.id);
+                      } else {
+                        showToastMessage('❌ Não foi possível gerar próximo desafio!', 'error');
                       }
                     } else {
                       showToastMessage('⚠️ Termine o primeiro jogo para definir quem fica!', 'error');
                     }
                   }}
                   disabled={!settings.currentWinnerTeam}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-xs transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-3 py-1 rounded-lg text-xs transition-colors"
                 >
                   Gerar Próximo Desafio
                 </button>
