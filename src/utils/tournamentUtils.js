@@ -146,25 +146,34 @@ export const generatePlayoffMatches = (matches, standings) => {
   return updatedMatches;
 };
 
-// Generate next match for winner-stays mode
+// Generate next match for winner-stays mode - CORRIGIDO
 export const generateNextWinnerStaysMatch = (matches, currentWinnerTeam, teams, activeTeams = null) => {
+  console.log('Generating next winner-stays match:', { currentWinnerTeam, activeTeams });
+  
   const teamNames = activeTeams || Object.keys(teams);
   const availableTeams = teamNames.filter(team => team !== currentWinnerTeam);
   
+  console.log('Available challenger teams:', availableTeams);
+  
   if (availableTeams.length === 0) {
+    console.log('No teams available to challenge');
     return null; // No teams available to challenge
   }
   
   // Pick a random challenger from available teams
   const challengerTeam = availableTeams[Math.floor(Math.random() * availableTeams.length)];
   
-  // Find the next match ID
-  const lastMatchId = Math.max(...matches.map(m => m.id), 0);
+  // Find the next sequential match ID for winner-stays matches
+  const winnerStaysMatches = matches.filter(m => m.type === 'winner-stays' || !m.type);
+  const lastWinnerStaysId = winnerStaysMatches.length > 0 ? Math.max(...winnerStaysMatches.map(m => m.id)) : 0;
+  const nextId = lastWinnerStaysId + 1;
+  
+  console.log('Creating new match:', { id: nextId, winner: currentWinnerTeam, challenger: challengerTeam });
   
   return {
-    id: lastMatchId + 1,
-    team1: currentWinnerTeam,
-    team2: challengerTeam,
+    id: nextId,
+    team1: currentWinnerTeam, // O time que fica sempre é o team1
+    team2: challengerTeam,    // O desafiante sempre é o team2
     score1: null,
     score2: null,
     played: false,
@@ -172,39 +181,54 @@ export const generateNextWinnerStaysMatch = (matches, currentWinnerTeam, teams, 
   };
 };
 
-// Get winner-stays standings (just track wins for each team)
+// Get winner-stays standings - CORRIGIDO
 export const calculateWinnerStaysStandings = (matches) => {
+  console.log('Calculating winner-stays standings for matches:', matches);
+  
   // Get unique teams from matches to create dynamic standings
   const teams = [...new Set(matches.flatMap(m => [m.team1, m.team2]))];
   const standings = {};
   
   teams.forEach(team => {
-    standings[team] = { wins: 0, matches: 0 };
+    standings[team] = { wins: 0, matches: 0, draws: 0, losses: 0 };
   });
 
-  matches.forEach(match => {
-    if (match.played === true && match.type === 'winner-stays') {
-      const score1 = parseInt(match.score1 ?? 0) || 0;
-      const score2 = parseInt(match.score2 ?? 0) || 0;
-      
-      standings[match.team1].matches++;
-      standings[match.team2].matches++;
-      
-      if (score1 > score2) {
-        // Team1 won
-        standings[match.team1].wins++;
-      } else if (score2 > score1) {
-        // Team2 won
-        standings[match.team2].wins++;
-      } else {
-        // Tie - in winner-stays mode, the challenger (team2) becomes the new winner
-        // So we give the "win" to team2 (the challenger)
-        standings[match.team2].wins++;
-      }
+  // Processar apenas jogos do tipo winner-stays que foram finalizados
+  const winnerStaysMatches = matches.filter(match => 
+    match.played === true && (match.type === 'winner-stays' || !match.type)
+  );
+  
+  console.log('Processing winner-stays matches:', winnerStaysMatches);
+
+  winnerStaysMatches.forEach(match => {
+    const score1 = parseInt(match.score1 ?? 0) || 0;
+    const score2 = parseInt(match.score2 ?? 0) || 0;
+    
+    console.log(`Processing match ${match.id}: ${match.team1} ${score1} x ${score2} ${match.team2}`);
+    
+    standings[match.team1].matches++;
+    standings[match.team2].matches++;
+    
+    if (score1 > score2) {
+      // Team1 (quem estava) venceu
+      standings[match.team1].wins++;
+      standings[match.team2].losses++;
+      console.log(`${match.team1} won and stays`);
+    } else if (score2 > score1) {
+      // Team2 (desafiante) venceu
+      standings[match.team2].wins++;
+      standings[match.team1].losses++;
+      console.log(`${match.team2} won and becomes new winner`);
+    } else {
+      // Empate - no modo "quem ganha fica", empate = desafiante vira o novo vencedor
+      standings[match.team2].wins++; // Desafiante "ganha" com o empate
+      standings[match.team1].draws++;
+      standings[match.team2].draws++;
+      console.log(`Draw: ${match.team2} becomes new winner`);
     }
   });
   
-  return Object.entries(standings)
+  const result = Object.entries(standings)
     .map(([team, stats]) => ({ 
       team, 
       ...stats,
@@ -215,9 +239,12 @@ export const calculateWinnerStaysStandings = (matches) => {
       if (b.wins !== a.wins) return b.wins - a.wins;
       return parseFloat(b.winRate) - parseFloat(a.winRate);
     });
+    
+  console.log('Final winner-stays standings:', result);
+  return result;
 };
 
-// Winner-stays logic: handle match results for "quem ganha fica" mode
+// Winner-stays logic - CORRIGIDO
 export const handleWinnerStaysMatch = (match, currentWinnerTeam) => {
   const score1 = parseInt(match.score1 ?? 0) || 0;
   const score2 = parseInt(match.score2 ?? 0) || 0;
@@ -225,39 +252,62 @@ export const handleWinnerStaysMatch = (match, currentWinnerTeam) => {
   let newWinnerTeam = currentWinnerTeam;
   let message = '';
   
+  console.log('Handling winner-stays match:', { 
+    match: `${match.team1} ${score1} x ${score2} ${match.team2}`, 
+    currentWinner: currentWinnerTeam 
+  });
+  
   if (score1 > score2) {
-    // Team1 won
+    // Team1 venceu
     newWinnerTeam = match.team1;
     if (currentWinnerTeam === match.team1) {
-      message = `🏆 ${match.team1} continua vencendo e permanece em campo!`;
+      message = `🏆 ${match.team1} venceu e continua em campo!`;
     } else {
-      message = `🏆 ${match.team1} venceu e agora é o time que fica em campo!`;
+      message = `🏆 ${match.team1} venceu e agora é o time que fica!`;
     }
   } else if (score2 > score1) {
-    // Team2 won
+    // Team2 venceu
     newWinnerTeam = match.team2;
-    if (currentWinnerTeam === match.team2) {
-      message = `🏆 ${match.team2} continua vencendo e permanece em campo!`;
-    } else {
-      message = `🏆 ${match.team2} venceu e agora é o time que fica em campo!`;
-    }
+    message = `🏆 ${match.team2} venceu e agora é o time que fica!`;
   } else {
-    // Tie - the team that tied with the current winner becomes the new winner
-    if (currentWinnerTeam === match.team1) {
-      newWinnerTeam = match.team2;
-      message = `🤝 Empate! ${match.team2} empatou com o atual vencedor e agora fica em campo!`;
-    } else if (currentWinnerTeam === match.team2) {
-      newWinnerTeam = match.team1;
-      message = `🤝 Empate! ${match.team1} empatou com o atual vencedor e agora fica em campo!`;
-    } else {
-      // First match or no current winner - randomly pick one
-      newWinnerTeam = Math.random() < 0.5 ? match.team1 : match.team2;
-      message = `🤝 Empate! ${newWinnerTeam} foi sorteado para ficar em campo!`;
-    }
+    // Empate - no modo "quem ganha fica", o desafiante (team2) sempre vira o novo vencedor
+    newWinnerTeam = match.team2;
+    message = `🤝 Empate! ${match.team2} empatou e agora fica em campo!`;
   }
+  
+  console.log('Result:', { newWinnerTeam, message });
   
   return {
     newWinnerTeam,
     message
+  };
+};
+
+// Initialize winner-stays mode with first match - NOVO
+export const initializeWinnerStaysMode = (teams, activeTeams) => {
+  const teamNames = activeTeams || Object.keys(teams);
+  
+  if (teamNames.length < 2) {
+    return { matches: [], currentWinner: null };
+  }
+  
+  // Escolher dois times aleatórios para o primeiro jogo
+  const shuffledTeams = shuffleArray([...teamNames]);
+  const team1 = shuffledTeams[0];
+  const team2 = shuffledTeams[1];
+  
+  const firstMatch = {
+    id: 1,
+    team1: team1,
+    team2: team2,
+    score1: null,
+    score2: null,
+    played: false,
+    type: 'winner-stays'
+  };
+  
+  return {
+    matches: [firstMatch],
+    currentWinner: null // Será definido após o primeiro jogo
   };
 };

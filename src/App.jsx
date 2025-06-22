@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { INITIAL_MATCHES, INITIAL_TEAMS, AVAILABLE_TEAMS } from './constants';
 import { useTimer } from './hooks/useTimer';
 import { TIMER_DURATION } from './constants';
+import { initializeWinnerStaysMode } from './utils/tournamentUtils';
 
 // Screen Components
 import HomeScreen from './screens/HomeScreen';
@@ -36,6 +37,27 @@ const App = () => {
     currentWinnerTeam: null, // For winner-stays mode
   });
 
+  // Initialize winner-stays mode when tournament type changes
+  React.useEffect(() => {
+    if (settings.tournamentType === 'winner-stays' && matches.length === INITIAL_MATCHES.length) {
+      // Only initialize if we're still using the default championship matches
+      const { matches: winnerStaysMatches, currentWinner } = initializeWinnerStaysMode(teams, settings.activeTeams);
+      if (winnerStaysMatches.length > 0) {
+        setMatches(winnerStaysMatches);
+        setSettings(prev => ({
+          ...prev,
+          currentWinnerTeam: currentWinner
+        }));
+      }
+    } else if (settings.tournamentType === 'championship' && matches.some(m => m.type === 'winner-stays')) {
+      // Reset to championship matches if switching back
+      setMatches(INITIAL_MATCHES);
+      setSettings(prev => ({
+        ...prev,
+        currentWinnerTeam: null
+      }));
+    }
+  }, [settings.tournamentType, settings.activeTeams]);
   // Timer hook
   const {
     timer,

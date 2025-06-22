@@ -66,15 +66,21 @@ const LiveFieldView = ({
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   
-  // Filter matches to only include active teams, but keep playoff structure
-  const filteredMatches = matches.filter(match => {
-    // Always keep playoff matches (they will be populated with correct teams)
-    if (match.type === 'final' || match.type === 'third_place') {
-      return true;
-    }
-    // For regular matches, only include if both teams are active
-    return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
-  });
+  // Filter matches based on mode and active teams
+  const filteredMatches = isWinnerStaysMode 
+    ? matches.filter(match => 
+        (match.type === 'winner-stays' || !match.type) && 
+        activeTeams.includes(match.team1) && 
+        activeTeams.includes(match.team2)
+      )
+    : matches.filter(match => {
+        // Always keep playoff matches (they will be populated with correct teams)
+        if (match.type === 'final' || match.type === 'third_place') {
+          return true;
+        }
+        // For regular matches, only include if both teams are active
+        return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
+      });
   
   let standings, updatedMatches;
   
@@ -86,20 +92,23 @@ const LiveFieldView = ({
     updatedMatches = generatePlayoffMatches(filteredMatches, standings);
   }
   
-  const currentMatch = updatedMatches.find(m => m.id === activeMatch) || updatedMatches.find(m => !m.played) || updatedMatches[0];
+  // Find current match - prioritize active match, then first unplayed match
+  const currentMatch = updatedMatches.find(m => m.id === activeMatch) || 
+                      updatedMatches.find(m => !m.played) || 
+                      updatedMatches[updatedMatches.length - 1]; // Last match if all played
   
   let remainingMatches;
   if (isWinnerStaysMode) {
-    // For winner-stays, only show the current match if it exists and isn't played
-    remainingMatches = currentMatch && !currentMatch.played ? [currentMatch] : [];
+    // For winner-stays, show current unplayed match
+    remainingMatches = updatedMatches.filter(m => !m.played);
   } else {
-    remainingMatches = updatedMatches.filter(m => m.id > currentMatch.id && !m.played);
+    remainingMatches = updatedMatches.filter(m => currentMatch && m.id > currentMatch.id && !m.played);
   }
   
-  const completedMatches = filteredMatches.filter(m => m.id < currentMatch.id && m.played);
+  const completedMatches = filteredMatches.filter(m => currentMatch && m.id < currentMatch.id && m.played);
   
-  const team1Players = teams[currentMatch.team1] || [];
-  const team2Players = teams[currentMatch.team2] || [];
+  const team1Players = currentMatch ? (teams[currentMatch.team1] || []) : [];
+  const team2Players = currentMatch ? (teams[currentMatch.team2] || []) : [];
 
   // Update matches if playoff matches were generated
   React.useEffect(() => {
@@ -292,20 +301,19 @@ const LiveFieldView = ({
   };
   // Finalizar jogo - playoffs não afetam pontuação regular
   const finishMatch = () => {
+    if (!currentMatch) {
+      showToastMessage('❌ Nenhum jogo ativo para finalizar!', 'error');
+      return;
+    }
+    
     const score1 = currentMatch.score1 || 0;
     const score2 = currentMatch.score2 || 0;
     
     // Handle winner-stays mode
     if (isWinnerStaysMode) {
-      const result = handleWinnerStaysMatch(currentMatch, settings.currentWinnerTeam);
+      console.log('Finishing winner-stays match:', currentMatch);
       
-      // Update the current winner in settings
-      setSettings(prev => ({
-        ...prev,
-        currentWinnerTeam: result.newWinnerTeam
-      }));
-      
-      // Mark current match as played
+      // Mark current match as played first
       const updatedMatch = { 
         ...currentMatch, 
         played: true,
@@ -313,25 +321,34 @@ const LiveFieldView = ({
         score2: score2
       };
       
+      const result = handleWinnerStaysMatch(updatedMatch, settings.currentWinnerTeam);
+      
+      console.log('Winner-stays result:', result);
+      
+      // Update the current winner in settings
+      setSettings(prev => ({
+        ...prev,
+        currentWinnerTeam: result.newWinnerTeam
+      }));
+      
+      // Update matches
       setMatches(prev => {
-        const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
-        
-        // Generate next match
-        const nextMatch = generateNextWinnerStaysMatch(updated, result.newWinnerTeam, teams, activeTeams);
-        if (nextMatch) {
-          return [...updated, nextMatch];
-        }
-        return updated;
+        return prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
       });
       
       setActiveMatch(null);
       setShowNextGameButton(true);
       showToastMessage(result.message, 'success');
       
-      // Force re-calculation of standings
+      // Generate next match after a delay to ensure state is updated
       setTimeout(() => {
-        console.log('Winner-stays match finished, standings should update now');
-      }, 100);
+        const nextMatch = generateNextWinnerStaysMatch(updated, result.newWinnerTeam, teams, activeTeams);
+        if (nextMatch) {
+          console.log('Generated next match:', nextMatch);
+          setMatches(prev => [...prev, nextMatch]);
+        }
+      }, 500);
+      
       return;
     }
     
@@ -438,13 +455,16 @@ const LiveFieldView = ({
     setActiveMatch(null); // Limpar o activeMatch
     
     if (isWinnerStaysMode) {
-      // For winner-stays, the next match should already be generated
-      const nextMatch = matches.find(m => !m.played);
+      // For winner-stays, find the next unplayed match
+      const nextMatch = filteredMatches.find(m => !m.played);
       if (nextMatch) {
+        console.log('Going to next winner-stays match:', nextMatch);
         setTimeout(() => setActiveMatch(nextMatch.id), 100);
+      } else {
+        console.log('No next match available in winner-stays mode');
       }
     } else {
-      const nextMatch = matches.find(m => m.id > currentMatch.id && !m.played);
+      const nextMatch = filteredMatches.find(m => currentMatch && m.id > currentMatch.id && !m.played);
       if (nextMatch) {
         // NÃO iniciar o timer automaticamente - apenas definir como próximo jogo ativo
         setTimeout(() => setActiveMatch(nextMatch.id), 100);
@@ -632,6 +652,17 @@ const LiveFieldView = ({
           </div>
         )}
         
+        {/* Show message if no current winner yet */}
+        {isWinnerStaysMode && !settings.currentWinnerTeam && (
+          <div className="mt-2 text-center">
+            <div className="bg-purple-600 rounded-lg p-2">
+              <span className="text-white text-xs font-bold">
+                ⚡ Aguardando primeiro jogo para definir quem fica
+              </span>
+            </div>
+          </div>
+        )}
+        
         {/* Show tournament results button if complete */}
         {!isWinnerStaysMode && playoffResults.champion && (
           <div className="mt-2 text-center">
@@ -646,6 +677,7 @@ const LiveFieldView = ({
       </div>
 
       {/* Match Header */}
+      {currentMatch && (
       <div className="dark-card mx-3 mt-3 rounded-xl shadow-sm overflow-hidden">
         <LiveFieldViewMatchHeader
           currentMatch={currentMatch}
@@ -666,6 +698,35 @@ const LiveFieldView = ({
           penaltyScore={penaltyScore}
         />
       </div>
+      )}
+      
+      {/* No current match message for winner-stays */}
+      {isWinnerStaysMode && !currentMatch && (
+        <div className="dark-card mx-3 mt-3 rounded-xl p-6 text-center">
+          <div className="text-4xl mb-3">⚡</div>
+          <h3 className="text-white font-bold text-lg mb-2">Nenhum Desafio Ativo</h3>
+          <p className="text-gray-400 mb-4">
+            {settings.currentWinnerTeam 
+              ? `${settings.currentWinnerTeam} está esperando um desafiante!`
+              : 'Inicie o primeiro jogo para começar o modo "Quem Ganha Fica"'
+            }
+          </p>
+          {settings.currentWinnerTeam && (
+            <button
+              onClick={() => {
+                const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
+                if (nextMatch) {
+                  setMatches(prev => [...prev, nextMatch]);
+                  setActiveMatch(nextMatch.id);
+                }
+              }}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              🎲 Gerar Próximo Desafio
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Goalkeeper Configuration */}
       {showGoalkeeperConfig && (
@@ -705,6 +766,7 @@ const LiveFieldView = ({
         onDecision={handleTiebreakerDecision}
       />
       {/* Campo de Futebol */}
+      {currentMatch && (
       <div className="dark-card mx-3 mt-3 rounded-xl shadow-sm overflow-hidden">
         <div className="relative bg-green-600 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 225">
@@ -811,8 +873,10 @@ const LiveFieldView = ({
           })}
         </div>
       </div>
+      )}
 
       {/* Gols da Partida em Duas Colunas */}
+      {currentMatch && (
       <div className="dark-card mx-3 mt-3 rounded-xl p-3 shadow-sm">
         <h3 className="text-white font-bold mb-2 text-sm text-center">
           Gols da Partida
@@ -874,8 +938,10 @@ const LiveFieldView = ({
           </div>
         )}
       </div>
+      )}
 
       {/* Atualizar Placar */}
+      {currentMatch && (
       <div className="dark-card mx-3 mt-3 rounded-xl p-3 shadow-sm">
         <h3 className="text-white font-bold mb-2 text-center text-sm">Atualizar Placar</h3>
         <div className="flex items-center justify-center space-x-4">
@@ -912,6 +978,7 @@ const LiveFieldView = ({
           </div>
         </div>
       </div>
+      )}
 
       {/* Próximos Jogos */}
       <div className="dark-card mx-3 mt-3 rounded-xl p-3 shadow-sm">
@@ -927,11 +994,17 @@ const LiveFieldView = ({
               <div className="mt-2">
                 <button
                   onClick={() => {
-                    const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
-                    if (nextMatch) {
-                      setMatches(prev => [...prev, nextMatch]);
+                    if (settings.currentWinnerTeam) {
+                      const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
+                      if (nextMatch) {
+                        setMatches(prev => [...prev, nextMatch]);
+                        setActiveMatch(nextMatch.id);
+                      }
+                    } else {
+                      showToastMessage('⚠️ Termine o primeiro jogo para definir quem fica!', 'error');
                     }
                   }}
+                  disabled={!settings.currentWinnerTeam}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-xs transition-colors"
                 >
                   Gerar Próximo Desafio
@@ -981,11 +1054,11 @@ const LiveFieldView = ({
                       e.preventDefault();
                       e.stopPropagation();
                       setActiveMatch(match.id);
-                      startMatchTimer(match.id, match.type === 'final' || match.type === 'third_place' || match.type === 'winner-stays');
+                      // Don't auto-start timer, just set as active
                     }}
                     className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-2 py-1 rounded-lg text-xs transition-colors"
                   >
-                    Iniciar
+                    Selecionar
                   </button>
                 ) : (
                   <span className="text-gray-500 text-xs">-</span>
@@ -1001,12 +1074,21 @@ const LiveFieldView = ({
           )}
         </div>
         
-        {/* Show playoff info when regular season is complete */}
+        {/* Show playoff info when regular season is complete - only for championship mode */}
         {!isWinnerStaysMode && matches.filter(m => m.type === 'regular').every(m => m.played) && 
          remainingMatches.some(m => m.type === 'final' || m.type === 'third_place') && (
           <div className="mt-3 p-2 bg-yellow-800 rounded-lg">
             <div className="text-yellow-200 text-xs text-center">
               🏆 Fase de Playoffs iniciada!
+            </div>
+          </div>
+        )}
+        
+        {/* Show winner-stays info */}
+        {isWinnerStaysMode && settings.currentWinnerTeam && (
+          <div className="mt-3 p-2 bg-purple-800 rounded-lg">
+            <div className="text-purple-200 text-xs text-center">
+              ⚡ Modo "Quem Ganha Fica" - {settings.currentWinnerTeam} está em campo
             </div>
           </div>
         )}
