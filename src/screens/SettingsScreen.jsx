@@ -11,6 +11,8 @@ const SettingsScreen = ({
   onBack 
 }) => {
   const [localSettings, setLocalSettings] = useState(settings);
+  const [showTeamRemovalModal, setShowTeamRemovalModal] = useState(false);
+  const [pendingTournamentType, setPendingTournamentType] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');
   const [showToast, setShowToast] = useState(false);
@@ -21,6 +23,37 @@ const SettingsScreen = ({
     setShowToast(true);
   };
 
+  const handleTournamentTypeChange = (newType) => {
+    if (newType === 'winner-stays' && localSettings.activeTeams.length === 4) {
+      // Show modal to select which team to remove
+      setPendingTournamentType(newType);
+      setShowTeamRemovalModal(true);
+    } else {
+      // Direct change for championship mode or if already 3 teams
+      setLocalSettings(prev => ({
+        ...prev,
+        tournamentType: newType
+      }));
+    }
+  };
+
+  const handleTeamRemoval = (teamToRemove) => {
+    const newActiveTeams = localSettings.activeTeams.filter(team => team !== teamToRemove);
+    setLocalSettings(prev => ({
+      ...prev,
+      tournamentType: pendingTournamentType,
+      activeTeams: newActiveTeams,
+      numberOfTeams: newActiveTeams.length
+    }));
+    setShowTeamRemovalModal(false);
+    setPendingTournamentType(null);
+    showToastMessage(`⚡ Modo "Quem Ganha Fica" ativado com 3 times! ${teamToRemove} foi removido.`, 'success');
+  };
+
+  const cancelTeamRemoval = () => {
+    setShowTeamRemovalModal(false);
+    setPendingTournamentType(null);
+  };
   const handleSave = () => {
     setSettings(localSettings);
     showToastMessage('⚙️ Configurações salvas com sucesso!', 'success');
@@ -41,6 +74,11 @@ const SettingsScreen = ({
   const addTeam = (teamName) => {
     if (!localSettings.activeTeams.includes(teamName)) {
       const newActiveTeams = [...localSettings.activeTeams, teamName];
+      // Check if switching to winner-stays mode would require team removal
+      if (localSettings.tournamentType === 'winner-stays' && newActiveTeams.length > 3) {
+        showToastMessage('⚠️ Modo "Quem Ganha Fica" funciona apenas com 3 times!', 'error');
+        return;
+      }
       setLocalSettings(prev => ({
         ...prev,
         activeTeams: newActiveTeams,
@@ -50,7 +88,8 @@ const SettingsScreen = ({
   };
 
   const removeTeam = (teamName) => {
-    if (localSettings.activeTeams.length > 2) { // Minimum 2 teams
+    const minTeams = localSettings.tournamentType === 'winner-stays' ? 3 : 2;
+    if (localSettings.activeTeams.length > minTeams) {
       const newActiveTeams = localSettings.activeTeams.filter(team => team !== teamName);
       setLocalSettings(prev => ({
         ...prev,
@@ -58,7 +97,8 @@ const SettingsScreen = ({
         numberOfTeams: newActiveTeams.length
       }));
     } else {
-      showToastMessage('⚠️ Mínimo de 2 times necessário!', 'error');
+      const minText = localSettings.tournamentType === 'winner-stays' ? '3 times' : '2 times';
+      showToastMessage(`⚠️ Mínimo de ${minText} necessário para este modo!`, 'error');
     }
   };
 
@@ -75,6 +115,56 @@ const SettingsScreen = ({
         isVisible={showToast}
         onClose={() => setShowToast(false)}
       />
+      
+      {/* Team Removal Modal for Winner-Stays Mode */}
+      {showTeamRemovalModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="dark-card-solid rounded-xl max-w-sm w-full shadow-xl">
+            <div className="p-4 border-b border-gray-600">
+              <h3 className="text-lg font-bold text-white mb-2">⚡ Modo "Quem Ganha Fica"</h3>
+              <p className="text-gray-300 text-sm">
+                Este modo funciona com exatamente 3 times. Escolha qual time remover:
+              </p>
+            </div>
+            
+            <div className="p-4">
+              <div className="space-y-2">
+                {localSettings.activeTeams.map((teamName) => (
+                  <button
+                    key={teamName}
+                    onClick={() => handleTeamRemoval(teamName)}
+                    className={`w-full p-3 rounded-lg text-left transition-colors bg-gray-700 hover:bg-gray-600 border-l-4 ${
+                      teamName === 'Vermelho' ? 'border-red-500' :
+                      teamName === 'Azul' ? 'border-blue-500' :
+                      teamName === 'Brasil' ? 'border-yellow-500' :
+                      'border-green-500'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-4 h-4 rounded-full ${
+                        teamName === 'Vermelho' ? 'bg-red-500' :
+                        teamName === 'Azul' ? 'bg-blue-500' :
+                        teamName === 'Brasil' ? 'bg-yellow-500' :
+                        'bg-green-500'
+                      }`}></div>
+                      <span className="text-white font-medium">Remover {teamName}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div className="p-4 border-t border-gray-600">
+              <button
+                onClick={cancelTeamRemoval}
+                className="w-full bg-gray-600 hover:bg-gray-700 text-white p-3 rounded-lg font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Content with proper top padding to account for fixed header */}
       <div className="pt-20 p-6">
@@ -151,10 +241,7 @@ const SettingsScreen = ({
                     name="tournamentType"
                     value="championship"
                     checked={localSettings.tournamentType === 'championship'}
-                    onChange={(e) => setLocalSettings(prev => ({
-                      ...prev,
-                      tournamentType: e.target.value
-                    }))}
+                    onChange={(e) => handleTournamentTypeChange(e.target.value)}
                     className="text-blue-600 focus:ring-blue-500"
                   />
                   <div>
@@ -169,15 +256,12 @@ const SettingsScreen = ({
                     name="tournamentType"
                     value="winner-stays"
                     checked={localSettings.tournamentType === 'winner-stays'}
-                    onChange={(e) => setLocalSettings(prev => ({
-                      ...prev,
-                      tournamentType: e.target.value
-                    }))}
+                    onChange={(e) => handleTournamentTypeChange(e.target.value)}
                     className="text-blue-600 focus:ring-blue-500"
                   />
                   <div>
                     <div className="text-white font-medium">⚡ Quem Ganha Fica</div>
-                    <div className="text-gray-400 text-sm">Time vencedor permanece, empate = desafiante vira vencedor</div>
+                    <div className="text-gray-400 text-sm">3 times - Vencedor permanece, empate = desafiante vira vencedor</div>
                   </div>
                 </label>
               </div>
@@ -193,7 +277,12 @@ const SettingsScreen = ({
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-white">Times do Torneio</h3>
-              <p className="text-sm text-gray-400">{localSettings.activeTeams.length} times selecionados</p>
+              <p className="text-sm text-gray-400">
+                {localSettings.activeTeams.length} times selecionados
+                {localSettings.tournamentType === 'winner-stays' && (
+                  <span className="text-purple-400 ml-1">(máx. 3 para "Quem Ganha Fica")</span>
+                )}
+              </p>
             </div>
           </div>
           
@@ -201,11 +290,13 @@ const SettingsScreen = ({
           <div className="flex flex-wrap gap-1.5">
             {AVAILABLE_TEAMS.map((teamName) => {
               const isActive = localSettings.activeTeams.includes(teamName);
+              const minTeams = localSettings.tournamentType === 'winner-stays' ? 3 : 2;
+              const canRemove = isActive && localSettings.activeTeams.length > minTeams;
               return (
                 <button
                   key={teamName}
                   onClick={() => isActive ? removeTeam(teamName) : addTeam(teamName)}
-                  disabled={isActive && localSettings.activeTeams.length <= 2}
+                  disabled={isActive && !canRemove}
                   className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
                     isActive
                       ? `bg-gray-800 ${TEAM_COLORS[teamName].text} border ${
@@ -215,7 +306,7 @@ const SettingsScreen = ({
                           'border-green-500'
                         } hover:bg-gray-700 active:scale-95`
                       : 'bg-gray-800 text-gray-500 border border-gray-600 hover:border-gray-500 hover:text-gray-400'
-                  } ${isActive && localSettings.activeTeams.length <= 2 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  } ${isActive && !canRemove ? 'opacity-50 cursor-not-allowed' : ''}`}
                   title={isActive ? 'Clique para remover' : 'Clique para adicionar'}
                 >
                   <div className={`w-2 h-2 rounded-full ${
@@ -227,7 +318,7 @@ const SettingsScreen = ({
                     ) : 'bg-gray-600'
                   }`}></div>
                   <span>{teamName}</span>
-                  {isActive && localSettings.activeTeams.length > 2 && (
+                  {isActive && canRemove && (
                     <X size={10} className="opacity-60" />
                   )}
                 </button>
@@ -263,6 +354,10 @@ const SettingsScreen = ({
               </>
             ) : (
               <>
+                <div className="flex items-start space-x-2">
+                  <span className="text-green-400 mt-1">•</span>
+                  <span>Funciona com exatamente 3 times</span>
+                </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-green-400 mt-1">•</span>
                   <span>Time vencedor permanece em campo</span>
