@@ -186,30 +186,7 @@ export const generateNextWinnerStaysMatch = (matches, currentWinnerTeam, teams, 
   });
   
   const teamNames = activeTeams || Object.keys(teams);
-  
-  // Get the last match to see who played
-  const lastMatch = matches[matches.length - 1];
-  let availableTeams;
-  
-  if (lastMatch && lastMatch.played) {
-    // Find teams that didn't play in the last match
-    const teamsInLastMatch = [lastMatch.team1, lastMatch.team2];
-    const teamsNotInLastMatch = teamNames.filter(team => !teamsInLastMatch.includes(team));
-    
-    console.log('Teams in last match:', teamsInLastMatch);
-    console.log('Teams not in last match:', teamsNotInLastMatch);
-    
-    // If there are teams that didn't play, they should challenge next
-    if (teamsNotInLastMatch.length > 0) {
-      availableTeams = teamsNotInLastMatch;
-    } else {
-      // If all teams played recently, exclude current winner
-      availableTeams = teamNames.filter(team => team !== currentWinnerTeam);
-    }
-  } else {
-    // Fallback: exclude current winner
-    availableTeams = teamNames.filter(team => team !== currentWinnerTeam);
-  }
+  const availableTeams = teamNames.filter(team => team !== currentWinnerTeam);
   
   console.log('Available challenger teams:', availableTeams);
   
