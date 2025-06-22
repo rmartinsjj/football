@@ -443,7 +443,12 @@ const LiveFieldView = ({
 
   const goToNextGame = () => {
     setShowNextGameButton(false);
-    setActiveMatch(null); // Limpar o activeMatch
+    
+    // Primeiro limpar o activeMatch
+    setActiveMatch(null);
+    
+    // Reset timer to ensure it's clean for next match
+    resetTimer();
     
     if (isWinnerStaysMode) {
       // Generate next match for winner-stays mode
@@ -452,7 +457,12 @@ const LiveFieldView = ({
         if (nextMatch) {
           console.log('🎲 Generated next winner-stays match:', nextMatch);
           setMatches(prev => [...prev, nextMatch]);
-          setTimeout(() => setActiveMatch(nextMatch.id), 100);
+          setTimeout(() => {
+            setActiveMatch(nextMatch.id);
+            // Auto-reset timer for the new match
+            const isFinal = nextMatch.id > 12 || nextMatch.type === 'winner-stays';
+            resetTimer(isFinal);
+          }, 100);
         } else {
           showToastMessage('❌ Não foi possível gerar próximo desafio!', 'error');
         }
@@ -460,8 +470,13 @@ const LiveFieldView = ({
     } else {
       const nextMatch = filteredMatches.find(m => currentMatch && m.id > currentMatch.id && !m.played);
       if (nextMatch) {
-        // NÃO iniciar o timer automaticamente - apenas definir como próximo jogo ativo
-        setTimeout(() => setActiveMatch(nextMatch.id), 100);
+        // Set next match as active and reset timer
+        setTimeout(() => {
+          setActiveMatch(nextMatch.id);
+          // Auto-reset timer for the new match
+          const isFinal = nextMatch.id > 12 || nextMatch.type === 'final' || nextMatch.type === 'third_place';
+          resetTimer(isFinal);
+        }, 100);
       }
     }
   };

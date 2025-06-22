@@ -59,6 +59,13 @@ export const useTimer = (settings = null) => {
     setIsTimerRunning(false);
   };
 
+  const setTimerForMatch = (matchId, isFinal = false) => {
+    setActiveMatch(matchId);
+    const duration = getTimerDuration(isFinal);
+    setTimer(duration);
+    setIsTimerRunning(false); // Don't auto-start, just set the time
+  };
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -72,6 +79,7 @@ export const useTimer = (settings = null) => {
     setActiveMatch,
     setOnTimerFinished,
     startMatchTimer,
+    setTimerForMatch,
     pauseTimer,
     resumeTimer,
     resetTimer,
