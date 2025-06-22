@@ -448,7 +448,7 @@ const LiveFieldView = ({
     if (isWinnerStaysMode) {
       // Generate next match for winner-stays mode
       if (settings.currentWinnerTeam) {
-        const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
+        const nextMatch = generateNextWinnerStaysMatch(filteredMatches, settings.currentWinnerTeam, teams, activeTeams);
         if (nextMatch) {
           console.log('🎲 Generated next winner-stays match:', nextMatch);
           setMatches(prev => [...prev, nextMatch]);
@@ -558,7 +558,7 @@ const LiveFieldView = ({
               <button
                 onClick={handleCloseResults}
                 className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-xl font-medium transition-colors"
-              >
+                    const nextMatch = generateNextWinnerStaysMatch(filteredMatches, settings.currentWinnerTeam, teams, activeTeams);
                 Fechar Resultados
               </button>
             </div>
@@ -992,7 +992,7 @@ const LiveFieldView = ({
                 <button
                   onClick={() => {
                     if (settings.currentWinnerTeam) {
-                      const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
+                      const nextMatch = generateNextWinnerStaysMatch(filteredMatches, settings.currentWinnerTeam, teams, activeTeams);
                       if (nextMatch) {
                         console.log('🎲 Quick generation of next match:', nextMatch);
                         setMatches(prev => [...prev, nextMatch]);
