@@ -98,8 +98,6 @@ const MatchesScreen = ({
     setMatchEvents(prev => prev.filter(e => e.id !== eventId));
   };
 
-  // Get the current match object for LiveFieldView
-  const currentMatchObject = activeMatch ? filteredMatches.find(m => m.id === activeMatch) : null;
   return (
     <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Jogos" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
@@ -131,47 +129,27 @@ const MatchesScreen = ({
       </div>
 
       {viewMode === 'field' ? (
-        currentMatchObject ? (
-          <LiveFieldView 
-            matches={filteredMatches}
-            setMatches={setMatches}
-            teams={teams}
-            matchEvents={matchEvents}
-            timer={timer}
-            isTimerRunning={isTimerRunning}
-            activeMatch={activeMatch}
-            setActiveMatch={setActiveMatch}
-            setOnTimerFinished={setOnTimerFinished}
-            startMatchTimer={startMatchTimer}
-            pauseTimer={pauseTimer}
-            resumeTimer={resumeTimer}
-            resetTimer={resetTimer}
-            formatTime={formatTime}
-            addGoal={addGoal}
-            removeGoal={removeGoal}
-            updateMatchScore={updateMatchScore}
-            settings={settings}
-            setSettings={setSettings}
-          />
-        ) : (
-          <div className="flex flex-col items-center justify-center min-h-[400px] p-6 mx-3">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-white mb-2">Nenhum jogo selecionado</h3>
-              <p className="text-gray-400 mb-4">Selecione um jogo na lista para visualizar o campo ao vivo</p>
-              <button
-                onClick={() => setViewMode('list')}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Ver Lista de Jogos
-              </button>
-            </div>
-          </div>
-        )
+        <LiveFieldView 
+          matches={filteredMatches}
+          setMatches={setMatches}
+          teams={teams}
+          matchEvents={matchEvents}
+          timer={timer}
+          isTimerRunning={isTimerRunning}
+          activeMatch={activeMatch}
+          setActiveMatch={setActiveMatch}
+          setOnTimerFinished={setOnTimerFinished}
+          startMatchTimer={startMatchTimer}
+          pauseTimer={pauseTimer}
+          resumeTimer={resumeTimer}
+          resetTimer={resetTimer}
+          formatTime={formatTime}
+          addGoal={addGoal}
+          removeGoal={removeGoal}
+          updateMatchScore={updateMatchScore}
+          settings={settings}
+          setSettings={setSettings}
+        />
       ) : (
         <MatchesList 
           matches={filteredMatches}
