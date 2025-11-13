@@ -147,34 +147,32 @@ const GameDayHomeScreen = ({
 
       <div className="px-4 pb-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
         {currentGameDay && (
-          <div
-            className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
-            style={{
-              backgroundImage: 'url(/1245151 copy.png)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'top center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          >
-            <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl"></div>
+          <>
+            <div
+              className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
+              style={{
+                backgroundImage: 'url(/1245151 copy.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'top center',
+                backgroundRepeat: 'no-repeat'
+              }}
+            >
+              <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl"></div>
 
-            <div className="relative z-10">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="text-base font-semibold mb-1">Torneio Ativo</h3>
-                  <p className="text-gray-200 text-sm">{players.length} jogadores • {settings?.numberOfTeams || 4} times</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-xl font-bold">{filteredMatches.filter(m => m.played).length}/{filteredMatches.length}</div>
-                  <p className="text-gray-200 text-sm">jogos</p>
+              <div className="relative z-10">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-base font-semibold mb-1">Torneio Ativo</h3>
+                    <p className="text-gray-200 text-sm">{players.length} jogadores • {settings?.numberOfTeams || 4} times</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xl font-bold">{filteredMatches.filter(m => m.played).length}/{filteredMatches.length}</div>
+                    <p className="text-gray-200 text-sm">jogos</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {currentGameDay && (
-          <>
             <h2 className="text-base font-semibold text-white mb-3">Menu Principal</h2>
             <div className="grid grid-cols-2 gap-3 mb-6">
               <button
@@ -246,17 +244,27 @@ const GameDayHomeScreen = ({
               </button>
             </div>
 
-            <div className="border-t border-gray-700 pt-4">
-              <button
-                onClick={() => setShowCreateForm(true)}
-                className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 rounded-xl font-semibold shadow-md transition-all flex items-center justify-center space-x-2"
-              >
-                <Play size={18} />
-                <span>Criar Novo Jogo</span>
-              </button>
-            </div>
           </>
         )}
+
+        {!currentGameDay && !showCreateForm && (
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-4">
+              <Calendar size={48} className="mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Nenhum jogo ativo</p>
+            </div>
+          </div>
+        )}
+
+        <div className="mb-6">
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 rounded-xl font-semibold shadow-md transition-all flex items-center justify-center space-x-2"
+          >
+            <Play size={18} />
+            <span>{showCreateForm ? 'Cancelar' : 'Criar Novo Jogo'}</span>
+          </button>
+        </div>
 
         {showCreateForm && (
           <div className="space-y-4">
@@ -379,33 +387,23 @@ const GameDayHomeScreen = ({
               )}
             </div>
 
-            <div className="flex space-x-2">
-              {currentGameDay && (
-                <button
-                  onClick={() => setShowCreateForm(false)}
-                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-xl font-semibold shadow-md transition-all"
-                >
-                  Cancelar
-                </button>
+            <button
+              onClick={handleCreateGame}
+              disabled={isCreating || selectedTeams.length < 2}
+              className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center space-x-2"
+            >
+              {isCreating ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Criando...</span>
+                </>
+              ) : (
+                <>
+                  <Play size={20} />
+                  <span>Criar e Começar</span>
+                </>
               )}
-              <button
-                onClick={handleCreateGame}
-                disabled={isCreating || selectedTeams.length < 2}
-                className={`${currentGameDay ? 'flex-1' : 'w-full'} bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center space-x-2`}
-              >
-                {isCreating ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Criando...</span>
-                  </>
-                ) : (
-                  <>
-                    <Play size={20} />
-                    <span>Criar e Começar</span>
-                  </>
-                )}
-              </button>
-            </div>
+            </button>
           </div>
         )}
 
