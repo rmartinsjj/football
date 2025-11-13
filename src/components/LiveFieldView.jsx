@@ -571,13 +571,13 @@ const LiveFieldView = ({
 
   const goToNextGame = () => {
     setShowNextGameButton(false);
-    
+
     // Primeiro limpar o activeMatch
     setActiveMatch(null);
-    
+
     // Reset timer to ensure it's clean for next match
     resetTimer();
-    
+
     if (isWinnerStaysMode) {
       // Generate next match for winner-stays mode
       if (settings.currentWinnerTeam) {
@@ -587,6 +587,9 @@ const LiveFieldView = ({
           setMatches(prev => [...prev, nextMatch]);
           setTimeout(() => {
             setActiveMatch(nextMatch.id);
+            if (syncActiveMatch) {
+              syncActiveMatch(nextMatch.id);
+            }
             // Auto-reset timer for the new match
             const isFinal = nextMatch.id > 12 || nextMatch.type === 'winner-stays';
             resetTimer(isFinal);
@@ -601,6 +604,9 @@ const LiveFieldView = ({
         // Set next match as active and reset timer
         setTimeout(() => {
           setActiveMatch(nextMatch.id);
+          if (syncActiveMatch) {
+            syncActiveMatch(nextMatch.id);
+          }
           // Auto-reset timer for the new match
           const isFinal = nextMatch.id > 12 || nextMatch.type === 'final' || nextMatch.type === 'third_place';
           resetTimer(isFinal);

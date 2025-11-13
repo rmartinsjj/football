@@ -179,9 +179,15 @@ const App = () => {
         currentWinnerTeam: gameDay.current_winner_team
       }));
 
-      // Restore active match if exists
+      // Restore active match or find next unplayed match
       if (gameDay.active_match_id) {
         setActiveMatch(gameDay.active_match_id);
+      } else if (matchesData && matchesData.length > 0) {
+        // Find first unplayed match
+        const nextMatch = matchesData.find(m => !m.played);
+        if (nextMatch) {
+          setActiveMatch(nextMatch.match_number);
+        }
       }
     } catch (error) {
       console.error('Error loading game day data:', error);
