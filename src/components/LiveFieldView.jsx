@@ -57,27 +57,62 @@ const LiveFieldView = ({
   // Calculate total players and goalkeeper logic
   const totalPlayers = Object.values(teams).flat().length;
   const hasAutoGoalkeepers = totalPlayers > 20;
-  
+
+  // Calculate standings and generate playoff matches
+  const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
+  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+
+  // Filter matches based on mode and active teams
+  const filteredMatches = isWinnerStaysMode
+    ? matches.filter(match =>
+        (match.type === 'winner-stays' || !match.type) &&
+        activeTeams.includes(match.team1) &&
+        activeTeams.includes(match.team2)
+      )
+    : matches.filter(match => {
+        // Always keep playoff matches (they will be populated with correct teams)
+        if (match.type === 'final' || match.type === 'third_place') {
+          return true;
+        }
+        // For regular matches, only include if both teams are active
+        return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
+      });
+
+  let standings, updatedMatches;
+
+  if (isWinnerStaysMode) {
+    standings = calculateWinnerStaysStandings(filteredMatches).filter(team => activeTeams.includes(team.team));
+    updatedMatches = filteredMatches; // No playoff generation for winner-stays
+  } else {
+    standings = calculateStandings(filteredMatches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
+    updatedMatches = generatePlayoffMatches(filteredMatches, standings);
+  }
+
+  // Find current match - prioritize active match, then first unplayed match
+  const currentMatch = updatedMatches.find(m => m.id === activeMatch) ||
+                      updatedMatches.find(m => !m.played) ||
+                      updatedMatches[updatedMatches.length - 1]; // Last match if all played
+
   // Auto-update goalkeeper names based on player count
   React.useEffect(() => {
     if (currentMatch && hasAutoGoalkeepers) {
       const team1Players = teams[currentMatch.team1] || [];
       const team2Players = teams[currentMatch.team2] || [];
-      
+
       // Logic for goalkeeper assignment
       if (totalPlayers >= 24) {
         // Each team has enough players for their own goalkeeper
         const team1Goalkeeper = team1Players[team1Players.length - 1]; // Last player becomes goalkeeper
         const team2Goalkeeper = team2Players[team2Players.length - 1];
-        
+
         setGoalkeepers({
-          left: { 
+          left: {
             name: team1Goalkeeper?.name || 'Goleiro 1',
             playerId: team1Goalkeeper?.id,
             isPlayer: true,
             teamName: currentMatch.team1
           },
-          right: { 
+          right: {
             name: team2Goalkeeper?.name || 'Goleiro 2',
             playerId: team2Goalkeeper?.id,
             isPlayer: true,
@@ -88,18 +123,18 @@ const LiveFieldView = ({
         // One team borrows a goalkeeper
         const team1HasGoalkeeper = team1Players.length >= 6;
         const team2HasGoalkeeper = team2Players.length >= 6;
-        
+
         if (team1HasGoalkeeper && !team2HasGoalkeeper) {
           // Team 1 has goalkeeper, Team 2 borrows
           const team1Goalkeeper = team1Players[team1Players.length - 1];
           setGoalkeepers({
-            left: { 
+            left: {
               name: team1Goalkeeper?.name || 'Goleiro 1',
               playerId: team1Goalkeeper?.id,
               isPlayer: true,
               teamName: currentMatch.team1
             },
-            right: { 
+            right: {
               name: 'Goleiro Emprestado',
               playerId: null,
               isPlayer: false,
@@ -110,13 +145,13 @@ const LiveFieldView = ({
           // Team 2 has goalkeeper, Team 1 borrows
           const team2Goalkeeper = team2Players[team2Players.length - 1];
           setGoalkeepers({
-            left: { 
+            left: {
               name: 'Goleiro Emprestado',
               playerId: null,
               isPlayer: false,
               teamName: null
             },
-            right: { 
+            right: {
               name: team2Goalkeeper?.name || 'Goleiro 2',
               playerId: team2Goalkeeper?.id,
               isPlayer: true,
@@ -127,15 +162,15 @@ const LiveFieldView = ({
           // Default case - both teams get one player as goalkeeper
           const team1Goalkeeper = team1Players[team1Players.length - 1];
           const team2Goalkeeper = team2Players[team2Players.length - 1];
-          
+
           setGoalkeepers({
-            left: { 
+            left: {
               name: team1Goalkeeper?.name || 'Goleiro 1',
               playerId: team1Goalkeeper?.id,
               isPlayer: true,
               teamName: currentMatch.team1
             },
-            right: { 
+            right: {
               name: team2Goalkeeper?.name || 'Goleiro 2',
               playerId: team2Goalkeeper?.id,
               isPlayer: true,
@@ -147,15 +182,15 @@ const LiveFieldView = ({
         // 21-22 players - each team designates one player as goalkeeper
         const team1Goalkeeper = team1Players[team1Players.length - 1];
         const team2Goalkeeper = team2Players[team2Players.length - 1];
-        
+
         setGoalkeepers({
-          left: { 
+          left: {
             name: team1Goalkeeper?.name || 'Goleiro 1',
             playerId: team1Goalkeeper?.id,
             isPlayer: true,
             teamName: currentMatch.team1
           },
-          right: { 
+          right: {
             name: team2Goalkeeper?.name || 'Goleiro 2',
             playerId: team2Goalkeeper?.id,
             isPlayer: true,
@@ -171,6 +206,7 @@ const LiveFieldView = ({
       });
     }
   }, [currentMatch, teams, totalPlayers, hasAutoGoalkeepers]);
+
   // Set up timer finished callback
   React.useEffect(() => {
     if (setOnTimerFinished) {
@@ -179,41 +215,6 @@ const LiveFieldView = ({
       });
     }
   }, [setOnTimerFinished]);
-
-  // Calculate standings and generate playoff matches
-  const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
-  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
-  
-  // Filter matches based on mode and active teams
-  const filteredMatches = isWinnerStaysMode 
-    ? matches.filter(match => 
-        (match.type === 'winner-stays' || !match.type) && 
-        activeTeams.includes(match.team1) && 
-        activeTeams.includes(match.team2)
-      )
-    : matches.filter(match => {
-        // Always keep playoff matches (they will be populated with correct teams)
-        if (match.type === 'final' || match.type === 'third_place') {
-          return true;
-        }
-        // For regular matches, only include if both teams are active
-        return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
-      });
-  
-  let standings, updatedMatches;
-  
-  if (isWinnerStaysMode) {
-    standings = calculateWinnerStaysStandings(filteredMatches).filter(team => activeTeams.includes(team.team));
-    updatedMatches = filteredMatches; // No playoff generation for winner-stays
-  } else {
-    standings = calculateStandings(filteredMatches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
-    updatedMatches = generatePlayoffMatches(filteredMatches, standings);
-  }
-  
-  // Find current match - prioritize active match, then first unplayed match
-  const currentMatch = updatedMatches.find(m => m.id === activeMatch) || 
-                      updatedMatches.find(m => !m.played) || 
-                      updatedMatches[updatedMatches.length - 1]; // Last match if all played
   
   let remainingMatches;
   if (isWinnerStaysMode) {
