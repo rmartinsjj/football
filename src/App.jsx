@@ -340,12 +340,14 @@ const App = () => {
       
       default:
         return (
-          <HomeScreen
+          <GameDayHomeScreen
+            onGameSelected={handleGameCreated}
+            currentGameDay={currentGameDay}
             players={players}
             matches={matches}
-            setCurrentScreen={setCurrentScreen}
             coleteWinner={coleteWinner}
             settings={settings}
+            setCurrentScreen={setCurrentScreen}
           />
         );
     }
