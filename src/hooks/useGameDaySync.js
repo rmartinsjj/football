@@ -7,10 +7,16 @@ export const useGameDaySync = (currentGameDay) => {
 
     try {
       const existingPlayers = await gameDayService.getPlayersByGameDay(currentGameDay.id);
-      const existingPlayerIds = new Set(existingPlayers.map(p => p.id));
+      const existingPlayerMap = new Map(existingPlayers.map(p => [p.id, p]));
 
       for (const player of players) {
-        if (!existingPlayerIds.has(player.id) && player.team_name) {
+        const existingPlayer = existingPlayerMap.get(player.id);
+
+        if (existingPlayer) {
+          if (existingPlayer.team_name !== player.team_name && player.team_name) {
+            await gameDayService.updatePlayer(player.id, { team_name: player.team_name });
+          }
+        } else if (player.team_name) {
           await gameDayService.addPlayer(currentGameDay.id, player.name, player.team_name);
         }
       }

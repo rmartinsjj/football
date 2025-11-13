@@ -66,9 +66,15 @@ const TeamsScreen = ({
     setTeams(newTeams);
     setTournamentStarted(true);
 
-    // Salvar no banco de dados
+    // Salvar no banco de dados - converter teams object para players array com team_name
     if (currentGameDay && syncPlayers) {
-      await syncPlayers(newTeams);
+      const updatedPlayers = Object.entries(newTeams).flatMap(([teamName, teamPlayers]) =>
+        teamPlayers.map(player => ({
+          ...player,
+          team_name: teamName
+        }))
+      );
+      await syncPlayers(updatedPlayers);
     }
 
     // Finalizar loading
@@ -100,9 +106,15 @@ const TeamsScreen = ({
       const newTeams = drawTeams(players, settings?.activeTeams);
       setTeams(newTeams);
 
-      // Salvar no banco de dados
+      // Salvar no banco de dados - converter teams object para players array com team_name
       if (currentGameDay && syncPlayers) {
-        await syncPlayers(newTeams);
+        const updatedPlayers = Object.entries(newTeams).flatMap(([teamName, teamPlayers]) =>
+          teamPlayers.map(player => ({
+            ...player,
+            team_name: teamName
+          }))
+        );
+        await syncPlayers(updatedPlayers);
       }
 
       // Finalizar loading

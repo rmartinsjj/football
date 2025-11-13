@@ -74,8 +74,17 @@ const MatchesScreen = ({
     // Salvar no banco primeiro
     if (currentGameDay && syncGoalEvent) {
       try {
-        const savedEvent = await syncGoalEvent(matchId, playerId, playerName, teamName, minute);
-        setMatchEvents(prev => [...prev, savedEvent]);
+        const savedEvent = await syncGoalEvent(playerId, playerName, teamName, matchId, minute);
+        if (savedEvent) {
+          setMatchEvents(prev => [...prev, {
+            id: savedEvent.id,
+            playerId: savedEvent.player_id,
+            playerName: savedEvent.player_name,
+            teamName: savedEvent.team_name,
+            matchId: matchId,
+            minute: savedEvent.minute
+          }]);
+        }
       } catch (error) {
         console.error('Error saving goal:', error);
       }
