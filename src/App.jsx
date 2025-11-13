@@ -8,6 +8,7 @@ import { gameDayService } from './services/gameDayService';
 
 // Screen Components
 import GameDayHomeScreen from './screens/GameDayHomeScreen';
+import GameMenuScreen from './screens/GameMenuScreen';
 import PlayersScreen from './screens/PlayersScreen';
 import TeamsScreen from './screens/TeamsScreen';
 import MatchesScreen from './screens/MatchesScreen';
@@ -172,7 +173,7 @@ const App = () => {
 
   const handleGameCreated = async (gameDay) => {
     await loadGameDayData(gameDay);
-    setCurrentScreen('home');
+    setCurrentScreen('menu');
   };
 
   React.useEffect(() => {
@@ -228,6 +229,19 @@ const App = () => {
             coleteWinner={coleteWinner}
             settings={settings}
             setCurrentScreen={setCurrentScreen}
+          />
+        );
+
+      case 'menu':
+        return (
+          <GameMenuScreen
+            currentGameDay={currentGameDay}
+            players={players}
+            matches={matches}
+            coleteWinner={coleteWinner}
+            settings={settings}
+            setCurrentScreen={setCurrentScreen}
+            onBack={() => setCurrentScreen('home')}
           />
         );
       

@@ -81,6 +81,7 @@ const GameDayHomeScreen = ({
       if (onGameSelected) {
         onGameSelected(game);
       }
+      setCurrentScreen('menu');
     } catch (error) {
       console.error('Error selecting game:', error);
       alert('Erro ao selecionar jogo: ' + error.message);
@@ -143,116 +144,13 @@ const GameDayHomeScreen = ({
       </div>
 
       <div className="px-4 pb-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
-        {currentGameDay ? (
-          <>
-            <div
-              className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
-              style={{
-                backgroundImage: 'url(/1245151 copy.png)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'top center',
-                backgroundRepeat: 'no-repeat'
-              }}
-            >
-              <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl"></div>
-
-              <div className="relative z-10">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="text-base font-semibold mb-1">Torneio Ativo</h3>
-                    <p className="text-gray-200 text-sm">{players.length} jogadores • {settings?.numberOfTeams || 4} times</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xl font-bold">{filteredMatches.filter(m => m.played).length}/{filteredMatches.length}</div>
-                    <p className="text-gray-200 text-sm">jogos</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <h2 className="text-base font-semibold text-white mb-3">Menu Principal</h2>
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <button
-                onClick={() => setCurrentScreen('players')}
-                className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
-              >
-                <div className="mb-3">
-                  <img src="/soccer-player1.png" alt="Jogador" className="w-8 h-8 filter brightness-0 invert opacity-80" />
-                </div>
-                <h3 className="font-semibold text-white text-sm mb-1">Jogadores</h3>
-                <p className="text-xs text-gray-400">{players.length} cadastrados</p>
-              </button>
-
-              <button
-                onClick={() => setCurrentScreen('teams')}
-                className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
-              >
-                <div className="mb-3">
-                  <img src="/ball3.png" alt="Bola" className="w-8 h-8 filter brightness-0 invert opacity-80" />
-                </div>
-                <h3 className="font-semibold text-white text-sm mb-1">Times</h3>
-                <p className="text-xs text-gray-400">Sortear equipes</p>
-              </button>
-
-              <button
-                onClick={() => setCurrentScreen('matches')}
-                className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
-              >
-                <div className="mb-3">
-                  <img src="/classifcacao1.png" alt="Jogos" className="w-8 h-8 filter brightness-0 invert opacity-80" />
-                </div>
-                <h3 className="font-semibold text-white text-sm mb-1">Jogos</h3>
-                <p className="text-xs text-gray-400">Controlar partidas</p>
-              </button>
-
-              <button
-                onClick={() => setCurrentScreen('standings')}
-                className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
-              >
-                <div className="mb-3">
-                  <img src="/throphy.png" alt="Classificação" className="w-8 h-8 filter brightness-0 invert opacity-80" />
-                </div>
-                <h3 className="font-semibold text-white text-sm mb-1">Classificação</h3>
-                <p className="text-xs text-gray-400">Ver tabela</p>
-              </button>
-
-              <button
-                onClick={() => setCurrentScreen('scorers')}
-                className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
-              >
-                <div className="mb-3">
-                  <img src="/artilheirosicon.png" alt="Artilheiros" className="w-8 h-8 filter brightness-0 invert opacity-80" />
-                </div>
-                <h3 className="font-semibold text-white text-sm mb-1">Artilheiros</h3>
-                <p className="text-xs text-gray-400">Ver goleadores</p>
-              </button>
-
-              <button
-                onClick={() => setCurrentScreen('colete')}
-                className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
-              >
-                <div className="mb-3">
-                  <img src="/tshirtcolete.png" alt="Colete" className="w-8 h-8 filter brightness-0 invert opacity-80" />
-                </div>
-                <h3 className="font-semibold text-white text-sm mb-1">Sorteio do Colete</h3>
-                <p className="text-xs text-gray-400">
-                  {coleteWinner ? coleteWinner : 'Organizar disputa'}
-                </p>
-              </button>
-            </div>
-
-          </>
-        ) : (
-          <>
-            <button
-              onClick={() => setShowCreateForm(!showCreateForm)}
-              className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md transition-all flex items-center justify-center space-x-2 mb-4"
-            >
-              <Play size={20} />
-              <span>Criar Novo Jogo</span>
-            </button>
-          </>
-        )}
+        <button
+          onClick={() => setShowCreateForm(!showCreateForm)}
+          className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md transition-all flex items-center justify-center space-x-2 mb-4"
+        >
+          <Play size={20} />
+          <span>Criar Novo Jogo</span>
+        </button>
 
         {showCreateForm && (
           <div className="space-y-4">
@@ -395,7 +293,7 @@ const GameDayHomeScreen = ({
           </div>
         )}
 
-        {!currentGameDay && !loading && existingGames.length > 0 && (
+        {!loading && existingGames.length > 0 && (
           <div className="mb-6">
             <h3 className="text-white font-semibold mb-3 text-base">Todos os Jogos</h3>
 
@@ -440,8 +338,7 @@ const GameDayHomeScreen = ({
         )}
       </div>
 
-      {!currentGameDay && (
-        <div className="px-4 pb-8">
+      <div className="px-4 pb-8">
           <div className="flex flex-col items-center justify-center mt-8">
             <img
               src="/IMG_9294.PNG"
@@ -454,7 +351,6 @@ const GameDayHomeScreen = ({
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 };
