@@ -72,10 +72,16 @@ const MatchesScreen = ({
   const addGoal = async (playerId, playerName, teamName, matchId) => {
     const minute = Math.floor((timer > 0 ? ((activeMatch === matchId ? (7*60 - timer) : 0)) : 0) / 60) + 1;
 
+    console.log('🎯 addGoal called:', { playerId, playerName, teamName, matchId, minute });
+    console.log('🎯 currentGameDay:', currentGameDay?.id);
+    console.log('🎯 syncGoalEvent exists:', !!syncGoalEvent);
+
     // Salvar no banco primeiro
     if (currentGameDay && syncGoalEvent) {
       try {
+        console.log('🎯 Calling syncGoalEvent...');
         const savedEvent = await syncGoalEvent(playerId, playerName, teamName, matchId, minute);
+        console.log('🎯 savedEvent:', savedEvent);
         if (savedEvent) {
           setMatchEvents(prev => [...prev, {
             id: savedEvent.id,
@@ -90,6 +96,7 @@ const MatchesScreen = ({
         console.error('Error saving goal:', error);
       }
     } else {
+      console.log('🎯 Using fallback mode');
       // Fallback para modo local
       const goalEvent = {
         id: Date.now(),

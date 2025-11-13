@@ -72,17 +72,28 @@ export const useGameDaySync = (currentGameDay) => {
   }, [currentGameDay]);
 
   const syncGoalEvent = useCallback(async (playerId, playerName, teamName, matchId, minute) => {
-    if (!currentGameDay?.id) return null;
+    console.log('⚽ syncGoalEvent called:', { playerId, playerName, teamName, matchId, minute });
+    console.log('⚽ currentGameDay:', currentGameDay);
+
+    if (!currentGameDay?.id) {
+      console.log('⚽ No currentGameDay, returning null');
+      return null;
+    }
 
     try {
+      console.log('⚽ Getting matches for game day:', currentGameDay.id);
       const matches = await gameDayService.getMatchesByGameDay(currentGameDay.id);
+      console.log('⚽ Matches found:', matches.length);
+
       const match = matches.find(m => m.match_number === matchId);
+      console.log('⚽ Match found:', match);
 
       if (!match) {
         console.error('Match not found:', matchId);
         return null;
       }
 
+      console.log('⚽ Saving goal event to database...');
       const event = await gameDayService.addGoalEvent(
         match.id,
         currentGameDay.id,
@@ -91,6 +102,7 @@ export const useGameDaySync = (currentGameDay) => {
         teamName,
         minute
       );
+      console.log('⚽ Goal event saved:', event);
 
       return event;
     } catch (error) {
