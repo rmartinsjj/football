@@ -37,10 +37,12 @@ export const useGameDaySync = (currentGameDay) => {
 
     try {
       const existingMatches = await gameDayService.getMatchesByGameDay(currentGameDay.id);
-      const existingMatchNumbers = new Set(existingMatches.map(m => m.match_number));
+      const existingMatchMap = new Map(existingMatches.map(m => [m.match_number, m]));
 
       for (const match of matches) {
-        if (!existingMatchNumbers.has(match.id)) {
+        const existingMatch = existingMatchMap.get(match.id);
+
+        if (!existingMatch) {
           await gameDayService.createMatch(currentGameDay.id, {
             match_number: match.id,
             team1: match.team1,
@@ -53,8 +55,8 @@ export const useGameDaySync = (currentGameDay) => {
             match_type: match.type || 'regular',
             played: match.played || false
           });
-        } else if (match.dbId) {
-          await gameDayService.updateMatch(match.dbId, {
+        } else {
+          await gameDayService.updateMatch(existingMatch.id, {
             score1: match.score1 || 0,
             score2: match.score2 || 0,
             penalty_score1: match.penaltyScore1,
