@@ -168,7 +168,7 @@ const MatchesScreen = ({
       </div>
 
       {viewMode === 'field' ? (
-        <LiveFieldView 
+        <LiveFieldView
           matches={filteredMatches}
           setMatches={setMatches}
           teams={teams}
@@ -189,6 +189,7 @@ const MatchesScreen = ({
           updateMatchScore={updateMatchScore}
           settings={settings}
           setSettings={setSettings}
+          syncMatches={syncMatches}
           syncActiveMatch={syncActiveMatch}
         />
       ) : (

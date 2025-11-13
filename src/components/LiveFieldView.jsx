@@ -29,6 +29,7 @@ const LiveFieldView = ({
   setOnTimerFinished,
   settings,
   setSettings,
+  syncMatches,
   syncActiveMatch
 }) => {
   const [goalkeepers, setGoalkeepers] = useState({ 
