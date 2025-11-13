@@ -5,15 +5,18 @@ import LiveFieldViewToastMessage from '../components/LiveFieldView-ToastMessage'
 import { TEAM_COLORS } from '../constants';
 import { drawTeams } from '../utils/tournamentUtils';
 
-const TeamsScreen = ({ 
-  players, 
-  teams, 
-  setTeams, 
-  tournamentStarted, 
-  setTournamentStarted, 
+const TeamsScreen = ({
+  players,
+  teams,
+  setTeams,
+  tournamentStarted,
+  setTournamentStarted,
   settings,
   setCurrentScreen,
-  onBack 
+  onBack,
+  currentGameDay,
+  syncPlayers,
+  syncMatches
 }) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawingStep, setDrawingStep] = useState(0);
@@ -62,7 +65,12 @@ const TeamsScreen = ({
     const newTeams = drawTeams(players, settings?.activeTeams);
     setTeams(newTeams);
     setTournamentStarted(true);
-    
+
+    // Salvar no banco de dados
+    if (currentGameDay && syncPlayers) {
+      await syncPlayers(newTeams);
+    }
+
     // Finalizar loading
     setIsDrawing(false);
     setDrawingStep(0);
@@ -91,7 +99,12 @@ const TeamsScreen = ({
       // Re-sortear os times
       const newTeams = drawTeams(players, settings?.activeTeams);
       setTeams(newTeams);
-      
+
+      // Salvar no banco de dados
+      if (currentGameDay && syncPlayers) {
+        await syncPlayers(newTeams);
+      }
+
       // Finalizar loading
       setIsDrawing(false);
       setDrawingStep(0);
@@ -104,22 +117,34 @@ const TeamsScreen = ({
     );
   };
 
-  const addPlayerToTeam = (player, teamName) => {
-    setTeams(prev => ({
-      ...prev,
-      [teamName]: [...(prev[teamName] || []), player]
-    }));
+  const addPlayerToTeam = async (player, teamName) => {
+    const updatedTeams = {
+      ...teams,
+      [teamName]: [...(teams[teamName] || []), player]
+    };
+    setTeams(updatedTeams);
     setAvailablePlayers(prev => prev.filter(p => p.id !== player.id));
+
+    // Salvar no banco
+    if (currentGameDay && syncPlayers) {
+      await syncPlayers(updatedTeams);
+    }
   };
 
-  const removePlayerFromTeam = (playerId, teamName) => {
+  const removePlayerFromTeam = async (playerId, teamName) => {
     const playerToRemove = teams[teamName].find(p => p.id === playerId);
     if (playerToRemove) {
-      setTeams(prev => ({
-        ...prev,
-        [teamName]: prev[teamName].filter(p => p.id !== playerId)
-      }));
+      const updatedTeams = {
+        ...teams,
+        [teamName]: teams[teamName].filter(p => p.id !== playerId)
+      };
+      setTeams(updatedTeams);
       setAvailablePlayers(prev => [...prev, playerToRemove]);
+
+      // Salvar no banco
+      if (currentGameDay && syncPlayers) {
+        await syncPlayers(updatedTeams);
+      }
     }
   };
 

@@ -4,8 +4,8 @@ import MatchesList from '../components/MatchesList';
 import LiveFieldView from '../components/LiveFieldView';
 import { handleWinnerStaysMatch } from '../utils/tournamentUtils';
 
-const MatchesScreen = ({ 
-  matches, 
+const MatchesScreen = ({
+  matches,
   setMatches,
   teams,
   matchEvents,
@@ -24,7 +24,11 @@ const MatchesScreen = ({
   settings,
   setSettings,
   setCurrentScreen,
-  onBack 
+  onBack,
+  currentGameDay,
+  syncMatches,
+  syncGoalEvent,
+  removeGoalEvent
 }) => {
   const [viewMode, setViewMode] = useState('field');
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
@@ -39,40 +43,55 @@ const MatchesScreen = ({
     return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
   });
 
-  const updateMatchScore = (matchId, team, score) => {
-    setMatches(prev => prev.map(match => {
+  const updateMatchScore = async (matchId, team, score) => {
+    const updatedMatches = matches.map(match => {
       if (match.id === matchId) {
         const updated = { ...match };
         const numericScore = score === '' ? null : parseInt(score) || 0;
-        
+
         if (match.team1 === team) {
           updated.score1 = numericScore;
         } else {
           updated.score2 = numericScore;
         }
-        
-        // NÃO marcar como jogado automaticamente - só quando apertar "Finalizar"
-        // updated.played permanece como estava
-        
+
         return updated;
       }
       return match;
-    }));
+    });
+
+    setMatches(updatedMatches);
+
+    // Salvar no banco
+    if (currentGameDay && syncMatches) {
+      await syncMatches(updatedMatches);
+    }
   };
 
-  const addGoal = (playerId, playerName, teamName, matchId) => {
-    // Adicionar evento de gol
-    const goalEvent = {
-      id: Date.now(),
-      playerId,
-      playerName,
-      teamName,
-      matchId,
-      minute: Math.floor((timer > 0 ? ((activeMatch === matchId ? (7*60 - timer) : 0)) : 0) / 60) + 1
-    };
-    
-    setMatchEvents(prev => [...prev, goalEvent]);
-    
+  const addGoal = async (playerId, playerName, teamName, matchId) => {
+    const minute = Math.floor((timer > 0 ? ((activeMatch === matchId ? (7*60 - timer) : 0)) : 0) / 60) + 1;
+
+    // Salvar no banco primeiro
+    if (currentGameDay && syncGoalEvent) {
+      try {
+        const savedEvent = await syncGoalEvent(matchId, playerId, playerName, teamName, minute);
+        setMatchEvents(prev => [...prev, savedEvent]);
+      } catch (error) {
+        console.error('Error saving goal:', error);
+      }
+    } else {
+      // Fallback para modo local
+      const goalEvent = {
+        id: Date.now(),
+        playerId,
+        playerName,
+        teamName,
+        matchId,
+        minute
+      };
+      setMatchEvents(prev => [...prev, goalEvent]);
+    }
+
     // Atualizar placar
     const currentMatch = filteredMatches.find(m => m.id === matchId);
     if (currentMatch) {
@@ -84,9 +103,18 @@ const MatchesScreen = ({
     }
   };
 
-  const removeGoal = (eventId) => {
+  const removeGoal = async (eventId) => {
     const eventToRemove = matchEvents.find(e => e.id === eventId);
     if (eventToRemove) {
+      // Remover do banco primeiro
+      if (currentGameDay && removeGoalEvent) {
+        try {
+          await removeGoalEvent(eventId);
+        } catch (error) {
+          console.error('Error removing goal:', error);
+        }
+      }
+
       const currentMatch = matches.find(m => m.id === eventToRemove.matchId);
       if (currentMatch) {
         if (currentMatch.team1 === eventToRemove.teamName) {

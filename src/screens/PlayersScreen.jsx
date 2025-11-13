@@ -3,12 +3,14 @@ import { Users, Plus, Minus } from 'lucide-react';
 import Header from '../components/Header';
 import LiveFieldViewToastMessage from '../components/LiveFieldView-ToastMessage';
 import { parsePlayerList } from '../utils/tournamentUtils';
+import { gameDayService } from '../services/gameDayService';
 
-const PlayersScreen = ({ 
-  players, 
-  setPlayers, 
+const PlayersScreen = ({
+  players,
+  setPlayers,
   setCurrentScreen,
-  onBack 
+  onBack,
+  currentGameDay
 }) => {
   const [playerListText, setPlayerListText] = useState('');
   const [newPlayerName, setNewPlayerName] = useState('');
@@ -22,27 +24,72 @@ const PlayersScreen = ({
     setShowToast(true);
   };
 
-  const handleParsePlayerList = () => {
-    const newPlayers = parsePlayerList(playerListText);
-    setPlayers(newPlayers);
-    setPlayerListText('');
-    showToastMessage(`${newPlayers.length} jogadores adicionados!`, 'success');
-  };
+  const handleParsePlayerList = async () => {
+    if (!currentGameDay) {
+      showToastMessage('Nenhum jogo ativo!', 'error');
+      return;
+    }
 
-  const addPlayer = () => {
-    if (newPlayerName.trim()) {
-      const newPlayer = {
-        id: Date.now(),
-        name: newPlayerName.trim(),
-        photo: null
-      };
-      setPlayers([...players, newPlayer]);
-      setNewPlayerName('');
+    const parsedPlayers = parsePlayerList(playerListText);
+
+    try {
+      const savedPlayers = [];
+      for (const player of parsedPlayers) {
+        const savedPlayer = await gameDayService.addPlayer(
+          currentGameDay.id,
+          player.name,
+          null
+        );
+        savedPlayers.push(savedPlayer);
+      }
+
+      setPlayers(savedPlayers);
+      setPlayerListText('');
+      showToastMessage(`${savedPlayers.length} jogadores adicionados!`, 'success');
+    } catch (error) {
+      console.error('Error adding players:', error);
+      showToastMessage('Erro ao adicionar jogadores', 'error');
     }
   };
 
-  const removePlayer = (playerId) => {
-    setPlayers(players.filter(p => p.id !== playerId));
+  const addPlayer = async () => {
+    if (!currentGameDay) {
+      showToastMessage('Nenhum jogo ativo!', 'error');
+      return;
+    }
+
+    if (newPlayerName.trim()) {
+      try {
+        const savedPlayer = await gameDayService.addPlayer(
+          currentGameDay.id,
+          newPlayerName.trim(),
+          null
+        );
+
+        setPlayers([...players, savedPlayer]);
+        setNewPlayerName('');
+        showToastMessage('Jogador adicionado!', 'success');
+      } catch (error) {
+        console.error('Error adding player:', error);
+        showToastMessage('Erro ao adicionar jogador', 'error');
+      }
+    }
+  };
+
+  const removePlayer = async (playerId) => {
+    if (!currentGameDay) {
+      showToastMessage('Nenhum jogo ativo!', 'error');
+      return;
+    }
+
+    try {
+      await gameDayService.deletePlayer(playerId);
+      setPlayers(players.filter(p => p.id !== playerId));
+      showToastMessage('Jogador removido!', 'success');
+    } catch (error) {
+      console.error('Error removing player:', error);
+      showToastMessage('Erro ao remover jogador', 'error');
+    }
   };
 
   return (

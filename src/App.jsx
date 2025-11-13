@@ -116,15 +116,19 @@ const App = () => {
       if (playersData && playersData.length > 0) {
         setPlayers(playersData);
 
-        const teamGroups = playersData.reduce((acc, player) => {
-          if (!acc[player.team_name]) {
-            acc[player.team_name] = [];
-          }
-          acc[player.team_name].push(player);
-          return acc;
-        }, {});
-        setTeams(teamGroups);
-        setTournamentStarted(true);
+        // Agrupar jogadores por time (apenas os que têm team_name)
+        const playersWithTeams = playersData.filter(p => p.team_name);
+        if (playersWithTeams.length > 0) {
+          const teamGroups = playersWithTeams.reduce((acc, player) => {
+            if (!acc[player.team_name]) {
+              acc[player.team_name] = [];
+            }
+            acc[player.team_name].push(player);
+            return acc;
+          }, {});
+          setTeams(teamGroups);
+          setTournamentStarted(true);
+        }
       }
 
       if (matchesData && matchesData.length > 0) {

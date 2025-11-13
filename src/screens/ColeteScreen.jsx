@@ -5,7 +5,7 @@ import LiveFieldViewToastMessage from '../components/LiveFieldView-ToastMessage'
 import { TEAM_COLORS } from '../constants';
 import { calculateStandings } from '../utils/tournamentUtils';
 
-const ColeteScreen = ({ 
+const ColeteScreen = ({
   players,
   teams,
   matches,
@@ -17,7 +17,8 @@ const ColeteScreen = ({
   coleteWinner,
   setColeteWinner,
   setCurrentScreen,
-  onBack 
+  onBack,
+  syncVestAssignment
 }) => {
   const [toastMessage, setToastMessage] = React.useState('');
   const [toastType, setToastType] = React.useState('success');
@@ -43,7 +44,7 @@ const ColeteScreen = ({
 
   const drawColete = async () => {
     const eligiblePlayers = coleteParticipants.filter(p => p.id !== immunePlayer?.id);
-    
+
     if (eligiblePlayers.length === 0) {
       showToastMessage('Adicione jogadores para o sorteio!', 'error');
       return;
@@ -66,11 +67,23 @@ const ColeteScreen = ({
     // Sortear o jogador
     const randomPlayer = eligiblePlayers[Math.floor(Math.random() * eligiblePlayers.length)];
     setColeteWinner(randomPlayer);
-    
+
+    // Salvar no banco de dados
+    if (syncVestAssignment) {
+      try {
+        const playerTeam = Object.keys(teams).find(teamName =>
+          teams[teamName]?.some(p => p.id === randomPlayer.id)
+        );
+        await syncVestAssignment(playerTeam || randomPlayer.name);
+      } catch (error) {
+        console.error('Error saving vest assignment:', error);
+      }
+    }
+
     // Finalizar loading
     setIsDrawing(false);
     setDrawingStep(0);
-    
+
     showToastMessage(`🧽 ${randomPlayer.name} foi sorteado para lavar o colete!`, 'success');
   };
 
