@@ -28,7 +28,8 @@ const MatchesScreen = ({
   currentGameDay,
   syncMatches,
   syncGoalEvent,
-  removeGoalEvent
+  removeGoalEvent,
+  syncActiveMatch
 }) => {
   const [viewMode, setViewMode] = useState('field');
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
@@ -188,6 +189,7 @@ const MatchesScreen = ({
           updateMatchScore={updateMatchScore}
           settings={settings}
           setSettings={setSettings}
+          syncActiveMatch={syncActiveMatch}
         />
       ) : (
         <MatchesList 

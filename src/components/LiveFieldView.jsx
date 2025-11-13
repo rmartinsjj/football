@@ -8,7 +8,7 @@ import LiveFieldViewMatchHeader from './LiveFieldView-MatchHeader';
 import LiveFieldViewGoalkeeperConfig from './LiveFieldView-GoalkeeperConfig';
 import LiveFieldViewPenaltyShootout from './LiveFieldView-PenaltyShootout';
 
-const LiveFieldView = ({ 
+const LiveFieldView = ({
   matches,
   setMatches,
   teams,
@@ -28,7 +28,8 @@ const LiveFieldView = ({
   updateMatchScore,
   setOnTimerFinished,
   settings,
-  setSettings
+  setSettings,
+  syncActiveMatch
 }) => {
   const [goalkeepers, setGoalkeepers] = useState({ 
     left: { name: 'Goleiro 1' }, 
@@ -833,6 +834,7 @@ const LiveFieldView = ({
           setShowGoalkeeperConfig={setShowGoalkeeperConfig}
           showPenaltyShootout={showPenaltyShootout}
           penaltyScore={penaltyScore}
+          syncActiveMatch={syncActiveMatch}
         />
       </div>
       )}

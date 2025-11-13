@@ -9,17 +9,24 @@ export const useGameDaySync = (currentGameDay) => {
       const existingPlayers = await gameDayService.getPlayersByGameDay(currentGameDay.id);
       const existingPlayerMap = new Map(existingPlayers.map(p => [p.id, p]));
 
+      console.log('Syncing players:', players.length, 'players');
+      console.log('Existing players in DB:', existingPlayers.length);
+
       for (const player of players) {
         const existingPlayer = existingPlayerMap.get(player.id);
 
         if (existingPlayer) {
+          console.log(`Updating player ${player.name} with team ${player.team_name}`);
           if (existingPlayer.team_name !== player.team_name && player.team_name) {
             await gameDayService.updatePlayer(player.id, { team_name: player.team_name });
           }
         } else if (player.team_name) {
+          console.log(`Adding new player ${player.name} to team ${player.team_name}`);
           await gameDayService.addPlayer(currentGameDay.id, player.name, player.team_name);
         }
       }
+
+      console.log('Players sync complete');
     } catch (error) {
       console.error('Error syncing players:', error);
     }
@@ -122,12 +129,25 @@ export const useGameDaySync = (currentGameDay) => {
     }
   }, [currentGameDay]);
 
+  const syncActiveMatch = useCallback(async (matchId) => {
+    if (!currentGameDay?.id) return;
+
+    try {
+      await gameDayService.updateGameDay(currentGameDay.id, {
+        active_match_id: matchId
+      });
+    } catch (error) {
+      console.error('Error updating active match:', error);
+    }
+  }, [currentGameDay]);
+
   return {
     syncPlayers,
     syncMatches,
     syncGoalEvent,
     removeGoalEvent,
     syncVestAssignment,
-    updateGameDaySettings
+    updateGameDaySettings,
+    syncActiveMatch
   };
 };

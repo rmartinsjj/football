@@ -82,7 +82,8 @@ const App = () => {
     syncGoalEvent,
     removeGoalEvent,
     syncVestAssignment,
-    updateGameDaySettings
+    updateGameDaySettings,
+    syncActiveMatch
   } = useGameDaySync(currentGameDay);
 
   useEffect(() => {
@@ -177,6 +178,11 @@ const App = () => {
         activeTeams: gameDay.active_teams || prev.activeTeams,
         currentWinnerTeam: gameDay.current_winner_team
       }));
+
+      // Restore active match if exists
+      if (gameDay.active_match_id) {
+        setActiveMatch(gameDay.active_match_id);
+      }
     } catch (error) {
       console.error('Error loading game day data:', error);
     }
@@ -319,6 +325,7 @@ const App = () => {
             syncGoalEvent={syncGoalEvent}
             removeGoalEvent={removeGoalEvent}
             updateGameDaySettings={updateGameDaySettings}
+            syncActiveMatch={syncActiveMatch}
           />
         );
       

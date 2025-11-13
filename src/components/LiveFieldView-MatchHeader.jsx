@@ -18,8 +18,15 @@ const LiveFieldViewMatchHeader = ({
   showGoalkeeperConfig,
   setShowGoalkeeperConfig,
   showPenaltyShootout,
-  penaltyScore
+  penaltyScore,
+  syncActiveMatch
 }) => {
+  const handleStartMatch = (matchId) => {
+    startMatchTimer(matchId);
+    if (syncActiveMatch) {
+      syncActiveMatch(matchId);
+    }
+  };
   return (
     <div className="p-3">
       {/* Header com Times, Jogo, Tempo e Controles */}
@@ -66,7 +73,7 @@ const LiveFieldViewMatchHeader = ({
         {/* Controles do Jogo - Ultra Minimalistas */}
         {activeMatch !== currentMatch.id ? (
           <button
-            onClick={() => startMatchTimer(currentMatch.id)}
+            onClick={() => handleStartMatch(currentMatch.id)}
             className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors"
             title="Iniciar"
           >
