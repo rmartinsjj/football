@@ -149,14 +149,21 @@ const App = () => {
       }
 
       if (eventsData && eventsData.length > 0) {
-        const formattedEvents = eventsData.map(event => ({
-          id: event.id,
-          matchId: matchesData.find(m => m.id === event.match_id)?.match_number,
-          playerId: event.player_id,
-          playerName: event.player_name,
-          teamName: event.team_name,
-          minute: event.minute
-        }));
+        const formattedEvents = eventsData
+          .map(event => {
+            const match = matchesData.find(m => m.id === event.match_id);
+            if (!match) return null; // Skip events without valid match
+
+            return {
+              id: event.id,
+              matchId: match.match_number,
+              playerId: event.player_id,
+              playerName: event.player_name,
+              teamName: event.team_name,
+              minute: event.minute
+            };
+          })
+          .filter(event => event !== null); // Remove null entries
         setMatchEvents(formattedEvents);
       }
 

@@ -1050,7 +1050,7 @@ const LiveFieldView = ({
           Gols da Partida
         </h3>
         
-        {matchEvents.filter(event => event.matchId === currentMatch.id).length === 0 ? (
+        {matchEvents.filter(event => event && event.matchId === currentMatch.id).length === 0 ? (
           <div className="text-center py-3">
             <span className="text-gray-400 text-xs">Nenhum gol marcado ainda</span>
           </div>
@@ -1062,7 +1062,7 @@ const LiveFieldView = ({
                 {currentMatch.team1}
               </h4>
               {matchEvents
-                .filter(event => event.matchId === currentMatch.id && event.teamName === currentMatch.team1)
+                .filter(event => event && event.matchId === currentMatch.id && event.teamName === currentMatch.team1)
                 .map((event) => (
                   <div key={event.id} className="flex items-center justify-between bg-gray-700 rounded-lg p-2">
                     <div className="flex items-center space-x-1">
@@ -1086,7 +1086,7 @@ const LiveFieldView = ({
                 {currentMatch.team2}
               </h4>
               {matchEvents
-                .filter(event => event.matchId === currentMatch.id && event.teamName === currentMatch.team2)
+                .filter(event => event && event.matchId === currentMatch.id && event.teamName === currentMatch.team2)
                 .map((event) => (
                   <div key={event.id} className="flex items-center justify-between bg-gray-700 rounded-lg p-2">
                     <div className="flex items-center space-x-1">
