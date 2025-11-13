@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { INITIAL_MATCHES, INITIAL_TEAMS, AVAILABLE_TEAMS } from './constants';
 import { useTimer } from './hooks/useTimer';
+import { useGameDaySync } from './hooks/useGameDaySync';
 import { TIMER_DURATION } from './constants';
 import { initializeWinnerStaysMode } from './utils/tournamentUtils';
+import { gameDayService } from './services/gameDayService';
 
 // Screen Components
 import HomeScreen from './screens/HomeScreen';
@@ -13,14 +15,17 @@ import StandingsScreen from './screens/StandingsScreen';
 import ScorersScreen from './screens/ScorersScreen';
 import ColeteScreen from './screens/ColeteScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import CreateGameScreen from './screens/CreateGameScreen';
 
 const App = () => {
-  const [currentScreen, setCurrentScreen] = useState('home');
+  const [currentScreen, setCurrentScreen] = useState('create-game');
+  const [currentGameDay, setCurrentGameDay] = useState(null);
   const [players, setPlayers] = useState([]);
   const [teams, setTeams] = useState(INITIAL_TEAMS);
   const [matches, setMatches] = useState(INITIAL_MATCHES);
   const [tournamentStarted, setTournamentStarted] = useState(false);
   const [matchEvents, setMatchEvents] = useState([]);
+  const [isLoadingGameDay, setIsLoadingGameDay] = useState(true);
   
   // Colete state
   const [coleteParticipants, setColeteParticipants] = useState([]);
@@ -58,7 +63,6 @@ const App = () => {
       }));
     }
   }, [settings.tournamentType, settings.activeTeams]);
-  // Timer hook
   const {
     timer,
     isTimerRunning,
@@ -72,28 +76,125 @@ const App = () => {
     formatTime
   } = useTimer(settings);
 
-  // Prevent zoom on mount
+  const {
+    syncPlayers,
+    syncMatches,
+    syncGoalEvent,
+    removeGoalEvent,
+    syncVestAssignment,
+    updateGameDaySettings
+  } = useGameDaySync(currentGameDay);
+
+  useEffect(() => {
+    checkForActiveGameDay();
+  }, []);
+
+  const checkForActiveGameDay = async () => {
+    try {
+      const activeGameDay = await gameDayService.getActiveGameDay();
+      if (activeGameDay) {
+        await loadGameDayData(activeGameDay);
+        setCurrentScreen('home');
+      }
+    } catch (error) {
+      console.error('Error checking for active game day:', error);
+    } finally {
+      setIsLoadingGameDay(false);
+    }
+  };
+
+  const loadGameDayData = async (gameDay) => {
+    try {
+      setCurrentGameDay(gameDay);
+
+      const [playersData, matchesData, eventsData, vestData] = await Promise.all([
+        gameDayService.getPlayersByGameDay(gameDay.id),
+        gameDayService.getMatchesByGameDay(gameDay.id),
+        gameDayService.getMatchEventsByGameDay(gameDay.id),
+        gameDayService.getVestAssignment(gameDay.id)
+      ]);
+
+      if (playersData && playersData.length > 0) {
+        setPlayers(playersData);
+
+        const teamGroups = playersData.reduce((acc, player) => {
+          if (!acc[player.team_name]) {
+            acc[player.team_name] = [];
+          }
+          acc[player.team_name].push(player);
+          return acc;
+        }, {});
+        setTeams(teamGroups);
+        setTournamentStarted(true);
+      }
+
+      if (matchesData && matchesData.length > 0) {
+        const formattedMatches = matchesData.map(match => ({
+          id: match.match_number,
+          dbId: match.id,
+          team1: match.team1,
+          team2: match.team2,
+          score1: match.score1,
+          score2: match.score2,
+          penaltyScore1: match.penalty_score1,
+          penaltyScore2: match.penalty_score2,
+          winner: match.winner,
+          type: match.match_type,
+          played: match.played
+        }));
+        setMatches(formattedMatches);
+      }
+
+      if (eventsData && eventsData.length > 0) {
+        const formattedEvents = eventsData.map(event => ({
+          id: event.id,
+          matchId: matchesData.find(m => m.id === event.match_id)?.match_number,
+          playerId: event.player_id,
+          playerName: event.player_name,
+          teamName: event.team_name,
+          minute: event.minute
+        }));
+        setMatchEvents(formattedEvents);
+      }
+
+      if (vestData) {
+        setColeteWinner(vestData.team_name);
+      }
+
+      setSettings(prev => ({
+        ...prev,
+        tournamentType: gameDay.tournament_type,
+        activeTeams: gameDay.active_teams || prev.activeTeams,
+        currentWinnerTeam: gameDay.current_winner_team
+      }));
+    } catch (error) {
+      console.error('Error loading game day data:', error);
+    }
+  };
+
+  const handleGameCreated = async (gameDay) => {
+    await loadGameDayData(gameDay);
+    setCurrentScreen('home');
+  };
+
   React.useEffect(() => {
-    // Disable zoom on iOS
     const preventDefault = (e) => {
       if (e.touches.length > 1) {
         e.preventDefault();
       }
     };
-    
+
     const preventZoom = (e) => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
       }
     };
-    
-    // Add event listeners
+
     document.addEventListener('touchstart', preventDefault, { passive: false });
     document.addEventListener('touchmove', preventDefault, { passive: false });
     document.addEventListener('wheel', preventZoom, { passive: false });
     document.addEventListener('keydown', preventZoom);
-    
-    // Cleanup
+
     return () => {
       document.removeEventListener('touchstart', preventDefault);
       document.removeEventListener('touchmove', preventDefault);
@@ -107,7 +208,26 @@ const App = () => {
   };
 
   const renderCurrentScreen = () => {
+    if (isLoadingGameDay) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-white text-lg">Carregando...</p>
+          </div>
+        </div>
+      );
+    }
+
     switch (currentScreen) {
+      case 'create-game':
+        return (
+          <CreateGameScreen
+            onGameCreated={handleGameCreated}
+            onBack={currentGameDay ? () => setCurrentScreen('home') : null}
+          />
+        );
+
       case 'home':
         return (
           <HomeScreen
@@ -116,6 +236,7 @@ const App = () => {
             setCurrentScreen={setCurrentScreen}
             coleteWinner={coleteWinner}
             settings={settings}
+            currentGameDay={currentGameDay}
           />
         );
       
@@ -126,6 +247,7 @@ const App = () => {
             setPlayers={setPlayers}
             setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
+            currentGameDay={currentGameDay}
           />
         );
       
@@ -140,6 +262,9 @@ const App = () => {
             settings={settings}
             setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
+            currentGameDay={currentGameDay}
+            syncPlayers={syncPlayers}
+            syncMatches={syncMatches}
           />
         );
       
@@ -165,6 +290,11 @@ const App = () => {
             setSettings={setSettings}
             setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
+            currentGameDay={currentGameDay}
+            syncMatches={syncMatches}
+            syncGoalEvent={syncGoalEvent}
+            removeGoalEvent={removeGoalEvent}
+            updateGameDaySettings={updateGameDaySettings}
           />
         );
       
@@ -203,6 +333,7 @@ const App = () => {
             setColeteWinner={setColeteWinner}
             setCurrentScreen={setCurrentScreen}
             onBack={handleBackToHome}
+            syncVestAssignment={syncVestAssignment}
           />
         );
       
