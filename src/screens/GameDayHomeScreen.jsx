@@ -17,7 +17,7 @@ const GameDayHomeScreen = ({
   const [isCreating, setIsCreating] = useState(false);
   const [existingGames, setExistingGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateForm, setShowCreateForm] = useState(!currentGameDay);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const allTeams = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
@@ -26,9 +26,6 @@ const GameDayHomeScreen = ({
     loadExistingGames();
   }, []);
 
-  useEffect(() => {
-    setShowCreateForm(!currentGameDay);
-  }, [currentGameDay]);
 
   const loadExistingGames = async () => {
     try {
@@ -146,7 +143,7 @@ const GameDayHomeScreen = ({
       </div>
 
       <div className="px-4 pb-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
-        {currentGameDay && (
+        {currentGameDay ? (
           <>
             <div
               className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
@@ -245,26 +242,17 @@ const GameDayHomeScreen = ({
             </div>
 
           </>
+        ) : (
+          <>
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md transition-all flex items-center justify-center space-x-2 mb-4"
+            >
+              <Play size={20} />
+              <span>Criar Novo Jogo</span>
+            </button>
+          </>
         )}
-
-        {!currentGameDay && !showCreateForm && (
-          <div className="text-center py-8">
-            <div className="text-gray-400 mb-4">
-              <Calendar size={48} className="mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Nenhum jogo ativo</p>
-            </div>
-          </div>
-        )}
-
-        <div className="mb-6">
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 rounded-xl font-semibold shadow-md transition-all flex items-center justify-center space-x-2"
-          >
-            <Play size={18} />
-            <span>{showCreateForm ? 'Cancelar' : 'Criar Novo Jogo'}</span>
-          </button>
-        </div>
 
         {showCreateForm && (
           <div className="space-y-4">
@@ -407,9 +395,9 @@ const GameDayHomeScreen = ({
           </div>
         )}
 
-        {!loading && existingGames.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-white font-semibold mb-3 text-sm">Todos os Jogos</h3>
+        {!currentGameDay && !loading && existingGames.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-white font-semibold mb-3 text-base">Todos os Jogos</h3>
 
             <div className="space-y-2">
               {existingGames.map(game => (
@@ -452,12 +440,21 @@ const GameDayHomeScreen = ({
         )}
       </div>
 
-      <div className="px-4 pb-8">
-        <div className="text-center text-gray-400 text-xs italic">
-          <p>Mais que futebol, é comunhão</p>
-          <p>e Jesus é o nosso capitão!</p>
+      {!currentGameDay && (
+        <div className="px-4 pb-8">
+          <div className="flex flex-col items-center justify-center mt-8">
+            <img
+              src="/IMG_9294.PNG"
+              alt="Jesus Soccer"
+              className="w-32 h-32 object-contain mb-4 opacity-90"
+            />
+            <div className="text-center text-gray-400 text-xs italic">
+              <p>Mais que futebol, é comunhão</p>
+              <p>e Jesus é o nosso capitão!</p>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
