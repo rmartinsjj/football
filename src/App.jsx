@@ -7,7 +7,7 @@ import { initializeWinnerStaysMode } from './utils/tournamentUtils';
 import { gameDayService } from './services/gameDayService';
 
 // Screen Components
-import HomeScreen from './screens/HomeScreen';
+import GameDayHomeScreen from './screens/GameDayHomeScreen';
 import PlayersScreen from './screens/PlayersScreen';
 import TeamsScreen from './screens/TeamsScreen';
 import MatchesScreen from './screens/MatchesScreen';
@@ -15,10 +15,9 @@ import StandingsScreen from './screens/StandingsScreen';
 import ScorersScreen from './screens/ScorersScreen';
 import ColeteScreen from './screens/ColeteScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import CreateGameScreen from './screens/CreateGameScreen';
 
 const App = () => {
-  const [currentScreen, setCurrentScreen] = useState('create-game');
+  const [currentScreen, setCurrentScreen] = useState('home');
   const [currentGameDay, setCurrentGameDay] = useState(null);
   const [players, setPlayers] = useState([]);
   const [teams, setTeams] = useState(INITIAL_TEAMS);
@@ -94,7 +93,6 @@ const App = () => {
       const activeGameDay = await gameDayService.getActiveGameDay();
       if (activeGameDay) {
         await loadGameDayData(activeGameDay);
-        setCurrentScreen('home');
       }
     } catch (error) {
       console.error('Error checking for active game day:', error);
@@ -220,23 +218,16 @@ const App = () => {
     }
 
     switch (currentScreen) {
-      case 'create-game':
-        return (
-          <CreateGameScreen
-            onGameCreated={handleGameCreated}
-            onBack={currentGameDay ? () => setCurrentScreen('home') : null}
-          />
-        );
-
       case 'home':
         return (
-          <HomeScreen
+          <GameDayHomeScreen
+            onGameSelected={handleGameCreated}
+            currentGameDay={currentGameDay}
             players={players}
             matches={matches}
-            setCurrentScreen={setCurrentScreen}
             coleteWinner={coleteWinner}
             settings={settings}
-            currentGameDay={currentGameDay}
+            setCurrentScreen={setCurrentScreen}
           />
         );
       
