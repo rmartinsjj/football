@@ -323,9 +323,9 @@ const TeamsScreen = ({
 
         {/* Times */}
         <div className="grid grid-cols-1 gap-3">
-          {Object.entries(teams).filter(([teamName]) => 
-            settings?.activeTeams?.includes(teamName) || !settings?.activeTeams
-          ).map(([teamName, teamPlayers]) => (
+          {(settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco']).map((teamName) => {
+            const teamPlayers = teams[teamName] || [];
+            return (
             <div key={teamName} className="dark-card rounded-xl shadow-sm overflow-hidden">
               <div className={`bg-gradient-to-r ${TEAM_COLORS[teamName].gradient} p-4`}>
                 <div className="flex items-center justify-between text-white">
@@ -390,7 +390,8 @@ const TeamsScreen = ({
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
