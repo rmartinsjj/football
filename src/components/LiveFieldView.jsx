@@ -54,6 +54,123 @@ const LiveFieldView = ({
   const [showToast, setShowToast] = useState(false);
   const [hasShownResults, setHasShownResults] = useState(false);
 
+  // Calculate total players and goalkeeper logic
+  const totalPlayers = Object.values(teams).flat().length;
+  const hasAutoGoalkeepers = totalPlayers > 20;
+  
+  // Auto-update goalkeeper names based on player count
+  React.useEffect(() => {
+    if (currentMatch && hasAutoGoalkeepers) {
+      const team1Players = teams[currentMatch.team1] || [];
+      const team2Players = teams[currentMatch.team2] || [];
+      
+      // Logic for goalkeeper assignment
+      if (totalPlayers >= 24) {
+        // Each team has enough players for their own goalkeeper
+        const team1Goalkeeper = team1Players[team1Players.length - 1]; // Last player becomes goalkeeper
+        const team2Goalkeeper = team2Players[team2Players.length - 1];
+        
+        setGoalkeepers({
+          left: { 
+            name: team1Goalkeeper?.name || 'Goleiro 1',
+            playerId: team1Goalkeeper?.id,
+            isPlayer: true,
+            teamName: currentMatch.team1
+          },
+          right: { 
+            name: team2Goalkeeper?.name || 'Goleiro 2',
+            playerId: team2Goalkeeper?.id,
+            isPlayer: true,
+            teamName: currentMatch.team2
+          }
+        });
+      } else if (totalPlayers === 23) {
+        // One team borrows a goalkeeper
+        const team1HasGoalkeeper = team1Players.length >= 6;
+        const team2HasGoalkeeper = team2Players.length >= 6;
+        
+        if (team1HasGoalkeeper && !team2HasGoalkeeper) {
+          // Team 1 has goalkeeper, Team 2 borrows
+          const team1Goalkeeper = team1Players[team1Players.length - 1];
+          setGoalkeepers({
+            left: { 
+              name: team1Goalkeeper?.name || 'Goleiro 1',
+              playerId: team1Goalkeeper?.id,
+              isPlayer: true,
+              teamName: currentMatch.team1
+            },
+            right: { 
+              name: 'Goleiro Emprestado',
+              playerId: null,
+              isPlayer: false,
+              teamName: null
+            }
+          });
+        } else if (team2HasGoalkeeper && !team1HasGoalkeeper) {
+          // Team 2 has goalkeeper, Team 1 borrows
+          const team2Goalkeeper = team2Players[team2Players.length - 1];
+          setGoalkeepers({
+            left: { 
+              name: 'Goleiro Emprestado',
+              playerId: null,
+              isPlayer: false,
+              teamName: null
+            },
+            right: { 
+              name: team2Goalkeeper?.name || 'Goleiro 2',
+              playerId: team2Goalkeeper?.id,
+              isPlayer: true,
+              teamName: currentMatch.team2
+            }
+          });
+        } else {
+          // Default case - both teams get one player as goalkeeper
+          const team1Goalkeeper = team1Players[team1Players.length - 1];
+          const team2Goalkeeper = team2Players[team2Players.length - 1];
+          
+          setGoalkeepers({
+            left: { 
+              name: team1Goalkeeper?.name || 'Goleiro 1',
+              playerId: team1Goalkeeper?.id,
+              isPlayer: true,
+              teamName: currentMatch.team1
+            },
+            right: { 
+              name: team2Goalkeeper?.name || 'Goleiro 2',
+              playerId: team2Goalkeeper?.id,
+              isPlayer: true,
+              teamName: currentMatch.team2
+            }
+          });
+        }
+      } else {
+        // 21-22 players - each team designates one player as goalkeeper
+        const team1Goalkeeper = team1Players[team1Players.length - 1];
+        const team2Goalkeeper = team2Players[team2Players.length - 1];
+        
+        setGoalkeepers({
+          left: { 
+            name: team1Goalkeeper?.name || 'Goleiro 1',
+            playerId: team1Goalkeeper?.id,
+            isPlayer: true,
+            teamName: currentMatch.team1
+          },
+          right: { 
+            name: team2Goalkeeper?.name || 'Goleiro 2',
+            playerId: team2Goalkeeper?.id,
+            isPlayer: true,
+            teamName: currentMatch.team2
+          }
+        });
+      }
+    } else {
+      // 20 or fewer players - external goalkeepers
+      setGoalkeepers({
+        left: { name: 'Goleiro 1', playerId: null, isPlayer: false, teamName: null },
+        right: { name: 'Goleiro 2', playerId: null, isPlayer: false, teamName: null }
+      });
+    }
+  }, [currentMatch, teams, totalPlayers, hasAutoGoalkeepers]);
   // Set up timer finished callback
   React.useEffect(() => {
     if (setOnTimerFinished) {
@@ -111,6 +228,14 @@ const LiveFieldView = ({
   const team1Players = currentMatch ? (teams[currentMatch.team1] || []) : [];
   const team2Players = currentMatch ? (teams[currentMatch.team2] || []) : [];
 
+  // Filter out goalkeepers from field players when auto-goalkeepers are enabled
+  const team1FieldPlayers = hasAutoGoalkeepers && totalPlayers >= 21 
+    ? team1Players.slice(0, -1) // Remove last player (goalkeeper)
+    : team1Players;
+    
+  const team2FieldPlayers = hasAutoGoalkeepers && totalPlayers >= 21
+    ? team2Players.slice(0, -1) // Remove last player (goalkeeper)  
+    : team2Players;
   // Update matches if playoff matches were generated
   React.useEffect(() => {
     if (JSON.stringify(updatedMatches) !== JSON.stringify(matches)) {
@@ -749,6 +874,8 @@ const LiveFieldView = ({
             goalkeepers={goalkeepers}
             setGoalkeepers={setGoalkeepers}
             isVisible={showGoalkeeperConfig}
+            hasAutoGoalkeepers={hasAutoGoalkeepers}
+            totalPlayers={totalPlayers}
           />
         </div>
       )}
@@ -809,8 +936,21 @@ const LiveFieldView = ({
           <div
             className="absolute transform -translate-x-1/2 -translate-y-1/2"
             style={{ left: '6%', top: '50%' }}
+            onClick={() => {
+              // Only allow goals if goalkeeper is a player
+              if (goalkeepers.left.isPlayer && goalkeepers.left.playerId) {
+                addGoal(
+                  goalkeepers.left.playerId, 
+                  goalkeepers.left.name, 
+                  goalkeepers.left.teamName, 
+                  currentMatch.id
+                );
+              }
+            }}
           >
-            <div className="w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+            <div className={`w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg ${
+              goalkeepers.left.isPlayer ? 'cursor-pointer hover:scale-110 active:scale-95 transition-transform' : ''
+            }`}>
               <span className="text-white text-[8px] font-bold">G</span>
             </div>
             <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
@@ -821,8 +961,21 @@ const LiveFieldView = ({
           <div
             className="absolute transform -translate-x-1/2 -translate-y-1/2"
             style={{ left: '94%', top: '50%' }}
+            onClick={() => {
+              // Only allow goals if goalkeeper is a player
+              if (goalkeepers.right.isPlayer && goalkeepers.right.playerId) {
+                addGoal(
+                  goalkeepers.right.playerId, 
+                  goalkeepers.right.name, 
+                  goalkeepers.right.teamName, 
+                  currentMatch.id
+                );
+              }
+            }}
           >
-            <div className="w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+            <div className={`w-5 h-5 bg-yellow-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg ${
+              goalkeepers.right.isPlayer ? 'cursor-pointer hover:scale-110 active:scale-95 transition-transform' : ''
+            }`}>
               <span className="text-white text-[8px] font-bold">G</span>
             </div>
             <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-90 text-white text-[7px] px-1 py-0.5 rounded whitespace-nowrap max-w-14 truncate">
@@ -831,7 +984,7 @@ const LiveFieldView = ({
           </div>
 
           {/* Jogadores do Time 1 */}
-          {team1Players.slice(0, 5).map((player, index) => {
+          {team1FieldPlayers.slice(0, 5).map((player, index) => {
             const positions = [
               { x: '18%', y: '25%' },
               { x: '18%', y: '75%' },
@@ -859,7 +1012,7 @@ const LiveFieldView = ({
           })}
 
           {/* Jogadores do Time 2 */}
-          {team2Players.slice(0, 5).map((player, index) => {
+          {team2FieldPlayers.slice(0, 5).map((player, index) => {
             const positions = [
               { x: '82%', y: '25%' },
               { x: '82%', y: '75%' },
