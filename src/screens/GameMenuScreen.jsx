@@ -19,6 +19,15 @@ const GameMenuScreen = ({
     return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
   });
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden pb-24">
@@ -62,7 +71,7 @@ const GameMenuScreen = ({
           <div className="relative z-10">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-base font-semibold mb-1">Torneio Ativo</h3>
+                <h3 className="text-base font-semibold mb-1">{formatDate(currentGameDay?.game_date)}</h3>
                 <p className="text-gray-200 text-sm">{players.length} jogadores • {settings?.numberOfTeams || 4} times</p>
               </div>
               <div className="text-right">

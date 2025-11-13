@@ -206,6 +206,14 @@ const App = () => {
     setCurrentScreen('home');
   };
 
+  const handleBackToMenu = () => {
+    if (currentGameDay) {
+      setCurrentScreen('menu');
+    } else {
+      setCurrentScreen('home');
+    }
+  };
+
   const renderCurrentScreen = () => {
     if (isLoadingGameDay) {
       return (
@@ -251,7 +259,7 @@ const App = () => {
             players={players}
             setPlayers={setPlayers}
             setCurrentScreen={setCurrentScreen}
-            onBack={handleBackToHome}
+            onBack={handleBackToMenu}
             currentGameDay={currentGameDay}
           />
         );
@@ -266,7 +274,7 @@ const App = () => {
             setTournamentStarted={setTournamentStarted}
             settings={settings}
             setCurrentScreen={setCurrentScreen}
-            onBack={handleBackToHome}
+            onBack={handleBackToMenu}
             currentGameDay={currentGameDay}
             syncPlayers={syncPlayers}
             syncMatches={syncMatches}
@@ -294,7 +302,7 @@ const App = () => {
             settings={settings}
             setSettings={setSettings}
             setCurrentScreen={setCurrentScreen}
-            onBack={handleBackToHome}
+            onBack={handleBackToMenu}
             currentGameDay={currentGameDay}
             syncMatches={syncMatches}
             syncGoalEvent={syncGoalEvent}
@@ -309,7 +317,7 @@ const App = () => {
             matches={matches}
             settings={settings}
             setCurrentScreen={setCurrentScreen}
-            onBack={handleBackToHome}
+            onBack={handleBackToMenu}
           />
         );
       
@@ -319,7 +327,7 @@ const App = () => {
             matchEvents={matchEvents}
             setMatchEvents={setMatchEvents}
             setCurrentScreen={setCurrentScreen}
-            onBack={handleBackToHome}
+            onBack={handleBackToMenu}
           />
         );
       
@@ -337,7 +345,7 @@ const App = () => {
             coleteWinner={coleteWinner}
             setColeteWinner={setColeteWinner}
             setCurrentScreen={setCurrentScreen}
-            onBack={handleBackToHome}
+            onBack={handleBackToMenu}
             syncVestAssignment={syncVestAssignment}
           />
         );
