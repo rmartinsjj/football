@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Play, Check, Settings, Users, Shuffle, Trophy, Target, BarChart3 } from 'lucide-react';
+import { Calendar, Play, Check, Settings, Trash2, X } from 'lucide-react';
 import { gameDayService } from '../services/gameDayService';
 
 const GameDayHomeScreen = ({
@@ -18,6 +18,9 @@ const GameDayHomeScreen = ({
   const [existingGames, setExistingGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const allTeams = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
@@ -85,6 +88,30 @@ const GameDayHomeScreen = ({
     } catch (error) {
       console.error('Error selecting game:', error);
       alert('Erro ao selecionar jogo: ' + error.message);
+    }
+  };
+
+  const handleDeleteGame = async () => {
+    if (deleteConfirmText !== 'DELETAR') {
+      alert('Digite "DELETAR" para confirmar');
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await gameDayService.deleteGameDay(deleteConfirmModal.id);
+      await loadExistingGames();
+      setDeleteConfirmModal(null);
+      setDeleteConfirmText('');
+
+      if (currentGameDay?.id === deleteConfirmModal.id) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error deleting game:', error);
+      alert('Erro ao deletar jogo: ' + error.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -299,39 +326,53 @@ const GameDayHomeScreen = ({
 
             <div className="space-y-2">
               {existingGames.map(game => (
-                <button
-                  key={game.id}
-                  onClick={() => handleSelectExistingGame(game)}
-                  className="w-full dark-card hover:bg-gray-700 rounded-lg p-3 transition-all text-left"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          game.tournament_type === 'championship'
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-purple-600 text-white'
-                        }`}>
-                          {game.tournament_type === 'championship' ? 'Campeonato' : 'Quem Ganha Fica'}
-                        </span>
-                        {game.is_active && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-600 text-white">
-                            ATIVO
+                <div key={game.id} className="relative">
+                  <button
+                    onClick={() => handleSelectExistingGame(game)}
+                    className="w-full dark-card hover:bg-gray-700 rounded-lg p-3 transition-all text-left"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            game.tournament_type === 'championship'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-purple-600 text-white'
+                          }`}>
+                            {game.tournament_type === 'championship' ? 'Campeonato' : 'Quem Ganha Fica'}
                           </span>
-                        )}
+                          {game.is_active && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-600 text-white">
+                              ATIVO
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-white font-medium text-sm">
+                          {formatDate(game.game_date)}
+                        </div>
+                        <div className="text-gray-400 text-xs">
+                          {game.active_teams?.length || 0} times
+                        </div>
                       </div>
-                      <div className="text-white font-medium text-sm">
-                        {formatDate(game.game_date)}
-                      </div>
-                      <div className="text-gray-400 text-xs">
-                        {game.active_teams?.length || 0} times
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteConfirmModal(game);
+                            setDeleteConfirmText('');
+                          }}
+                          className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500 hover:bg-opacity-10 rounded-lg transition-all"
+                          title="Deletar jogo"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                        <div className="text-gray-400">
+                          <Play size={16} />
+                        </div>
                       </div>
                     </div>
-                    <div className="text-gray-400">
-                      <Play size={16} />
-                    </div>
-                  </div>
-                </button>
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -339,18 +380,91 @@ const GameDayHomeScreen = ({
       </div>
 
       <div className="px-4 pb-8">
-          <div className="flex flex-col items-center justify-center mt-8">
-            <img
-              src="/IMG_9294.PNG"
-              alt="Jesus Soccer"
-              className="w-32 h-32 object-contain mb-4 opacity-90"
-            />
-            <div className="text-center text-gray-400 text-xs italic">
-              <p>Mais que futebol, é comunhão</p>
-              <p>e Jesus é o nosso capitão!</p>
+        <div className="flex flex-col items-center justify-center mt-8">
+          <img
+            src="/IMG_9294.PNG"
+            alt="Jesus Soccer"
+            className="w-32 h-32 object-contain mb-4 opacity-90"
+          />
+          <div className="text-center text-gray-400 text-xs italic">
+            <p>Mais que futebol, é comunhão</p>
+            <p>e Jesus é o nosso capitão!</p>
+          </div>
+        </div>
+      </div>
+
+      {deleteConfirmModal && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm px-4">
+          <div className="bg-gray-800 rounded-xl p-6 max-w-sm w-full shadow-2xl border border-gray-700">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-red-400">⚠️ Confirmar Exclusão</h3>
+              <button
+                onClick={() => {
+                  setDeleteConfirmModal(null);
+                  setDeleteConfirmText('');
+                }}
+                className="p-1 hover:bg-gray-700 rounded-full transition-colors"
+              >
+                <X size={20} className="text-gray-400" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-white text-sm mb-2">Você está prestes a deletar o jogo:</p>
+              <div className="bg-gray-700 rounded-lg p-3 mb-3">
+                <div className="text-white font-medium">{formatDate(deleteConfirmModal.game_date)}</div>
+                <div className="text-gray-400 text-xs">{deleteConfirmModal.active_teams?.length || 0} times</div>
+              </div>
+              <p className="text-red-400 text-sm font-semibold mb-4">
+                ⚠️ Esta ação não pode ser desfeita! Todos os dados do jogo serão permanentemente perdidos.
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-white text-sm font-semibold mb-2">
+                Digite <span className="text-red-400 font-bold">DELETAR</span> para confirmar:
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETAR"
+                className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:border-red-500 focus:outline-none font-mono text-center"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  setDeleteConfirmModal(null);
+                  setDeleteConfirmText('');
+                }}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteGame}
+                disabled={deleteConfirmText !== 'DELETAR' || isDeleting}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Deletando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={18} />
+                    <span>Deletar</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
+      )}
     </div>
   );
 };
