@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Shuffle, Trophy, Target, BarChart3, Settings, ArrowLeft, ShirtIcon } from 'lucide-react';
+import { Settings, ArrowLeft } from 'lucide-react';
 
 const GameMenuScreen = ({
   currentGameDay,
@@ -19,50 +19,6 @@ const GameMenuScreen = ({
     return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
   });
 
-  const menuItems = [
-    {
-      id: 'players',
-      icon: Users,
-      label: 'Jogadores',
-      bgColor: 'from-blue-600 to-blue-700',
-      description: `${players.length} cadastrados`
-    },
-    {
-      id: 'teams',
-      icon: Shuffle,
-      label: 'Sortear Times',
-      bgColor: 'from-green-600 to-green-700',
-      description: `${settings?.numberOfTeams || 4} times`
-    },
-    {
-      id: 'matches',
-      icon: Trophy,
-      label: 'Partidas',
-      bgColor: 'from-purple-600 to-purple-700',
-      description: `${filteredMatches.filter(m => m.played).length}/${filteredMatches.length} jogos`
-    },
-    {
-      id: 'standings',
-      icon: BarChart3,
-      label: 'Classificação',
-      bgColor: 'from-orange-600 to-orange-700',
-      description: 'Tabela'
-    },
-    {
-      id: 'scorers',
-      icon: Target,
-      label: 'Artilheiros',
-      bgColor: 'from-red-600 to-red-700',
-      description: 'Gols'
-    },
-    {
-      id: 'colete',
-      icon: ShirtIcon,
-      label: coleteWinner ? `Colete: ${coleteWinner}` : 'Lavar Colete',
-      bgColor: coleteWinner ? 'from-yellow-600 to-yellow-700' : 'from-gray-600 to-gray-700',
-      description: coleteWinner ? 'Definido' : 'Pendente'
-    }
-  ];
 
   return (
     <div className="min-h-screen overflow-x-hidden pb-24">
@@ -119,17 +75,87 @@ const GameMenuScreen = ({
 
         <h2 className="text-base font-semibold text-white mb-3">Menu Principal</h2>
         <div className="grid grid-cols-2 gap-3 mb-6">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setCurrentScreen(item.id)}
-              className={`bg-gradient-to-br ${item.bgColor} p-4 rounded-xl text-white transition-all hover:scale-105 active:scale-95 shadow-lg`}
-            >
-              <item.icon size={28} className="mb-2" />
-              <h3 className="font-semibold text-sm mb-1">{item.label}</h3>
-              <p className="text-xs opacity-90">{item.description}</p>
-            </button>
-          ))}
+          <button
+            onClick={() => setCurrentScreen('players')}
+            className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
+          >
+            <div className="mb-3">
+              <img src="/soccer-player1.png" alt="Jogador" className="w-8 h-8 filter brightness-0 invert opacity-80" />
+            </div>
+            <h3 className="font-semibold text-white text-sm mb-1">Jogadores</h3>
+            <p className="text-xs text-gray-400">{players.length} cadastrados</p>
+          </button>
+
+          <button
+            onClick={() => setCurrentScreen('teams')}
+            className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
+          >
+            <div className="mb-3">
+              <img src="/ball3.png" alt="Bola" className="w-8 h-8 filter brightness-0 invert opacity-80" />
+            </div>
+            <h3 className="font-semibold text-white text-sm mb-1">Times</h3>
+            <p className="text-xs text-gray-400">Sortear equipes</p>
+          </button>
+
+          <button
+            onClick={() => setCurrentScreen('matches')}
+            className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
+          >
+            <div className="mb-3">
+              <img src="/classifcacao1.png" alt="Jogos" className="w-8 h-8 filter brightness-0 invert opacity-80" />
+            </div>
+            <h3 className="font-semibold text-white text-sm mb-1">Jogos</h3>
+            <p className="text-xs text-gray-400">Controlar partidas</p>
+          </button>
+
+          <button
+            onClick={() => setCurrentScreen('standings')}
+            className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
+          >
+            <div className="mb-3">
+              <img src="/throphy.png" alt="Classificação" className="w-8 h-8 filter brightness-0 invert opacity-80" />
+            </div>
+            <h3 className="font-semibold text-white text-sm mb-1">Classificação</h3>
+            <p className="text-xs text-gray-400">Ver tabela</p>
+          </button>
+
+          <button
+            onClick={() => setCurrentScreen('scorers')}
+            className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
+          >
+            <div className="mb-3">
+              <img src="/artilheirosicon.png" alt="Artilheiros" className="w-8 h-8 filter brightness-0 invert opacity-80" />
+            </div>
+            <h3 className="font-semibold text-white text-sm mb-1">Artilheiros</h3>
+            <p className="text-xs text-gray-400">Ver goleadores</p>
+          </button>
+
+          <button
+            onClick={() => setCurrentScreen('colete')}
+            className="dark-card rounded-xl p-4 shadow-sm hover:shadow-md active:scale-95 transition-all duration-200 flex flex-col items-center justify-center text-center min-h-[100px]"
+          >
+            <div className="mb-3">
+              <img src="/tshirtcolete.png" alt="Colete" className="w-8 h-8 filter brightness-0 invert opacity-80" />
+            </div>
+            <h3 className="font-semibold text-white text-sm mb-1">Sorteio do Colete</h3>
+            <p className="text-xs text-gray-400">
+              {coleteWinner ? coleteWinner : 'Organizar disputa'}
+            </p>
+          </button>
+        </div>
+      </div>
+
+      <div className="px-4 pb-8">
+        <div className="flex flex-col items-center justify-center mt-8">
+          <img
+            src="/IMG_9294.PNG"
+            alt="Jesus Soccer"
+            className="w-32 h-32 object-contain mb-4 opacity-90"
+          />
+          <div className="text-center text-gray-400 text-xs italic">
+            <p>Mais que futebol, é comunhão</p>
+            <p>e Jesus é o nosso capitão!</p>
+          </div>
         </div>
       </div>
     </div>
