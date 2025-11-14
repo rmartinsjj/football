@@ -155,16 +155,16 @@ const GameMenuScreen = ({
       </div>
 
       <div className="px-4 pb-8">
-        <div className="flex flex-col items-center justify-center mt-8">
-          <img
-            src="/IMG_9294.PNG"
-            alt="Jesus Soccer"
-            className="w-32 h-32 object-contain mb-4 opacity-90"
-          />
-          <div className="text-center text-gray-400 text-xs italic">
+        <div className="flex items-center justify-center gap-6 mt-8">
+          <div className="text-left text-gray-400 text-xs italic leading-relaxed">
             <p>Mais que futebol, é comunhão</p>
             <p>e Jesus é o nosso capitão!</p>
           </div>
+          <img
+            src="/IMG_9294.PNG"
+            alt="Jesus Soccer"
+            className="w-24 h-24 object-contain opacity-90"
+          />
         </div>
       </div>
     </div>
