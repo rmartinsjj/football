@@ -2,34 +2,55 @@ import { supabase } from '../lib/supabase';
 
 export const gameDayService = {
   async createGameDay(gameDate, tournamentType = 'championship', activeTeams = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco']) {
-    const { data: existingGameDays, error: checkError } = await supabase
-      .from('game_days')
-      .select('id, is_active')
-      .eq('is_active', true)
-      .maybeSingle();
+    console.log('🎮 Creating game day:', { gameDate, tournamentType, activeTeams });
 
-    if (checkError) throw checkError;
-
-    if (existingGameDays) {
-      await supabase
+    try {
+      const { data: existingGameDays, error: checkError } = await supabase
         .from('game_days')
-        .update({ is_active: false })
-        .eq('id', existingGameDays.id);
+        .select('id, is_active')
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (checkError) {
+        console.error('❌ Error checking existing games:', checkError);
+        throw new Error(`Erro ao verificar jogos existentes: ${checkError.message}`);
+      }
+
+      if (existingGameDays) {
+        console.log('📝 Deactivating existing game:', existingGameDays.id);
+        const { error: updateError } = await supabase
+          .from('game_days')
+          .update({ is_active: false })
+          .eq('id', existingGameDays.id);
+
+        if (updateError) {
+          console.error('❌ Error deactivating game:', updateError);
+        }
+      }
+
+      console.log('✨ Inserting new game day...');
+      const { data, error } = await supabase
+        .from('game_days')
+        .insert({
+          game_date: gameDate,
+          tournament_type: tournamentType,
+          active_teams: activeTeams,
+          is_active: true
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('❌ Error creating game day:', error);
+        throw new Error(`Erro ao criar jogo: ${error.message || 'Erro desconhecido'}`);
+      }
+
+      console.log('✅ Game day created successfully:', data);
+      return data;
+    } catch (err) {
+      console.error('❌ Exception in createGameDay:', err);
+      throw err;
     }
-
-    const { data, error } = await supabase
-      .from('game_days')
-      .insert({
-        game_date: gameDate,
-        tournament_type: tournamentType,
-        active_teams: activeTeams,
-        is_active: true
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
   },
 
   async getActiveGameDay() {
