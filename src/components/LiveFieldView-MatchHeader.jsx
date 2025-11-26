@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, RotateCcw, Goal } from 'lucide-react';
+import { Play, Pause, RotateCcw, Goal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
 
 const LiveFieldViewMatchHeader = ({
@@ -19,7 +19,10 @@ const LiveFieldViewMatchHeader = ({
   setShowGoalkeeperConfig,
   showPenaltyShootout,
   penaltyScore,
-  syncActiveMatch
+  syncActiveMatch,
+  onNavigateMatch,
+  currentMatchIndex,
+  totalMatches
 }) => {
   const handleStartMatch = (matchId) => {
     startMatchTimer(matchId);
@@ -29,6 +32,33 @@ const LiveFieldViewMatchHeader = ({
   };
   return (
     <div className="p-3">
+      {/* Botões de Navegação Minimalistas */}
+      {onNavigateMatch && totalMatches > 1 && (
+        <div className="flex items-center justify-between mb-2 px-2">
+          <button
+            onClick={() => onNavigateMatch('prev')}
+            disabled={currentMatchIndex === 0}
+            className="text-gray-400 hover:text-white disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+            title="Jogo anterior"
+          >
+            <ChevronLeft size={20} />
+          </button>
+
+          <span className="text-gray-400 text-xs font-medium">
+            {currentMatchIndex + 1} / {totalMatches}
+          </span>
+
+          <button
+            onClick={() => onNavigateMatch('next')}
+            disabled={currentMatchIndex >= totalMatches - 1}
+            className="text-gray-400 hover:text-white disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+            title="Próximo jogo"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
+
       {/* Header com Times, Jogo, Tempo e Controles */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">

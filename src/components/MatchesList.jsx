@@ -125,8 +125,11 @@ const MatchesList = ({
       )}
 
       <div className="space-y-3">
-        {displayMatches.filter(match => !isWinnerStaysMode || !match.played).map((match, index) => (
-          currentMatchIndex === undefined || index === currentMatchIndex ? (
+        {displayMatches.filter(match => !isWinnerStaysMode || !match.played).map((match, index) => {
+          if (currentMatchIndex !== undefined && index !== currentMatchIndex) {
+            return null;
+          }
+          return (
           <div key={match.id} className="dark-card rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
@@ -184,7 +187,8 @@ const MatchesList = ({
               </div>
             </div>
           </div>
-        ) : null))}
+        );
+        })}
       </div>
     </div>
   );

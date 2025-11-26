@@ -55,6 +55,7 @@ const LiveFieldView = ({
   const [toastType, setToastType] = useState('success');
   const [showToast, setShowToast] = useState(false);
   const [hasShownResults, setHasShownResults] = useState(false);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
 
   // Calculate total players and goalkeeper logic
   const totalPlayers = Object.values(teams).flat().length;
@@ -90,10 +91,16 @@ const LiveFieldView = ({
     updatedMatches = generatePlayoffMatches(filteredMatches, standings);
   }
 
-  // Find current match - prioritize active match, then first unplayed match
-  const currentMatch = updatedMatches.find(m => m.id === activeMatch) ||
-                      updatedMatches.find(m => !m.played) ||
-                      updatedMatches[updatedMatches.length - 1]; // Last match if all played
+  // Find current match using index
+  const currentMatch = updatedMatches[currentMatchIndex] || updatedMatches[0];
+
+  const handleNavigateMatch = (direction) => {
+    if (direction === 'next') {
+      setCurrentMatchIndex(prev => Math.min(prev + 1, updatedMatches.length - 1));
+    } else if (direction === 'prev') {
+      setCurrentMatchIndex(prev => Math.max(prev - 1, 0));
+    }
+  };
 
   // Auto-update goalkeeper names based on player count
   React.useEffect(() => {
@@ -864,6 +871,9 @@ const LiveFieldView = ({
           showPenaltyShootout={showPenaltyShootout}
           penaltyScore={penaltyScore}
           syncActiveMatch={syncActiveMatch}
+          onNavigateMatch={handleNavigateMatch}
+          currentMatchIndex={currentMatchIndex}
+          totalMatches={updatedMatches.length}
         />
       </div>
       )}
