@@ -46,6 +46,10 @@ export const gameDayService = {
       }
 
       console.log('✅ Game day created successfully:', data);
+
+      console.log('🧹 Clearing old data from new game day...');
+      await this.clearAllGameDayData(data.id);
+
       return data;
     } catch (err) {
       console.error('❌ Exception in createGameDay:', err);
@@ -110,6 +114,40 @@ export const gameDayService = {
       .eq('id', gameDayId);
 
     if (error) throw error;
+  },
+
+  async clearAllGameDayData(gameDayId) {
+    console.log('🧹 Clearing all data for game day:', gameDayId);
+
+    try {
+      await supabase.from('match_events').delete().eq('game_day_id', gameDayId);
+      console.log('✅ Cleared match_events');
+
+      await supabase.from('matches').delete().eq('game_day_id', gameDayId);
+      console.log('✅ Cleared matches');
+
+      await supabase.from('players').delete().eq('game_day_id', gameDayId);
+      console.log('✅ Cleared players');
+
+      await supabase.from('vest_assignments').delete().eq('game_day_id', gameDayId);
+      console.log('✅ Cleared vest_assignments');
+
+      const { error } = await supabase
+        .from('game_days')
+        .update({ active_match: null })
+        .eq('id', gameDayId);
+
+      if (error) {
+        console.error('❌ Error clearing active_match:', error);
+      } else {
+        console.log('✅ Cleared active_match');
+      }
+
+      console.log('✅ All data cleared successfully');
+    } catch (error) {
+      console.error('❌ Error clearing game day data:', error);
+      throw error;
+    }
   },
 
   async addPlayer(gameDayId, playerName, teamName) {

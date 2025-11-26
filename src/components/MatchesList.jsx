@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Pause, RotateCcw, Clock } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
 
-const MatchesList = ({ 
+const MatchesList = ({
   matches,
   timer,
   isTimerRunning,
@@ -14,7 +14,9 @@ const MatchesList = ({
   resetTimer,
   formatTime,
   updateMatchScore,
-  settings
+  settings,
+  currentMatchIndex,
+  onNavigateMatch
 }) => {
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
@@ -35,6 +37,34 @@ const MatchesList = ({
   
   return (
     <div className="p-4 min-h-screen pb-24">
+      {displayMatches.length > 1 && currentMatchIndex !== undefined && onNavigateMatch && (
+        <div className="flex items-center justify-between mb-4 bg-gray-800 p-3 rounded-xl">
+          <button
+            onClick={() => onNavigateMatch('prev')}
+            disabled={currentMatchIndex === 0}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-all"
+          >
+            <span>←</span>
+            <span className="text-sm font-medium">Anterior</span>
+          </button>
+
+          <div className="text-center">
+            <div className="text-white font-bold text-lg">
+              Jogo {currentMatchIndex + 1} de {displayMatches.length}
+            </div>
+          </div>
+
+          <button
+            onClick={() => onNavigateMatch('next')}
+            disabled={currentMatchIndex >= displayMatches.length - 1}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-all"
+          >
+            <span className="text-sm font-medium">Próximo</span>
+            <span>→</span>
+          </button>
+        </div>
+      )}
+
       {activeMatch && (
         <div className="dark-card rounded-xl p-4 text-white mb-4 shadow-lg">
             <div className="flex justify-between items-center">
@@ -95,7 +125,8 @@ const MatchesList = ({
       )}
 
       <div className="space-y-3">
-        {displayMatches.filter(match => !isWinnerStaysMode || !match.played).map((match) => (
+        {displayMatches.filter(match => !isWinnerStaysMode || !match.played).map((match, index) => (
+          currentMatchIndex === undefined || index === currentMatchIndex ? (
           <div key={match.id} className="dark-card rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
@@ -153,7 +184,7 @@ const MatchesList = ({
               </div>
             </div>
           </div>
-        ))}
+        ) : null))}
       </div>
     </div>
   );

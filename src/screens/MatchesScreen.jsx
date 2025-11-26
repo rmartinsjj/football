@@ -32,6 +32,7 @@ const MatchesScreen = ({
   syncActiveMatch
 }) => {
   const [viewMode, setViewMode] = useState('field');
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
   
   // Filter matches to only include active teams, but keep playoff structure
@@ -144,6 +145,14 @@ const MatchesScreen = ({
     setMatchEvents(prev => prev.filter(e => e.id !== eventId));
   };
 
+  const handleNavigateMatch = (direction) => {
+    if (direction === 'next') {
+      setCurrentMatchIndex(prev => Math.min(prev + 1, filteredMatches.length - 1));
+    } else if (direction === 'prev') {
+      setCurrentMatchIndex(prev => Math.max(prev - 1, 0));
+    }
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden pb-24">
       <Header title="Jogos" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
@@ -200,7 +209,7 @@ const MatchesScreen = ({
           syncActiveMatch={syncActiveMatch}
         />
       ) : (
-        <MatchesList 
+        <MatchesList
           matches={filteredMatches}
           timer={timer}
           isTimerRunning={isTimerRunning}
@@ -213,6 +222,8 @@ const MatchesScreen = ({
           formatTime={formatTime}
           updateMatchScore={updateMatchScore}
           settings={settings}
+          currentMatchIndex={currentMatchIndex}
+          onNavigateMatch={handleNavigateMatch}
         />
       )}
     </div>
