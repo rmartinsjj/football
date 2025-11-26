@@ -230,7 +230,7 @@ const CreateGameScreen = ({ onGameCreated, onBack }) => {
         <button
           onClick={handleCreateGame}
           disabled={isCreating || selectedTeams.length < 2}
-          className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center space-x-2"
+          className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center space-x-2 mt-4 mb-4"
         >
           {isCreating ? (
             <>
