@@ -104,14 +104,14 @@ const CreateGameScreen = ({ onGameCreated, onBack }) => {
   const weekDates = getWeekDates();
 
   return (
-    <div className="min-h-screen overflow-x-hidden pb-24">
+    <div className="min-h-screen overflow-x-hidden">
       <Header
         title="Criar Jogo do Dia"
         showBack={!!onBack}
         onBack={onBack}
       />
 
-      <div className="px-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
+      <div className="px-4 pb-24" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
         <div className="dark-card rounded-xl p-4 shadow-sm mb-4">
           <h3 className="text-white font-semibold mb-3 flex items-center text-sm">
             <Calendar size={18} className="mr-2" />
@@ -246,11 +246,11 @@ const CreateGameScreen = ({ onGameCreated, onBack }) => {
         </button>
 
         {!loading && existingGames.length > 0 && (
-          <div className="mt-6">
+          <div className="mt-6 mb-6">
             <h3 className="text-white font-semibold mb-3 text-sm">Jogos Anteriores</h3>
 
-            <div className="space-y-2">
-              {existingGames.slice(0, 5).map(game => (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {existingGames.slice(0, 8).map(game => (
                 <button
                   key={game.id}
                   onClick={() => handleSelectExistingGame(game)}
