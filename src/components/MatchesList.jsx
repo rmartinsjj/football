@@ -125,7 +125,7 @@ const MatchesList = ({
       )}
 
       <div className="space-y-3">
-        {displayMatches.filter(match => !isWinnerStaysMode || !match.played).map((match, index) => {
+        {displayMatches.map((match, index) => {
           if (currentMatchIndex !== undefined && index !== currentMatchIndex) {
             return null;
           }
