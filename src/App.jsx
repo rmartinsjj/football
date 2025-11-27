@@ -130,6 +130,11 @@ const App = () => {
           setTeams(teamGroups);
           setTournamentStarted(true);
         }
+      } else {
+        // Limpar dados de jogadores quando não houver nenhum
+        setPlayers([]);
+        setTeams(INITIAL_TEAMS);
+        setTournamentStarted(false);
       }
 
       if (matchesData && matchesData.length > 0) {
@@ -147,6 +152,9 @@ const App = () => {
           played: match.played
         }));
         setMatches(formattedMatches);
+      } else {
+        // Limpar dados de matches quando não houver nenhum
+        setMatches(INITIAL_MATCHES);
       }
 
       if (eventsData && eventsData.length > 0) {
@@ -166,10 +174,16 @@ const App = () => {
           })
           .filter(event => event !== null); // Remove null entries
         setMatchEvents(formattedEvents);
+      } else {
+        // Limpar eventos quando não houver nenhum
+        setMatchEvents([]);
       }
 
       if (vestData) {
         setColeteWinner(vestData.team_name);
+      } else {
+        // Limpar colete winner quando não houver
+        setColeteWinner(null);
       }
 
       setSettings(prev => ({
