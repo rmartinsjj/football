@@ -315,6 +315,7 @@ const App = () => {
             currentGameDay={currentGameDay}
             syncPlayers={syncPlayers}
             syncMatches={syncMatches}
+            matches={matches}
           />
         );
       

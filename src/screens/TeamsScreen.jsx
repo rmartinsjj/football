@@ -16,7 +16,8 @@ const TeamsScreen = ({
   onBack,
   currentGameDay,
   syncPlayers,
-  syncMatches
+  syncMatches,
+  matches
 }) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawingStep, setDrawingStep] = useState(0);
@@ -77,6 +78,11 @@ const TeamsScreen = ({
       await syncPlayers(updatedPlayers);
     }
 
+    // Sincronizar matches para o banco de dados
+    if (currentGameDay && syncMatches && matches) {
+      await syncMatches(matches);
+    }
+
     // Finalizar loading
     setIsDrawing(false);
     setDrawingStep(0);
@@ -115,6 +121,11 @@ const TeamsScreen = ({
           }))
         );
         await syncPlayers(updatedPlayers);
+      }
+
+      // Sincronizar matches para o banco de dados
+      if (currentGameDay && syncMatches && matches) {
+        await syncMatches(matches);
       }
 
       // Finalizar loading
