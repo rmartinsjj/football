@@ -50,7 +50,6 @@ const LiveFieldView = ({
     thirdPlace: null,
     fourthPlace: null
   });
-  const [showNextGameButton, setShowNextGameButton] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');
   const [showToast, setShowToast] = useState(false);
@@ -490,7 +489,6 @@ const LiveFieldView = ({
       });
 
       setActiveMatch(null);
-      setShowNextGameButton(true);
       showToastMessage(result.message, 'success');
 
       return;
@@ -588,61 +586,12 @@ const LiveFieldView = ({
       // message already set above
     }
 
-    // NÃO limpar o activeMatch ainda - manter para mostrar o botão "Próximo Jogo"
-    setShowNextGameButton(true);
-    
     // Force re-render after a small delay to ensure state is updated
     setTimeout(() => {
       console.log('Match finished, standings should update now');
     }, 100);
-    
+
     showToastMessage(message, 'success');
-  };
-
-  const goToNextGame = () => {
-    setShowNextGameButton(false);
-
-    // Primeiro limpar o activeMatch
-    setActiveMatch(null);
-
-    // Reset timer to ensure it's clean for next match
-    resetTimer();
-
-    if (isWinnerStaysMode) {
-      // Generate next match for winner-stays mode
-      if (settings.currentWinnerTeam) {
-        const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
-        if (nextMatch) {
-          console.log('🎲 Generated next winner-stays match:', nextMatch);
-          setMatches(prev => [...prev, nextMatch]);
-          setTimeout(() => {
-            setActiveMatch(nextMatch.id);
-            if (syncActiveMatch) {
-              syncActiveMatch(nextMatch.id);
-            }
-            // Auto-reset timer for the new match
-            const isFinal = nextMatch.id > 12 || nextMatch.type === 'winner-stays';
-            resetTimer(isFinal);
-          }, 100);
-        } else {
-          showToastMessage('❌ Não foi possível gerar próximo desafio!', 'error');
-        }
-      }
-    } else {
-      const nextMatch = filteredMatches.find(m => currentMatch && m.id > currentMatch.id && !m.played);
-      if (nextMatch) {
-        // Set next match as active and reset timer
-        setTimeout(() => {
-          setActiveMatch(nextMatch.id);
-          if (syncActiveMatch) {
-            syncActiveMatch(nextMatch.id);
-          }
-          // Auto-reset timer for the new match
-          const isFinal = nextMatch.id > 12 || nextMatch.type === 'final' || nextMatch.type === 'third_place';
-          resetTimer(isFinal);
-        }, 100);
-      }
-    }
   };
 
   // Show tournament results if both playoff matches are complete
@@ -864,8 +813,6 @@ const LiveFieldView = ({
           resumeTimer={resumeTimer}
           resetTimer={resetTimer}
           finishMatch={finishMatch}
-          showNextGameButton={showNextGameButton}
-          goToNextGame={goToNextGame}
           showGoalkeeperConfig={showGoalkeeperConfig}
           setShowGoalkeeperConfig={setShowGoalkeeperConfig}
           showPenaltyShootout={showPenaltyShootout}

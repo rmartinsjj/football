@@ -13,8 +13,6 @@ const LiveFieldViewMatchHeader = ({
   resumeTimer,
   resetTimer,
   finishMatch,
-  showNextGameButton,
-  goToNextGame,
   showGoalkeeperConfig,
   setShowGoalkeeperConfig,
   showPenaltyShootout,
@@ -142,15 +140,6 @@ const LiveFieldViewMatchHeader = ({
             >
               ✓
             </button>
-            {showNextGameButton && (
-              <button
-                onClick={goToNextGame}
-                className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-2 h-6 rounded-full flex items-center justify-center transition-colors text-xs font-medium"
-                title="Próximo Jogo"
-              >
-                ▶
-              </button>
-            )}
           </div>
         )}
       </div>
