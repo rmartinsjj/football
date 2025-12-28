@@ -64,9 +64,12 @@ const MatchesScreen = ({
 
     setMatches(updatedMatches);
 
-    // Salvar no banco
+    // Salvar no banco e atualizar com dbIds
     if (currentGameDay && syncMatches) {
-      await syncMatches(updatedMatches);
+      const matchesWithDbIds = await syncMatches(updatedMatches);
+      if (matchesWithDbIds) {
+        setMatches(matchesWithDbIds);
+      }
     }
   };
 
@@ -84,12 +87,16 @@ const MatchesScreen = ({
         const savedEvent = await syncGoalEvent(playerId, playerName, teamName, matchId, minute);
         console.log('🎯 savedEvent:', savedEvent);
         if (savedEvent) {
+          // Map match_id from database back to match_number for local state
+          const match = matches.find(m => m.dbId === savedEvent.match_id);
+          const matchNumber = match ? match.id : matchId;
+
           setMatchEvents(prev => [...prev, {
             id: savedEvent.id,
             playerId: savedEvent.player_id,
             playerName: savedEvent.player_name,
             teamName: savedEvent.team_name,
-            matchId: matchId,
+            matchId: matchNumber,
             minute: savedEvent.minute
           }]);
         }

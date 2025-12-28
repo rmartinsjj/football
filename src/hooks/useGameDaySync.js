@@ -33,7 +33,7 @@ export const useGameDaySync = (currentGameDay) => {
   }, [currentGameDay]);
 
   const syncMatches = useCallback(async (matches) => {
-    if (!currentGameDay?.id) return;
+    if (!currentGameDay?.id) return matches;
 
     try {
       const existingMatches = await gameDayService.getMatchesByGameDay(currentGameDay.id);
@@ -66,8 +66,19 @@ export const useGameDaySync = (currentGameDay) => {
           });
         }
       }
+
+      // Fetch updated matches with dbIds
+      const updatedMatches = await gameDayService.getMatchesByGameDay(currentGameDay.id);
+      return matches.map(match => {
+        const dbMatch = updatedMatches.find(m => m.match_number === match.id);
+        return {
+          ...match,
+          dbId: dbMatch?.id
+        };
+      });
     } catch (error) {
       console.error('Error syncing matches:', error);
+      return matches;
     }
   }, [currentGameDay]);
 

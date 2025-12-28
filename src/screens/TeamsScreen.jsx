@@ -80,7 +80,10 @@ const TeamsScreen = ({
 
     // Sincronizar matches para o banco de dados
     if (currentGameDay && syncMatches && matches) {
-      await syncMatches(matches);
+      const matchesWithDbIds = await syncMatches(matches);
+      if (matchesWithDbIds) {
+        setMatches(matchesWithDbIds);
+      }
     }
 
     // Finalizar loading
@@ -125,7 +128,10 @@ const TeamsScreen = ({
 
       // Sincronizar matches para o banco de dados
       if (currentGameDay && syncMatches && matches) {
-        await syncMatches(matches);
+        const matchesWithDbIds = await syncMatches(matches);
+        if (matchesWithDbIds) {
+          setMatches(matchesWithDbIds);
+        }
       }
 
       // Finalizar loading

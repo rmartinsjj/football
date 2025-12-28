@@ -432,7 +432,11 @@ const LiveFieldView = ({
 
       // Save to database
       if (syncMatches) {
-        syncMatches(updated).catch(err => console.error('Error syncing penalty shootout:', err));
+        syncMatches(updated).then(matchesWithDbIds => {
+          if (matchesWithDbIds) {
+            setMatches(matchesWithDbIds);
+          }
+        }).catch(err => console.error('Error syncing penalty shootout:', err));
       }
 
       return updated;
@@ -482,7 +486,11 @@ const LiveFieldView = ({
 
         // Save to database
         if (syncMatches) {
-          syncMatches(updated).catch(err => console.error('Error syncing winner-stays match:', err));
+          syncMatches(updated).then(matchesWithDbIds => {
+            if (matchesWithDbIds) {
+              setMatches(matchesWithDbIds);
+            }
+          }).catch(err => console.error('Error syncing winner-stays match:', err));
         }
 
         return updated;
@@ -524,7 +532,11 @@ const LiveFieldView = ({
 
       // Save to database
       if (syncMatches) {
-        syncMatches(updated).catch(err => console.error('Error syncing match finish:', err));
+        syncMatches(updated).then(matchesWithDbIds => {
+          if (matchesWithDbIds) {
+            setMatches(matchesWithDbIds);
+          }
+        }).catch(err => console.error('Error syncing match finish:', err));
       }
 
       // If this is match 12 (last regular season match), generate playoff matches
