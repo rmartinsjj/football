@@ -85,7 +85,9 @@ export const calculateStandings = (matches) => {
 export const parsePlayerList = (playerListText) => {
   const lines = playerListText.split('\n').filter(line => line.trim());
   return lines.map((line, index) => {
-    const cleanName = line.replace(/^\d+\.?\s*⁠?\s*/, '').trim();
+    let cleanName = line.trim();
+    cleanName = cleanName.replace(/^\d+[\s.\u200B\u200C\u200D\uFEFF]*/, '');
+    cleanName = cleanName.trim();
     return {
       id: Date.now() + index,
       name: cleanName,
