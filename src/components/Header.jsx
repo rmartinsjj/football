@@ -23,11 +23,11 @@ const Header = ({ title, showBack = false, onBack, setCurrentScreen }) => {
   return (
     <>
       {/* Header with fixed positioning and proper safe area handling */}
-      <div className="fixed top-0 left-0 right-0 z-[9999] w-full bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-lg">
-        <div className="px-4 py-3 flex items-center justify-between h-16" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
+      <div className="fixed top-0 left-0 right-0 z-[9999] w-full bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-lg" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="px-4 py-3 flex items-center justify-between min-h-[64px]">
           <div className="flex items-center space-x-3">
             {showBack && (
-              <button 
+              <button
                 onClick={onBack}
                 className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
               >
@@ -36,7 +36,7 @@ const Header = ({ title, showBack = false, onBack, setCurrentScreen }) => {
             )}
             <h1 className="text-lg font-bold text-white truncate">{title}</h1>
           </div>
-          
+
           {setCurrentScreen && (
             <button
               onClick={() => setShowMenu(!showMenu)}

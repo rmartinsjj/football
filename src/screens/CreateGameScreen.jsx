@@ -111,7 +111,7 @@ const CreateGameScreen = ({ onGameCreated, onBack }) => {
         onBack={onBack}
       />
 
-      <div className="px-4 pb-24" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
+      <div className="px-4 pb-24" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top) + 16px)' }}>
         <div className="dark-card rounded-xl p-4 shadow-sm mb-4">
           <h3 className="text-white font-semibold mb-3 flex items-center text-sm">
             <Calendar size={18} className="mr-2" />

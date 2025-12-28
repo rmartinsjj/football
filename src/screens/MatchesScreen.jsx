@@ -178,7 +178,7 @@ const MatchesScreen = ({
       <Header title="Jogos" showBack={true} onBack={onBack} setCurrentScreen={setCurrentScreen} />
       
       {/* Content with proper top padding to account for fixed header */}
-      <div className="p-3 dark-card border-b border-gray-700 mx-3 rounded-t-xl" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
+      <div className="p-3 dark-card border-b border-gray-700 mx-3 rounded-t-xl" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top) + 16px)' }}>
         <div className="flex bg-gray-700 rounded-lg p-1">
           <button
             onClick={() => setViewMode('field')}

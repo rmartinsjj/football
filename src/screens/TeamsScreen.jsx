@@ -240,7 +240,7 @@ const TeamsScreen = ({
       )}
       
       {/* Content with proper top padding to account for fixed header */}
-      <div className="p-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
+      <div className="p-4" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top) + 16px)' }}>
         {/* Seção de Sorteio/Re-sortear */}
         {!tournamentStarted ? (
           <div className="dark-card rounded-xl p-4 shadow-sm mb-4">

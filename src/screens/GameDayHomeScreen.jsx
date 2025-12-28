@@ -152,8 +152,8 @@ const GameDayHomeScreen = ({
 
   return (
     <div className="min-h-screen overflow-x-hidden pb-24">
-      <div className="fixed top-0 left-0 right-0 z-[9999] w-full bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-lg">
-        <div className="px-4 py-3 flex items-center justify-between h-16" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
+      <div className="fixed top-0 left-0 right-0 z-[9999] w-full bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-lg" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="px-4 py-3 flex items-center justify-between min-h-[64px]">
           <img
             src="/logoespacoappfootball.png"
             alt="Espaço Novo Tempo"
@@ -170,7 +170,7 @@ const GameDayHomeScreen = ({
         </div>
       </div>
 
-      <div className="px-4 pb-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
+      <div className="px-4 pb-4" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top) + 16px)' }}>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
           className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 rounded-xl font-semibold shadow-md transition-all flex items-center justify-center space-x-2 mb-4"

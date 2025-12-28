@@ -31,8 +31,8 @@ const GameMenuScreen = ({
 
   return (
     <div className="min-h-screen overflow-x-hidden pb-24">
-      <div className="fixed top-0 left-0 right-0 z-[9999] w-full bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-lg">
-        <div className="px-4 py-3 flex items-center justify-between h-16" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
+      <div className="fixed top-0 left-0 right-0 z-[9999] w-full bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-lg" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="px-4 py-3 flex items-center justify-between min-h-[64px]">
           <button
             onClick={onBack}
             className="p-2 hover:bg-gray-700 rounded-full transition-colors active:bg-gray-600"
@@ -56,7 +56,7 @@ const GameMenuScreen = ({
         </div>
       </div>
 
-      <div className="px-4 pb-4" style={{ paddingTop: 'max(80px, calc(64px + env(safe-area-inset-top)))' }}>
+      <div className="px-4 pb-4" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top) + 16px)' }}>
         <div
           className="rounded-xl p-4 text-white mb-4 shadow-lg relative overflow-hidden"
           style={{
