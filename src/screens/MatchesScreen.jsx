@@ -49,7 +49,7 @@ const MatchesScreen = ({
     const updatedMatches = matches.map(match => {
       if (match.id === matchId) {
         const updated = { ...match };
-        const numericScore = score === '' ? null : parseInt(score) || 0;
+        const numericScore = score === '' ? 0 : parseInt(score) || 0;
 
         if (match.team1 === team) {
           updated.score1 = numericScore;
@@ -63,46 +63,74 @@ const MatchesScreen = ({
     });
 
     setMatches(updatedMatches);
+  };
 
-    // Salvar no banco e atualizar com dbIds
-    if (currentGameDay && syncMatches) {
-      const matchesWithDbIds = await syncMatches(updatedMatches);
-      if (matchesWithDbIds) {
-        setMatches(matchesWithDbIds);
+  const recalculateMatchScores = (events) => {
+    const scoreMap = new Map();
+
+    events.forEach(event => {
+      if (!event || !event.matchId) return;
+
+      if (!scoreMap.has(event.matchId)) {
+        scoreMap.set(event.matchId, { team1: 0, team2: 0, team1Name: null, team2Name: null });
       }
-    }
+
+      const scores = scoreMap.get(event.matchId);
+      const match = matches.find(m => m.id === event.matchId);
+
+      if (match) {
+        if (!scores.team1Name) scores.team1Name = match.team1;
+        if (!scores.team2Name) scores.team2Name = match.team2;
+
+        if (event.teamName === match.team1) {
+          scores.team1++;
+        } else if (event.teamName === match.team2) {
+          scores.team2++;
+        }
+      }
+    });
+
+    const updatedMatches = matches.map(match => {
+      const scores = scoreMap.get(match.id);
+      if (scores) {
+        return {
+          ...match,
+          score1: scores.team1,
+          score2: scores.team2
+        };
+      }
+      return match;
+    });
+
+    setMatches(updatedMatches);
   };
 
   const addGoal = async (playerId, playerName, teamName, matchId) => {
     const minute = Math.floor((timer > 0 ? ((activeMatch === matchId ? (7*60 - timer) : 0)) : 0) / 60) + 1;
 
-    console.log('🎯 addGoal called:', { playerId, playerName, teamName, matchId, minute });
-    console.log('🎯 currentGameDay:', currentGameDay?.id);
-    console.log('🎯 syncGoalEvent exists:', !!syncGoalEvent);
-
-    // Salvar no banco primeiro
     if (currentGameDay && syncGoalEvent) {
       try {
-        console.log('🎯 Calling syncGoalEvent...');
         const savedEvent = await syncGoalEvent(playerId, playerName, teamName, matchId, minute);
-        console.log('🎯 savedEvent:', savedEvent);
         if (savedEvent) {
-          // Use match_number from savedEvent (already mapped in syncGoalEvent)
-          setMatchEvents(prev => [...prev, {
+          const newEvent = {
             id: savedEvent.id,
             playerId: savedEvent.player_id,
             playerName: savedEvent.player_name,
             teamName: savedEvent.team_name,
             matchId: savedEvent.match_number,
             minute: savedEvent.minute
-          }]);
+          };
+
+          setMatchEvents(prev => {
+            const updated = [...prev, newEvent];
+            recalculateMatchScores(updated);
+            return updated;
+          });
         }
       } catch (error) {
         console.error('Error saving goal:', error);
       }
     } else {
-      console.log('🎯 Using fallback mode');
-      // Fallback para modo local
       const goalEvent = {
         id: Date.now(),
         playerId,
@@ -111,42 +139,33 @@ const MatchesScreen = ({
         matchId,
         minute
       };
-      setMatchEvents(prev => [...prev, goalEvent]);
-    }
 
-    // Atualizar placar
-    const currentMatch = filteredMatches.find(m => m.id === matchId);
-    if (currentMatch) {
-      if (currentMatch.team1 === teamName) {
-        updateMatchScore(matchId, teamName, (currentMatch.score1 || 0) + 1);
-      } else {
-        updateMatchScore(matchId, teamName, (currentMatch.score2 || 0) + 1);
-      }
+      setMatchEvents(prev => {
+        const updated = [...prev, goalEvent];
+        recalculateMatchScores(updated);
+        return updated;
+      });
     }
   };
 
   const removeGoal = async (eventId) => {
     const eventToRemove = matchEvents.find(e => e.id === eventId);
-    if (eventToRemove) {
-      // Remover do banco primeiro
-      if (currentGameDay && removeGoalEvent) {
-        try {
-          await removeGoalEvent(eventId);
-        } catch (error) {
-          console.error('Error removing goal:', error);
-        }
-      }
+    if (!eventToRemove) return;
 
-      const currentMatch = matches.find(m => m.id === eventToRemove.matchId);
-      if (currentMatch) {
-        if (currentMatch.team1 === eventToRemove.teamName) {
-          updateMatchScore(eventToRemove.matchId, eventToRemove.teamName, Math.max(0, (currentMatch.score1 || 0) - 1));
-        } else {
-          updateMatchScore(eventToRemove.matchId, eventToRemove.teamName, Math.max(0, (currentMatch.score2 || 0) - 1));
-        }
+    if (currentGameDay && removeGoalEvent) {
+      try {
+        await removeGoalEvent(eventId);
+      } catch (error) {
+        console.error('Error removing goal:', error);
+        return;
       }
     }
-    setMatchEvents(prev => prev.filter(e => e.id !== eventId));
+
+    setMatchEvents(prev => {
+      const updated = prev.filter(e => e.id !== eventId);
+      recalculateMatchScores(updated);
+      return updated;
+    });
   };
 
   const handleNavigateMatch = (direction) => {

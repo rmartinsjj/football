@@ -449,117 +449,130 @@ const LiveFieldView = ({
     showToastMessage(`🏆 ${winner} venceu nos pênaltis! (${penaltyScore.team1} x ${penaltyScore.team2})`, 'success');
   };
   // Finalizar jogo - playoffs não afetam pontuação regular
-  const finishMatch = () => {
+  const finishMatch = async () => {
     if (!currentMatch) {
       showToastMessage('❌ Nenhum jogo ativo para finalizar!', 'error');
       return;
     }
-    
+
     const score1 = currentMatch.score1 || 0;
     const score2 = currentMatch.score2 || 0;
-    
+
     // Handle winner-stays mode
     if (isWinnerStaysMode) {
       console.log('Finishing winner-stays match:', currentMatch);
-      
+
       // Mark current match as played first
-      const updatedMatch = { 
-        ...currentMatch, 
+      const updatedMatch = {
+        ...currentMatch,
         played: true,
         score1: score1,
         score2: score2
       };
-      
+
       const result = handleWinnerStaysMatch(updatedMatch, settings.currentWinnerTeam);
-      
+
       console.log('Winner-stays result:', result);
-      
+
       // Update the current winner in settings
       setSettings(prev => ({
         ...prev,
         currentWinnerTeam: result.newWinnerTeam
       }));
-      
+
       // Update matches
-      setMatches(prev => {
-        const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
+      const updated = matches.map(m => m.id === currentMatch.id ? updatedMatch : m);
+      setMatches(updated);
 
-        // Save to database
-        if (syncMatches) {
-          syncMatches(updated).then(matchesWithDbIds => {
-            if (matchesWithDbIds) {
-              setMatches(matchesWithDbIds);
-            }
-          }).catch(err => console.error('Error syncing winner-stays match:', err));
+      // Save to database
+      if (syncMatches) {
+        try {
+          const matchesWithDbIds = await syncMatches(updated);
+          if (matchesWithDbIds) {
+            setMatches(matchesWithDbIds);
+          }
+        } catch (err) {
+          console.error('Error syncing winner-stays match:', err);
         }
-
-        return updated;
-      });
+      }
 
       setActiveMatch(null);
       showToastMessage(result.message, 'success');
 
       return;
     }
-    
+
     // Check if it's match 13 (3rd place) and it's a tie
     if (currentMatch.id === 13 && score1 === score2) {
       setShowPenaltyShootout(true);
       setPenaltyScore({ team1: 0, team2: 0 });
       return;
     }
-    
+
     // Check if it's match 14 (final) and it's a tie
     if (currentMatch.id === 14 && score1 === score2) {
       setShowPenaltyShootout(true);
       setPenaltyScore({ team1: 0, team2: 0 });
       return;
     }
-    
+
     // Mark match as played first
-    const updatedMatch = { 
-      ...currentMatch, 
+    const updatedMatch = {
+      ...currentMatch,
       played: true,
       score1: score1,
       score2: score2
     };
-    
+
     console.log('Finishing match:', updatedMatch);
 
-    // Update matches and generate playoffs if needed
-    setMatches(prev => {
-      const updated = prev.map(m => m.id === currentMatch.id ? updatedMatch : m);
+    // Update matches locally first
+    let updated = matches.map(m => m.id === currentMatch.id ? updatedMatch : m);
 
-      // Save to database
-      if (syncMatches) {
-        syncMatches(updated).then(matchesWithDbIds => {
-          if (matchesWithDbIds) {
-            setMatches(matchesWithDbIds);
+    // If this is match 12 (last regular season match), generate playoff matches
+    if (currentMatch.id === 12) {
+      console.log('Match 12 completed, generating playoffs...');
+      const regularMatches = updated.filter(m => m.type === 'regular');
+      const finalStandings = calculateStandings(regularMatches);
+      console.log('Final standings for playoffs:', finalStandings);
+
+      // Check for tiebreaker first
+      if (checkForTiebreaker(finalStandings)) {
+        setMatches(updated);
+        // Save to database
+        if (syncMatches) {
+          try {
+            const matchesWithDbIds = await syncMatches(updated);
+            if (matchesWithDbIds) {
+              setMatches(matchesWithDbIds);
+            }
+          } catch (err) {
+            console.error('Error syncing match finish:', err);
           }
-        }).catch(err => console.error('Error syncing match finish:', err));
-      }
-
-      // If this is match 12 (last regular season match), generate playoff matches
-      if (currentMatch.id === 12) {
-        console.log('Match 12 completed, generating playoffs...');
-        const regularMatches = updated.filter(m => m.type === 'regular');
-        const finalStandings = calculateStandings(regularMatches);
-        console.log('Final standings for playoffs:', finalStandings);
-
-        // Check for tiebreaker first
-        if (checkForTiebreaker(finalStandings)) {
-          return updated; // Don't generate playoffs yet, wait for tiebreaker
         }
-
-        // Generate playoff matches
-        return generatePlayoffMatches(updated, finalStandings);
+        return; // Don't generate playoffs yet, wait for tiebreaker
       }
 
-      return updated;
-    });
-    
+      // Generate playoff matches
+      updated = generatePlayoffMatches(updated, finalStandings);
+    }
+
+    setMatches(updated);
+
+    // Save to database
+    if (syncMatches) {
+      try {
+        const matchesWithDbIds = await syncMatches(updated);
+        if (matchesWithDbIds) {
+          setMatches(matchesWithDbIds);
+        }
+      } catch (err) {
+        console.error('Error syncing match finish:', err);
+      }
+    }
+
     let message = '';
-    
+
     // Special messages for playoff matches
     if (currentMatch.id === 13) {
       // 3rd place match
@@ -585,23 +598,18 @@ const LiveFieldView = ({
         message = `🤝 Empate! (+1 ponto para cada time)`;
       }
     }
-    
+
     // For regular season ties
     if (currentMatch.type === 'regular' && score1 === score2) {
       message = `🤝 Empate! (+1 ponto para cada time)`;
     }
-    
+
     // For playoff ties (shouldn't happen as they go to penalties)
     if ((currentMatch.id === 13 || currentMatch.id === 14) && score1 === score2) {
       message = `🤝 Empate! Vai para os pênaltis!`;
     } else {
       // message already set above
     }
-
-    // Force re-render after a small delay to ensure state is updated
-    setTimeout(() => {
-      console.log('Match finished, standings should update now');
-    }, 100);
 
     showToastMessage(message, 'success');
   };
