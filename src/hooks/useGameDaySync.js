@@ -115,7 +115,11 @@ export const useGameDaySync = (currentGameDay) => {
       );
       console.log('⚽ Goal event saved:', event);
 
-      return event;
+      // Return event with match_number for proper mapping
+      return {
+        ...event,
+        match_number: matchId
+      };
     } catch (error) {
       console.error('Error syncing goal event:', error);
       return null;

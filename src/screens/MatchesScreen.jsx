@@ -87,16 +87,13 @@ const MatchesScreen = ({
         const savedEvent = await syncGoalEvent(playerId, playerName, teamName, matchId, minute);
         console.log('🎯 savedEvent:', savedEvent);
         if (savedEvent) {
-          // Map match_id from database back to match_number for local state
-          const match = matches.find(m => m.dbId === savedEvent.match_id);
-          const matchNumber = match ? match.id : matchId;
-
+          // Use match_number from savedEvent (already mapped in syncGoalEvent)
           setMatchEvents(prev => [...prev, {
             id: savedEvent.id,
             playerId: savedEvent.player_id,
             playerName: savedEvent.player_name,
             teamName: savedEvent.team_name,
-            matchId: matchNumber,
+            matchId: savedEvent.match_number,
             minute: savedEvent.minute
           }]);
         }
