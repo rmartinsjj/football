@@ -94,19 +94,30 @@ const LiveFieldView = ({
     updatedMatches = displayMatches; // No playoff generation for winner-stays
   } else {
     standings = calculateStandings(filteredMatches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
+
+    console.log('🏆 Before generatePlayoffMatches:', filteredMatches.filter(m => m.id >= 13));
     updatedMatches = generatePlayoffMatches(filteredMatches, standings);
+    console.log('🏆 After generatePlayoffMatches:', updatedMatches.filter(m => m.id >= 13));
 
     // ONLY filter TBD matches if match 12 is not complete yet
-    const match12 = matches.find(m => m.id === 12);
+    const match12 = filteredMatches.find(m => m.id === 12);
+    console.log('🏆 Match 12 status:', match12?.played ? 'COMPLETE' : 'NOT COMPLETE');
+
     if (!match12 || !match12.played) {
       // Match 12 not complete, filter out TBD playoff matches
+      console.log('🏆 Filtering out TBD playoff matches');
       updatedMatches = updatedMatches.filter(match => {
         if (match.type === 'final' || match.type === 'third_place') {
           return match.team1 !== 'TBD' && match.team2 !== 'TBD';
         }
         return true;
       });
+      console.log('🏆 After TBD filter:', updatedMatches.filter(m => m.id >= 13));
+    } else {
+      console.log('🏆 Match 12 complete, keeping all playoff matches');
     }
+
+    console.log('🏆 Final updatedMatches length:', updatedMatches.length);
   }
 
   // Reset match index if it's out of range or if match at index is invalid
