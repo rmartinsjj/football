@@ -80,30 +80,33 @@ const LiveFieldView = ({
         return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
       });
 
-  // Filter out playoff matches with TBD teams for display
-  const displayMatches = filteredMatches.filter(match => {
-    if (match.type === 'final' || match.type === 'third_place') {
-      return match.team1 !== 'TBD' && match.team2 !== 'TBD';
-    }
-    return true;
-  });
-
   let standings, updatedMatches;
 
   if (isWinnerStaysMode) {
+    // For winner-stays mode, filter out TBD matches
+    const displayMatches = filteredMatches.filter(match => {
+      if (match.type === 'final' || match.type === 'third_place') {
+        return match.team1 !== 'TBD' && match.team2 !== 'TBD';
+      }
+      return true;
+    });
     standings = calculateWinnerStaysStandings(displayMatches).filter(team => activeTeams.includes(team.team));
     updatedMatches = displayMatches; // No playoff generation for winner-stays
   } else {
     standings = calculateStandings(filteredMatches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
     updatedMatches = generatePlayoffMatches(filteredMatches, standings);
 
-    // Filter updated matches to remove TBD playoff matches from display
-    updatedMatches = updatedMatches.filter(match => {
-      if (match.type === 'final' || match.type === 'third_place') {
-        return match.team1 !== 'TBD' && match.team2 !== 'TBD';
-      }
-      return true;
-    });
+    // ONLY filter TBD matches if match 12 is not complete yet
+    const match12 = matches.find(m => m.id === 12);
+    if (!match12 || !match12.played) {
+      // Match 12 not complete, filter out TBD playoff matches
+      updatedMatches = updatedMatches.filter(match => {
+        if (match.type === 'final' || match.type === 'third_place') {
+          return match.team1 !== 'TBD' && match.team2 !== 'TBD';
+        }
+        return true;
+      });
+    }
   }
 
   // Reset match index if it's out of range

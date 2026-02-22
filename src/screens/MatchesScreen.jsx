@@ -90,16 +90,16 @@ const MatchesScreen = ({
       }
     });
 
-    const updatedMatches = matches.map(match => {
-      const scores = scoreMap.get(match.id);
-      return {
-        ...match,
-        score1: scores ? scores.team1 : 0,
-        score2: scores ? scores.team2 : 0
-      };
+    setMatches(currentMatches => {
+      return currentMatches.map(match => {
+        const scores = scoreMap.get(match.id);
+        return {
+          ...match,
+          score1: scores ? scores.team1 : 0,
+          score2: scores ? scores.team2 : 0
+        };
+      });
     });
-
-    setMatches(updatedMatches);
   };
 
   const addGoal = async (playerId, playerName, teamName, matchId) => {
