@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Play, Check, Settings, Trash2, X } from 'lucide-react';
+import { Calendar, Play, Check, Settings, Trash2, X, Camera, User } from 'lucide-react';
 import { gameDayService } from '../services/gameDayService';
 
 const GameDayHomeScreen = ({
@@ -21,6 +21,10 @@ const GameDayHomeScreen = ({
   const [deleteConfirmModal, setDeleteConfirmModal] = useState(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showVestWasherModal, setShowVestWasherModal] = useState(null);
+  const [vestWasherName, setVestWasherName] = useState('');
+  const [vestWasherPhoto, setVestWasherPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   const allTeams = ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'];
   const activeTeams = settings?.activeTeams || ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'];
@@ -112,6 +116,41 @@ const GameDayHomeScreen = ({
       alert('Erro ao deletar jogo: ' + error.message);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setVestWasherPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveVestWasher = async () => {
+    if (!vestWasherName.trim()) {
+      alert('Digite o nome da pessoa que lavou o colete');
+      return;
+    }
+
+    try {
+      await gameDayService.updateVestWasher(
+        showVestWasherModal.id,
+        vestWasherName,
+        photoPreview
+      );
+      await loadExistingGames();
+      setShowVestWasherModal(null);
+      setVestWasherName('');
+      setVestWasherPhoto(null);
+      setPhotoPreview(null);
+    } catch (error) {
+      console.error('Error updating vest washer:', error);
+      alert('Erro ao salvar: ' + error.message);
     }
   };
 
@@ -332,29 +371,62 @@ const GameDayHomeScreen = ({
                     className="w-full dark-card hover:bg-gray-700 rounded-lg p-3 transition-all text-left"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            game.tournament_type === 'championship'
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-purple-600 text-white'
+                      <div className="flex items-center space-x-3 flex-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowVestWasherModal(game);
+                            setVestWasherName(game.vest_washer_name || '');
+                            setPhotoPreview(game.vest_washer_photo || null);
+                          }}
+                          className="flex-shrink-0 relative group"
+                          title="Adicionar foto de quem lavou o colete"
+                        >
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2 transition-all ${
+                            game.vest_washer_photo
+                              ? 'border-green-500'
+                              : 'border-gray-600 group-hover:border-blue-500'
                           }`}>
-                            {game.tournament_type === 'championship' ? 'Campeonato' : 'Quem Ganha Fica'}
-                          </span>
-                          {game.is_active && (
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-600 text-white">
-                              ATIVO
-                            </span>
+                            {game.vest_washer_photo ? (
+                              <img
+                                src={game.vest_washer_photo}
+                                alt={game.vest_washer_name || 'Lavou colete'}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <Camera size={20} className="text-gray-500 group-hover:text-blue-400 transition-colors" />
+                            )}
+                          </div>
+                          {game.vest_washer_photo && (
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                              <Check size={10} className="text-white" />
+                            </div>
                           )}
-                        </div>
-                        <div className="text-white font-medium text-sm">
-                          {formatDate(game.game_date)}
-                        </div>
-                        <div className="text-gray-400 text-xs">
-                          {game.active_teams?.length || 0} times
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              game.tournament_type === 'championship'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-purple-600 text-white'
+                            }`}>
+                              {game.tournament_type === 'championship' ? 'Campeonato' : 'Quem Ganha Fica'}
+                            </span>
+                            {game.is_active && (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-600 text-white">
+                                ATIVO
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-white font-medium text-sm">
+                            {formatDate(game.game_date)}
+                          </div>
+                          <div className="text-gray-400 text-xs">
+                            {game.active_teams?.length || 0} times
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-shrink-0">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -392,6 +464,97 @@ const GameDayHomeScreen = ({
           />
         </div>
       </div>
+
+      {showVestWasherModal && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm px-4">
+          <div className="bg-gray-800 rounded-xl p-6 max-w-sm w-full shadow-2xl border border-gray-700">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-white flex items-center">
+                <Camera size={20} className="mr-2" />
+                Quem Lavou o Colete?
+              </h3>
+              <button
+                onClick={() => {
+                  setShowVestWasherModal(null);
+                  setVestWasherName('');
+                  setVestWasherPhoto(null);
+                  setPhotoPreview(null);
+                }}
+                className="p-1 hover:bg-gray-700 rounded-full transition-colors"
+              >
+                <X size={20} className="text-gray-400" />
+              </button>
+            </div>
+
+            <div className="mb-4 flex flex-col items-center">
+              <div className="relative mb-4">
+                <div className={`w-32 h-32 rounded-full flex items-center justify-center overflow-hidden border-4 transition-all ${
+                  photoPreview ? 'border-green-500' : 'border-gray-600 border-dashed'
+                }`}>
+                  {photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User size={48} className="text-gray-500" />
+                  )}
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                  id="photo-upload"
+                />
+                <label
+                  htmlFor="photo-upload"
+                  className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full cursor-pointer transition-all shadow-lg"
+                >
+                  <Camera size={20} />
+                </label>
+              </div>
+
+              <div className="w-full">
+                <label className="block text-white text-sm font-semibold mb-2">
+                  Nome da pessoa:
+                </label>
+                <input
+                  type="text"
+                  value={vestWasherName}
+                  onChange={(e) => setVestWasherName(e.target.value)}
+                  placeholder="Digite o nome"
+                  className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  setShowVestWasherModal(null);
+                  setVestWasherName('');
+                  setVestWasherPhoto(null);
+                  setPhotoPreview(null);
+                }}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-all"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveVestWasher}
+                disabled={!vestWasherName.trim()}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                <Check size={18} />
+                <span>Salvar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {deleteConfirmModal && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm px-4">

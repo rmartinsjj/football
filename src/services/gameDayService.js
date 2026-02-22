@@ -300,5 +300,21 @@ export const gameDayService = {
 
     if (error) throw error;
     return data;
+  },
+
+  async updateVestWasher(gameDayId, vestWasherName, vestWasherPhoto) {
+    const { data, error } = await supabase
+      .from('game_days')
+      .update({
+        vest_washer_name: vestWasherName,
+        vest_washer_photo: vestWasherPhoto,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', gameDayId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 };
