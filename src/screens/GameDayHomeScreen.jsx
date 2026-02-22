@@ -419,11 +419,6 @@ const GameDayHomeScreen = ({
                             <Camera size={22} className="text-gray-500 group-hover:text-blue-400 transition-colors" />
                           )}
                         </div>
-                        {game.vest_washer_photo && (
-                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                            <Check size={12} className="text-white" />
-                          </div>
-                        )}
                       </button>
 
                       <div className="flex items-center space-x-2 flex-shrink-0">
