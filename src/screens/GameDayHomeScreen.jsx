@@ -370,62 +370,62 @@ const GameDayHomeScreen = ({
                     onClick={() => handleSelectExistingGame(game)}
                     className="w-full dark-card hover:bg-gray-700 rounded-lg p-3 transition-all text-left"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3 flex-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowVestWasherModal(game);
-                            setVestWasherName(game.vest_washer_name || '');
-                            setPhotoPreview(game.vest_washer_photo || null);
-                          }}
-                          className="flex-shrink-0 relative group"
-                          title="Adicionar foto de quem lavou o colete"
-                        >
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2 transition-all ${
-                            game.vest_washer_photo
-                              ? 'border-green-500'
-                              : 'border-gray-600 group-hover:border-blue-500'
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            game.tournament_type === 'championship'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-purple-600 text-white'
                           }`}>
-                            {game.vest_washer_photo ? (
-                              <img
-                                src={game.vest_washer_photo}
-                                alt={game.vest_washer_name || 'Lavou colete'}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <Camera size={20} className="text-gray-500 group-hover:text-blue-400 transition-colors" />
-                            )}
-                          </div>
-                          {game.vest_washer_photo && (
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                              <Check size={10} className="text-white" />
-                            </div>
-                          )}
-                        </button>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              game.tournament_type === 'championship'
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-purple-600 text-white'
-                            }`}>
-                              {game.tournament_type === 'championship' ? 'Campeonato' : 'Quem Ganha Fica'}
+                            {game.tournament_type === 'championship' ? 'Campeonato' : 'Quem Ganha Fica'}
+                          </span>
+                          {game.is_active && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-600 text-white">
+                              ATIVO
                             </span>
-                            {game.is_active && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-600 text-white">
-                                ATIVO
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-white font-medium text-sm">
-                            {formatDate(game.game_date)}
-                          </div>
-                          <div className="text-gray-400 text-xs">
-                            {game.active_teams?.length || 0} times
-                          </div>
+                          )}
+                        </div>
+                        <div className="text-white font-medium text-sm">
+                          {formatDate(game.game_date)}
+                        </div>
+                        <div className="text-gray-400 text-xs">
+                          {game.active_teams?.length || 0} times
                         </div>
                       </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowVestWasherModal(game);
+                          setVestWasherName(game.vest_washer_name || '');
+                          setPhotoPreview(game.vest_washer_photo || null);
+                        }}
+                        className="flex-shrink-0 relative group"
+                        title="Adicionar foto de quem lavou o colete"
+                      >
+                        <div className={`w-14 h-14 rounded-full flex items-center justify-center overflow-hidden border-2 transition-all ${
+                          game.vest_washer_photo
+                            ? 'border-green-500'
+                            : 'border-gray-600 group-hover:border-blue-500'
+                        }`}>
+                          {game.vest_washer_photo ? (
+                            <img
+                              src={game.vest_washer_photo}
+                              alt={game.vest_washer_name || 'Lavou colete'}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Camera size={22} className="text-gray-500 group-hover:text-blue-400 transition-colors" />
+                          )}
+                        </div>
+                        {game.vest_washer_photo && (
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                            <Check size={12} className="text-white" />
+                          </div>
+                        )}
+                      </button>
+
                       <div className="flex items-center space-x-2 flex-shrink-0">
                         <button
                           onClick={(e) => {
