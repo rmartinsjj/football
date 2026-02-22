@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users } from 'lucide-react';
 import { TEAM_COLORS } from '../constants';
 import { calculateStandings, generatePlayoffMatches, handleWinnerStaysMatch, generateNextWinnerStaysMatch, calculateWinnerStaysStandings } from '../utils/tournamentUtils';
@@ -80,15 +80,40 @@ const LiveFieldView = ({
         return activeTeams.includes(match.team1) && activeTeams.includes(match.team2);
       });
 
+  // Filter out playoff matches with TBD teams for display
+  const displayMatches = filteredMatches.filter(match => {
+    if (match.type === 'final' || match.type === 'third_place') {
+      return match.team1 !== 'TBD' && match.team2 !== 'TBD';
+    }
+    return true;
+  });
+
   let standings, updatedMatches;
 
   if (isWinnerStaysMode) {
-    standings = calculateWinnerStaysStandings(filteredMatches).filter(team => activeTeams.includes(team.team));
-    updatedMatches = filteredMatches; // No playoff generation for winner-stays
+    standings = calculateWinnerStaysStandings(displayMatches).filter(team => activeTeams.includes(team.team));
+    updatedMatches = displayMatches; // No playoff generation for winner-stays
   } else {
     standings = calculateStandings(filteredMatches.filter(m => m.type === 'regular')).filter(team => activeTeams.includes(team.team)); // Only regular season for standings
     updatedMatches = generatePlayoffMatches(filteredMatches, standings);
+
+    // Filter updated matches to remove TBD playoff matches from display
+    updatedMatches = updatedMatches.filter(match => {
+      if (match.type === 'final' || match.type === 'third_place') {
+        return match.team1 !== 'TBD' && match.team2 !== 'TBD';
+      }
+      return true;
+    });
   }
+
+  // Reset match index if it's out of range
+  useEffect(() => {
+    if (currentMatchIndex >= updatedMatches.length && updatedMatches.length > 0) {
+      setCurrentMatchIndex(updatedMatches.length - 1);
+    } else if (currentMatchIndex < 0) {
+      setCurrentMatchIndex(0);
+    }
+  }, [updatedMatches.length, currentMatchIndex]);
 
   // Find current match using index
   const currentMatch = updatedMatches[currentMatchIndex] || updatedMatches[0];
@@ -845,18 +870,22 @@ const LiveFieldView = ({
       </div>
       )}
       
-      {/* No current match message for winner-stays */}
-      {isWinnerStaysMode && !currentMatch && (
+      {/* No current match message */}
+      {!currentMatch && (
         <div className="dark-card mx-3 mt-3 rounded-xl p-6 text-center">
-          <div className="text-4xl mb-3">⚡</div>
-          <h3 className="text-white font-bold text-lg mb-2">Nenhum Desafio Ativo</h3>
+          <div className="text-4xl mb-3">{isWinnerStaysMode ? '⚡' : '🏆'}</div>
+          <h3 className="text-white font-bold text-lg mb-2">
+            {isWinnerStaysMode ? 'Nenhum Desafio Ativo' : 'Aguardando Playoffs'}
+          </h3>
           <p className="text-gray-400 mb-4">
-            {settings.currentWinnerTeam 
-              ? `${settings.currentWinnerTeam} está esperando um desafiante!`
-              : 'Inicie o primeiro jogo para começar o modo "Quem Ganha Fica"'
+            {isWinnerStaysMode
+              ? (settings.currentWinnerTeam
+                  ? `${settings.currentWinnerTeam} está esperando um desafiante!`
+                  : 'Inicie o primeiro jogo para começar o modo "Quem Ganha Fica"')
+              : 'Complete todos os jogos da fase de grupos para liberar as finais!'
             }
           </p>
-          {settings.currentWinnerTeam && (
+          {isWinnerStaysMode && settings.currentWinnerTeam && (
             <button
               onClick={() => {
                 const nextMatch = generateNextWinnerStaysMatch(matches, settings.currentWinnerTeam, teams, activeTeams);
