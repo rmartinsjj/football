@@ -170,25 +170,22 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
 
               let positionClass, medalIcon;
 
+              // SEMPRE mostrar posição baseada no índice atual (pontuação da fase regular)
+              positionClass = `${index + 1}º`;
+
               if (playoffsComplete) {
+                // Quando playoffs completos, mostrar medalhas dos resultados finais
                 if (finalResults.champion === team.team) {
-                  positionClass = '🏆';
                   medalIcon = '🏆';
                 } else if (finalResults.runnerUp === team.team) {
-                  positionClass = '🥈';
                   medalIcon = '🥈';
                 } else if (finalResults.thirdPlace === team.team) {
-                  positionClass = '🥉';
                   medalIcon = '🥉';
-                } else if (finalResults.fourthPlace === team.team) {
-                  positionClass = '4º';
-                  medalIcon = null;
                 } else {
-                  positionClass = `${index + 1}º`;
                   medalIcon = null;
                 }
               } else {
-                positionClass = `${index + 1}º`;
+                // Antes dos playoffs, mostrar medalhas baseadas na posição da fase regular
                 if (index === 0) medalIcon = <Medal className="text-yellow-400" size={20} />;
                 else if (index === 1) medalIcon = <Medal className="text-gray-300" size={20} />;
                 else if (index === 2) medalIcon = '🏅';
