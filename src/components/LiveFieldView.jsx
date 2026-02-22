@@ -725,64 +725,64 @@ const LiveFieldView = ({
 
       {/* Tournament Results Modal */}
       {showPlayoffResults && playoffResults.champion && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl border-2 border-blue-500">
             <div className="mb-6">
-              <div className="text-4xl mb-2">🏆</div>
-              <h2 className="text-2xl font-bold text-white mb-1">TORNEIO FINALIZADO!</h2>
-              <p className="text-yellow-100 text-sm">Espaço Novo Tempo - Praia da Costa</p>
+              <div className="text-5xl mb-2">🏆</div>
+              <h2 className="text-2xl font-bold text-white mb-2">TORNEIO FINALIZADO!</h2>
+              <p className="text-blue-200 text-sm font-medium">Espaço Novo Tempo - Praia da Costa</p>
             </div>
-            
-            <div className="space-y-4">
+
+            <div className="space-y-3">
               {/* Champion */}
-              <div className="bg-white bg-opacity-20 rounded-xl p-4 border-2 border-yellow-300">
-                <div className="flex items-center justify-center space-x-3 mb-2">
+              <div className="bg-yellow-500 rounded-xl p-4 border-2 border-yellow-400 shadow-lg">
+                <div className="flex items-center justify-center space-x-3">
                   <div className="text-3xl">🏆</div>
                   <div>
-                    <div className="text-yellow-100 text-xs font-medium">CAMPEÃO</div>
-                    <div className="text-white text-lg font-bold">{playoffResults.champion}</div>
+                    <div className="text-yellow-900 text-xs font-bold uppercase tracking-wide">Campeão</div>
+                    <div className="text-gray-900 text-xl font-extrabold">{playoffResults.champion}</div>
                   </div>
                 </div>
               </div>
-              
+
               {/* Runner-up */}
-              <div className="bg-white bg-opacity-15 rounded-xl p-3 border border-gray-300">
+              <div className="bg-gray-300 rounded-xl p-3 border-2 border-gray-400 shadow-md">
                 <div className="flex items-center justify-center space-x-3">
                   <div className="text-2xl">🥈</div>
                   <div>
-                    <div className="text-gray-200 text-xs font-medium">VICE-CAMPEÃO</div>
-                    <div className="text-white text-base font-bold">{playoffResults.runnerUp}</div>
+                    <div className="text-gray-700 text-xs font-bold uppercase tracking-wide">Vice-Campeão</div>
+                    <div className="text-gray-900 text-base font-bold">{playoffResults.runnerUp}</div>
                   </div>
                 </div>
               </div>
-              
+
               {/* Third place */}
-              <div className="bg-white bg-opacity-10 rounded-xl p-3 border border-orange-300">
+              <div className="bg-orange-400 rounded-xl p-3 border-2 border-orange-500 shadow-md">
                 <div className="flex items-center justify-center space-x-3">
-                  <div className="text-xl">🥉</div>
+                  <div className="text-2xl">🥉</div>
                   <div>
-                    <div className="text-orange-200 text-xs font-medium">3º LUGAR</div>
-                    <div className="text-white text-base font-bold">{playoffResults.thirdPlace}</div>
+                    <div className="text-orange-900 text-xs font-bold uppercase tracking-wide">3º Lugar</div>
+                    <div className="text-gray-900 text-base font-bold">{playoffResults.thirdPlace}</div>
                   </div>
                 </div>
               </div>
-              
+
               {/* Fourth place */}
-              <div className="bg-white bg-opacity-5 rounded-xl p-3">
+              <div className="bg-gray-700 rounded-xl p-3 border-2 border-gray-600 shadow-md">
                 <div className="flex items-center justify-center space-x-3">
-                  <div className="text-lg">4️⃣</div>
+                  <div className="text-xl">4️⃣</div>
                   <div>
-                    <div className="text-gray-300 text-xs font-medium">4º LUGAR</div>
-                    <div className="text-white text-sm font-bold">{playoffResults.fourthPlace}</div>
+                    <div className="text-gray-300 text-xs font-bold uppercase tracking-wide">4º Lugar</div>
+                    <div className="text-white text-base font-bold">{playoffResults.fourthPlace}</div>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="mt-6">
               <button
                 onClick={handleCloseResults}
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+                className="bg-white text-blue-700 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold transition-colors shadow-md w-full"
               >
                 Fechar Resultados
               </button>
