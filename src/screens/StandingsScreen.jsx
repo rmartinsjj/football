@@ -153,79 +153,77 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
           
           <div className="space-y-1">
             {standings.map((team, index) => {
-              // Determine background and text colors
-              let bgClass, textClass, positionClass;
+              // Use team colors for backgrounds
+              const teamColorMap = {
+                'Flamengo': 'bg-gradient-to-r from-red-600 to-red-700',
+                'Cruzeiro': 'bg-gradient-to-r from-blue-600 to-blue-700',
+                'Corinthians': 'bg-gradient-to-r from-gray-700 to-gray-800',
+                'Palmeiras': 'bg-gradient-to-r from-green-600 to-green-700'
+              };
+
+              const teamBorderMap = {
+                'Flamengo': 'border-red-800',
+                'Cruzeiro': 'border-blue-800',
+                'Corinthians': 'border-black',
+                'Palmeiras': 'border-green-800'
+              };
+
+              let positionClass, medalIcon;
 
               if (playoffsComplete) {
                 if (finalResults.champion === team.team) {
-                  bgClass = 'bg-gradient-to-r from-yellow-500 to-yellow-600 border-l-4 border-yellow-700';
-                  textClass = 'text-white';
                   positionClass = '🏆';
+                  medalIcon = '🏆';
                 } else if (finalResults.runnerUp === team.team) {
-                  bgClass = 'bg-gradient-to-r from-gray-400 to-gray-500 border-l-4 border-gray-600';
-                  textClass = 'text-white';
                   positionClass = '🥈';
+                  medalIcon = '🥈';
                 } else if (finalResults.thirdPlace === team.team) {
-                  bgClass = 'bg-gradient-to-r from-orange-500 to-orange-600 border-l-4 border-orange-700';
-                  textClass = 'text-white';
                   positionClass = '🥉';
+                  medalIcon = '🥉';
                 } else if (finalResults.fourthPlace === team.team) {
-                  bgClass = 'bg-gradient-to-r from-red-500 to-red-600 border-l-4 border-red-700';
-                  textClass = 'text-white';
                   positionClass = '4º';
+                  medalIcon = null;
                 } else {
-                  bgClass = 'bg-gray-800 hover:bg-gray-700';
-                  textClass = 'text-white';
                   positionClass = `${index + 1}º`;
+                  medalIcon = null;
                 }
               } else {
-                if (index === 0) {
-                  bgClass = 'bg-gradient-to-r from-green-900 to-green-800 border-l-4 border-green-500';
-                  textClass = 'text-white';
-                  positionClass = `${index + 1}º`;
-                } else if (index === 1) {
-                  bgClass = 'bg-gradient-to-r from-blue-900 to-blue-800 border-l-4 border-blue-400';
-                  textClass = 'text-white';
-                  positionClass = `${index + 1}º`;
-                } else if (index === standings.length - 1 || index === standings.length - 2) {
-                  bgClass = 'bg-gradient-to-r from-red-900 to-red-800 border-l-4 border-red-400';
-                  textClass = 'text-white';
-                  positionClass = `${index + 1}º`;
-                } else {
-                  bgClass = 'bg-gray-800 hover:bg-gray-700';
-                  textClass = 'text-white';
-                  positionClass = `${index + 1}º`;
-                }
+                positionClass = `${index + 1}º`;
+                if (index === 0) medalIcon = <Medal className="text-yellow-400" size={20} />;
+                else if (index === 1) medalIcon = <Medal className="text-gray-300" size={20} />;
+                else if (index === 2) medalIcon = '🏅';
+                else if (index === standings.length - 1) medalIcon = '🧽';
+                else medalIcon = null;
               }
+
+              const bgClass = teamColorMap[team.team] || 'bg-gray-800';
+              const borderClass = teamBorderMap[team.team] || 'border-gray-900';
 
               return (
                 <div
                   key={team.team}
-                  className={`p-4 ${bgClass} transition-colors`}
+                  className={`p-4 ${bgClass} border-l-4 ${borderClass} transition-colors shadow-md`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-3">
-                        <span className={`text-2xl font-bold ${textClass}`}>
+                        <span className="text-2xl font-bold text-white">
                           {positionClass}
                         </span>
-                        {!playoffsComplete && (
-                          <>
-                            {index === 0 && <Medal className="text-green-400" size={20} />}
-                            {index === 1 && <Medal className="text-blue-400" size={20} />}
-                            {index === 2 && <span className="text-lg">🏅</span>}
-                            {index === standings.length - 1 && <span className="text-lg">🧽</span>}
-                          </>
+                        {medalIcon && (
+                          typeof medalIcon === 'string'
+                            ? <span className="text-lg">{medalIcon}</span>
+                            : medalIcon
                         )}
                       </div>
                       <div className={`w-5 h-5 ${TEAM_COLORS[team.team].bg} rounded-full border-2 border-white shadow-md`}></div>
-                      <span className={`font-bold ${textClass} truncate text-lg`}>{team.team}</span>
+                      <span className="font-bold text-white truncate text-lg">{team.team}</span>
                     </div>
                     <div className="text-right">
-                      <div className={`text-2xl font-bold ${textClass}`}>
+                      <div className="text-2xl font-bold text-white">
                         {isWinnerStaysMode ? team.wins : team.points}
                       </div>
-                      <div className={`text-sm ${playoffsComplete ? 'text-white/80' : 'text-gray-300'}`}>
+                      <div className="text-sm text-white/90">
                         {isWinnerStaysMode ? 'vitórias' : 'pontos'}
                       </div>
                     </div>
