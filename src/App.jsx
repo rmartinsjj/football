@@ -138,6 +138,7 @@ const App = () => {
       }
 
       if (matchesData && matchesData.length > 0) {
+        console.log('📊 Loading matches from database:', matchesData);
         const formattedMatches = matchesData.map(match => ({
           id: match.match_number,
           dbId: match.id,
@@ -151,9 +152,11 @@ const App = () => {
           type: match.match_type,
           played: match.played
         }));
+        console.log('📊 Formatted matches:', formattedMatches.map(m => ({ id: m.id, type: m.type, team1: m.team1, team2: m.team2 })));
         setMatches(formattedMatches);
       } else {
         // Limpar dados de matches quando não houver nenhum
+        console.log('📊 No matches in database, using INITIAL_MATCHES');
         setMatches(INITIAL_MATCHES);
       }
 
