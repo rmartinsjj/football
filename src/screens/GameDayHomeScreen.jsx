@@ -13,7 +13,7 @@ const GameDayHomeScreen = ({
 }) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [tournamentType, setTournamentType] = useState('championship');
-  const [selectedTeams, setSelectedTeams] = useState(['Vermelho', 'Azul', 'Brasil', 'Verde Branco']);
+  const [selectedTeams, setSelectedTeams] = useState(['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras']);
   const [isCreating, setIsCreating] = useState(false);
   const [existingGames, setExistingGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,8 +22,8 @@ const GameDayHomeScreen = ({
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const allTeams = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
-  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+  const allTeams = ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'];
+  const activeTeams = settings?.activeTeams || ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'];
 
   useEffect(() => {
     loadExistingGames();
@@ -264,10 +264,10 @@ const GameDayHomeScreen = ({
                 {allTeams.map(team => {
                   const isSelected = selectedTeams.includes(team);
                   const teamColors = {
-                    'Vermelho': 'bg-red-600',
-                    'Azul': 'bg-blue-600',
-                    'Brasil': 'bg-yellow-500',
-                    'Verde Branco': 'bg-green-600'
+                    'Flamengo': 'bg-red-600',
+                    'Cruzeiro': 'bg-blue-600',
+                    'Corinthians': 'bg-black',
+                    'Palmeiras': 'bg-green-600'
                   };
 
                   return (

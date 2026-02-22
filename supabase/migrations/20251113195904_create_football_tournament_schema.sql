@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS game_days (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   game_date date UNIQUE NOT NULL,
   tournament_type text DEFAULT 'championship' CHECK (tournament_type IN ('championship', 'winner-stays')),
-  active_teams text[] DEFAULT ARRAY['Vermelho', 'Azul', 'Brasil', 'Verde Branco'],
+  active_teams text[] DEFAULT ARRAY['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'],
   current_winner_team text,
   is_active boolean DEFAULT false,
   created_at timestamptz DEFAULT now(),

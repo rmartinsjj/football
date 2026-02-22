@@ -96,7 +96,7 @@ export const parsePlayerList = (playerListText) => {
   }).filter(player => player.name);
 };
 
-export const drawTeams = (players, activeTeams = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco']) => {
+export const drawTeams = (players, activeTeams = ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras']) => {
   const shuffledPlayers = shuffleArray(players);
   const newTeams = {
     ...Object.fromEntries(activeTeams.map(team => [team, []]))

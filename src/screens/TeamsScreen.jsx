@@ -25,10 +25,10 @@ const TeamsScreen = ({
   const [selectedTeam, setSelectedTeam] = useState('');
   const [availablePlayers, setAvailablePlayers] = useState([]);
   const [expandedTeams, setExpandedTeams] = useState({
-    'Vermelho': false,
-    'Azul': false,
-    'Brasil': false,
-    'Verde Branco': false
+    'Flamengo': false,
+    'Cruzeiro': false,
+    'Corinthians': false,
+    'Palmeiras': false
   });
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');

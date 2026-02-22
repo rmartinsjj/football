@@ -10,7 +10,7 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
   const [tiebreakerTeams, setTiebreakerTeams] = React.useState([]);
   
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
-  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+  const activeTeams = settings?.activeTeams || ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'];
   
   // Filter matches to only include active teams, but keep playoff structure
   const filteredMatches = matches.filter(match => {

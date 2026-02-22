@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabase';
 
 export const gameDayService = {
-  async createGameDay(gameDate, tournamentType = 'championship', activeTeams = ['Vermelho', 'Azul', 'Brasil', 'Verde Branco']) {
+  async createGameDay(gameDate, tournamentType = 'championship', activeTeams = ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras']) {
     console.log('🎮 Creating game day:', { gameDate, tournamentType, activeTeams });
 
     try {

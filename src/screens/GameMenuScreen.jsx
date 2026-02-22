@@ -10,7 +10,7 @@ const GameMenuScreen = ({
   setCurrentScreen,
   onBack
 }) => {
-  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+  const activeTeams = settings?.activeTeams || ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'];
 
   const filteredMatches = matches.filter(match => {
     if (match.type === 'final' || match.type === 'third_place') {

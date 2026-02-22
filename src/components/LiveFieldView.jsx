@@ -62,7 +62,7 @@ const LiveFieldView = ({
 
   // Calculate standings and generate playoff matches
   const isWinnerStaysMode = settings?.tournamentType === 'winner-stays';
-  const activeTeams = settings?.activeTeams || ['Vermelho', 'Azul', 'Brasil', 'Verde Branco'];
+  const activeTeams = settings?.activeTeams || ['Flamengo', 'Cruzeiro', 'Corinthians', 'Palmeiras'];
 
   // Filter matches based on mode and active teams
   const filteredMatches = isWinnerStaysMode

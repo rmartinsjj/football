@@ -134,17 +134,17 @@ const SettingsScreen = ({
                     key={teamName}
                     onClick={() => handleTeamRemoval(teamName)}
                     className={`w-full p-3 rounded-lg text-left transition-colors bg-gray-700 hover:bg-gray-600 border-l-4 ${
-                      teamName === 'Vermelho' ? 'border-red-500' :
-                      teamName === 'Azul' ? 'border-blue-500' :
-                      teamName === 'Brasil' ? 'border-yellow-500' :
+                      teamName === 'Flamengo' ? 'border-red-500' :
+                      teamName === 'Cruzeiro' ? 'border-blue-500' :
+                      teamName === 'Corinthians' ? 'border-gray-500' :
                       'border-green-500'
                     }`}
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`w-4 h-4 rounded-full ${
-                        teamName === 'Vermelho' ? 'bg-red-500' :
-                        teamName === 'Azul' ? 'bg-blue-500' :
-                        teamName === 'Brasil' ? 'bg-yellow-500' :
+                        teamName === 'Flamengo' ? 'bg-red-500' :
+                        teamName === 'Cruzeiro' ? 'bg-blue-500' :
+                        teamName === 'Corinthians' ? 'bg-gray-600' :
                         'bg-green-500'
                       }`}></div>
                       <span className="text-white font-medium">Remover {teamName}</span>
