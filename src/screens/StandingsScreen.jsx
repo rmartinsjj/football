@@ -152,101 +152,127 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
           </div>
           
           <div className="space-y-1">
-            {standings.map((team, index) => (
-              <div
-                key={team.team}
-                className={`p-4 ${
-                  playoffsComplete ? (
-                    finalResults.champion === team.team ? 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-l-4 border-yellow-500' :
-                    finalResults.runnerUp === team.team ? 'bg-gradient-to-r from-gray-50 to-gray-100 border-l-4 border-gray-400' :
-                    finalResults.thirdPlace === team.team ? 'bg-gradient-to-r from-orange-50 to-orange-100 border-l-4 border-orange-400' :
-                    finalResults.fourthPlace === team.team ? 'bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-400' :
-                    'hover:bg-gray-700'
-                  ) : (
-                    index === 0 ? 'bg-gradient-to-r from-green-900 to-green-800 border-l-4 border-green-500' :
-                    index === 1 ? 'bg-gradient-to-r from-blue-900 to-blue-800 border-l-4 border-blue-400' :
-                    index === standings.length - 1 || index === standings.length - 2 ? 'bg-gradient-to-r from-red-900 to-red-800 border-l-4 border-red-400' :
-                    'hover:bg-gray-700'
-                  )
-                } transition-colors`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-3">
-                      <span className="text-2xl font-bold text-gray-300">
-                        {playoffsComplete ? (
-                          finalResults.champion === team.team ? '🏆' :
-                          finalResults.runnerUp === team.team ? '🥈' :
-                          finalResults.thirdPlace === team.team ? '🥉' :
-                          finalResults.fourthPlace === team.team ? '4º' :
-                          `${index + 1}º`
-                        ) : (
-                          `${index + 1}º`
+            {standings.map((team, index) => {
+              // Determine background and text colors
+              let bgClass, textClass, positionClass;
+
+              if (playoffsComplete) {
+                if (finalResults.champion === team.team) {
+                  bgClass = 'bg-gradient-to-r from-yellow-500 to-yellow-600 border-l-4 border-yellow-700';
+                  textClass = 'text-white';
+                  positionClass = '🏆';
+                } else if (finalResults.runnerUp === team.team) {
+                  bgClass = 'bg-gradient-to-r from-gray-400 to-gray-500 border-l-4 border-gray-600';
+                  textClass = 'text-white';
+                  positionClass = '🥈';
+                } else if (finalResults.thirdPlace === team.team) {
+                  bgClass = 'bg-gradient-to-r from-orange-500 to-orange-600 border-l-4 border-orange-700';
+                  textClass = 'text-white';
+                  positionClass = '🥉';
+                } else if (finalResults.fourthPlace === team.team) {
+                  bgClass = 'bg-gradient-to-r from-red-500 to-red-600 border-l-4 border-red-700';
+                  textClass = 'text-white';
+                  positionClass = '4º';
+                } else {
+                  bgClass = 'bg-gray-800 hover:bg-gray-700';
+                  textClass = 'text-white';
+                  positionClass = `${index + 1}º`;
+                }
+              } else {
+                if (index === 0) {
+                  bgClass = 'bg-gradient-to-r from-green-900 to-green-800 border-l-4 border-green-500';
+                  textClass = 'text-white';
+                  positionClass = `${index + 1}º`;
+                } else if (index === 1) {
+                  bgClass = 'bg-gradient-to-r from-blue-900 to-blue-800 border-l-4 border-blue-400';
+                  textClass = 'text-white';
+                  positionClass = `${index + 1}º`;
+                } else if (index === standings.length - 1 || index === standings.length - 2) {
+                  bgClass = 'bg-gradient-to-r from-red-900 to-red-800 border-l-4 border-red-400';
+                  textClass = 'text-white';
+                  positionClass = `${index + 1}º`;
+                } else {
+                  bgClass = 'bg-gray-800 hover:bg-gray-700';
+                  textClass = 'text-white';
+                  positionClass = `${index + 1}º`;
+                }
+              }
+
+              return (
+                <div
+                  key={team.team}
+                  className={`p-4 ${bgClass} transition-colors`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-3">
+                        <span className={`text-2xl font-bold ${textClass}`}>
+                          {positionClass}
+                        </span>
+                        {!playoffsComplete && (
+                          <>
+                            {index === 0 && <Medal className="text-green-400" size={20} />}
+                            {index === 1 && <Medal className="text-blue-400" size={20} />}
+                            {index === 2 && <span className="text-lg">🏅</span>}
+                            {index === standings.length - 1 && <span className="text-lg">🧽</span>}
+                          </>
                         )}
-                      </span>
-                      {!playoffsComplete && (
-                        <>
-                          {index === 0 && <Medal className="text-green-500" size={20} />}
-                          {index === 1 && <Medal className="text-blue-500" size={20} />}
-                          {index === 2 && <span className="text-lg">🏅</span>}
-                          {index === standings.length - 1 && <span className="text-lg">🧽</span>}
-                        </>
-                      )}
+                      </div>
+                      <div className={`w-5 h-5 ${TEAM_COLORS[team.team].bg} rounded-full border-2 border-white shadow-md`}></div>
+                      <span className={`font-bold ${textClass} truncate text-lg`}>{team.team}</span>
                     </div>
-                    <div className={`w-4 h-4 ${TEAM_COLORS[team.team].bg} rounded-full`}></div>
-                    <span className="font-bold text-white truncate">{team.team}</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-white">
-                      {isWinnerStaysMode ? team.wins : team.points}
-                    </div>
-                    <div className="text-sm text-gray-400">
-                      {isWinnerStaysMode ? 'vitórias' : 'pontos'}
+                    <div className="text-right">
+                      <div className={`text-2xl font-bold ${textClass}`}>
+                        {isWinnerStaysMode ? team.wins : team.points}
+                      </div>
+                      <div className={`text-sm ${playoffsComplete ? 'text-white/80' : 'text-gray-300'}`}>
+                        {isWinnerStaysMode ? 'vitórias' : 'pontos'}
+                      </div>
                     </div>
                   </div>
+
+                  {isWinnerStaysMode ? (
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-blue-400 text-base">{team.matches}</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">Jogos</div>
+                      </div>
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-green-400 text-base">{team.wins}</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">Vitórias</div>
+                      </div>
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-yellow-400 text-base">{team.winRate}%</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">Taxa</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-3 grid grid-cols-5 gap-2 text-center text-sm">
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-blue-400 text-base">{team.gamesPlayed}</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">J</div>
+                      </div>
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-green-400 text-base">{team.wins}</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">V</div>
+                      </div>
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-yellow-400 text-base">{team.draws}</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">E</div>
+                      </div>
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-red-400 text-base">{team.losses}</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">D</div>
+                      </div>
+                      <div className="bg-gray-800 bg-opacity-60 rounded-lg p-2.5 border border-white/20">
+                        <div className="font-bold text-white text-base">{team.goalDiff > 0 ? '+' : ''}{team.goalDiff}</div>
+                        <div className="text-[9px] text-white/80 leading-tight text-center font-medium">SG</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                
-                {isWinnerStaysMode ? (
-                  <div className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
-                    <div className="bg-gray-700 rounded-lg p-2">
-                      <div className="font-medium text-blue-600">{team.matches}</div>
-                      <div className="text-[8px] text-gray-400 leading-tight text-center">Jogos</div>
-                    </div>
-                    <div className="bg-gray-700 rounded-lg p-2">
-                      <div className="font-medium text-green-600">{team.wins}</div>
-                      <div className="text-[8px] text-gray-400 leading-tight text-center">Vitórias</div>
-                    </div>
-                    <div className="bg-gray-700 rounded-lg p-2">
-                      <div className="font-medium text-yellow-600">{team.winRate}%</div>
-                      <div className="text-[8px] text-gray-400 leading-tight text-center">Taxa</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-3 grid grid-cols-5 gap-2 text-center text-sm">
-                  <div className="bg-gray-700 rounded-lg p-2">
-                    <div className="font-medium text-blue-600">{team.gamesPlayed}</div>
-                    <div className="text-[8px] text-gray-400 leading-tight text-center">J</div>
-                  </div>
-                  <div className="bg-gray-700 rounded-lg p-2">
-                    <div className="font-medium text-green-600">{team.wins}</div>
-                    <div className="text-[8px] text-gray-400 leading-tight text-center">V</div>
-                  </div>
-                  <div className="bg-gray-700 rounded-lg p-2">
-                    <div className="font-medium text-yellow-600">{team.draws}</div>
-                    <div className="text-[8px] text-gray-400 leading-tight text-center">E</div>
-                  </div>
-                  <div className="bg-gray-700 rounded-lg p-2">
-                    <div className="font-medium text-red-600">{team.losses}</div>
-                    <div className="text-[8px] text-gray-400 leading-tight text-center">D</div>
-                  </div>
-                  <div className="bg-gray-700 rounded-lg p-2">
-                    <div className="font-medium text-white">{team.goalDiff > 0 ? '+' : ''}{team.goalDiff}</div>
-                    <div className="text-[8px] text-gray-400 leading-tight text-center">SG</div>
-                  </div>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
