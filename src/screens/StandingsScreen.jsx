@@ -91,40 +91,40 @@ const StandingsScreen = ({ matches, settings, setCurrentScreen, onBack }) => {
         
         {/* Final Tournament Results */}
         {playoffsComplete && finalResults && (
-          <div className="bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl p-6 text-center shadow-lg mb-6">
+          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 rounded-2xl p-6 text-center shadow-xl mb-6 border border-blue-500">
             <div className="mb-4">
-              <div className="text-3xl mb-2">🏆</div>
-              <h2 className="text-xl font-bold text-white mb-1">RESULTADO FINAL</h2>
-              <p className="text-yellow-100 text-sm">Torneio Finalizado</p>
+              <div className="text-4xl mb-2">🏆</div>
+              <h2 className="text-2xl font-bold text-white mb-1">RESULTADO FINAL</h2>
+              <p className="text-blue-200 text-sm">Torneio Finalizado</p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-3">
               {/* Champion */}
-              <div className="bg-white bg-opacity-20 rounded-xl p-3 border-2 border-yellow-300 col-span-2">
+              <div className="bg-yellow-500 rounded-xl p-4 border-2 border-yellow-400 col-span-2 shadow-lg">
                 <div className="flex items-center justify-center space-x-3">
-                  <div className="text-2xl">🏆</div>
+                  <div className="text-3xl">🏆</div>
                   <div>
-                    <div className="text-yellow-100 text-xs font-medium">CAMPEÃO</div>
-                    <div className="text-white text-lg font-bold">{finalResults.champion}</div>
+                    <div className="text-yellow-900 text-xs font-bold uppercase tracking-wide">Campeão</div>
+                    <div className="text-gray-900 text-xl font-extrabold">{finalResults.champion}</div>
                   </div>
                 </div>
               </div>
-              
+
               {/* Runner-up */}
-              <div className="bg-white bg-opacity-15 rounded-xl p-3 border border-gray-300">
+              <div className="bg-gray-300 rounded-xl p-3 border-2 border-gray-400 shadow-md">
                 <div className="text-center">
-                  <div className="text-xl mb-1">🥈</div>
-                  <div className="text-gray-200 text-xs font-medium">VICE</div>
-                  <div className="text-white text-sm font-bold">{finalResults.runnerUp}</div>
+                  <div className="text-2xl mb-1">🥈</div>
+                  <div className="text-gray-700 text-xs font-bold uppercase tracking-wide">Vice</div>
+                  <div className="text-gray-900 text-base font-bold">{finalResults.runnerUp}</div>
                 </div>
               </div>
-              
+
               {/* Third place */}
-              <div className="bg-white bg-opacity-10 rounded-xl p-3 border border-orange-300">
+              <div className="bg-orange-400 rounded-xl p-3 border-2 border-orange-500 shadow-md">
                 <div className="text-center">
-                  <div className="text-xl mb-1">🥉</div>
-                  <div className="text-orange-200 text-xs font-medium">3º LUGAR</div>
-                  <div className="text-white text-sm font-bold">{finalResults.thirdPlace}</div>
+                  <div className="text-2xl mb-1">🥉</div>
+                  <div className="text-orange-900 text-xs font-bold uppercase tracking-wide">3º Lugar</div>
+                  <div className="text-gray-900 text-base font-bold">{finalResults.thirdPlace}</div>
                 </div>
               </div>
             </div>
