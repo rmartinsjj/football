@@ -56,7 +56,10 @@ export const useGameDaySync = (currentGameDay) => {
             played: match.played || false
           });
         } else {
+          // Update match including teams (important for playoff matches that go from TBD to actual teams)
           await gameDayService.updateMatch(existingMatch.id, {
+            team1: match.team1,
+            team2: match.team2,
             score1: match.score1 || 0,
             score2: match.score2 || 0,
             penalty_score1: match.penaltyScore1,

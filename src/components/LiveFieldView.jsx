@@ -109,23 +109,60 @@ const LiveFieldView = ({
     }
   }
 
-  // Reset match index if it's out of range
+  // Reset match index if it's out of range or if match at index is invalid
   useEffect(() => {
     if (currentMatchIndex >= updatedMatches.length && updatedMatches.length > 0) {
       setCurrentMatchIndex(updatedMatches.length - 1);
     } else if (currentMatchIndex < 0) {
       setCurrentMatchIndex(0);
+    } else {
+      // Check if current match at index is valid (has real teams, not TBD)
+      const matchAtIndex = updatedMatches[currentMatchIndex];
+      if (matchAtIndex && (
+        !matchAtIndex.team1 ||
+        !matchAtIndex.team2 ||
+        matchAtIndex.team1 === 'TBD' ||
+        matchAtIndex.team2 === 'TBD'
+      )) {
+        // Find first valid match
+        const firstValidIndex = updatedMatches.findIndex(m =>
+          m.team1 && m.team2 && m.team1 !== 'TBD' && m.team2 !== 'TBD'
+        );
+        if (firstValidIndex >= 0 && firstValidIndex !== currentMatchIndex) {
+          console.log('Current match has TBD teams, switching to first valid match at index:', firstValidIndex);
+          setCurrentMatchIndex(firstValidIndex);
+        }
+      }
     }
-  }, [updatedMatches.length, currentMatchIndex]);
+  }, [updatedMatches, currentMatchIndex]);
 
-  // Find current match using index
-  const currentMatch = updatedMatches[currentMatchIndex] || updatedMatches[0];
+  // Find current match using index - with validation
+  let currentMatch = updatedMatches[currentMatchIndex] || updatedMatches[0];
+
+  // If current match has TBD or undefined teams, don't display it
+  if (currentMatch && (
+    !currentMatch.team1 ||
+    !currentMatch.team2 ||
+    currentMatch.team1 === 'TBD' ||
+    currentMatch.team2 === 'TBD'
+  )) {
+    console.log('Current match has invalid teams:', currentMatch);
+    currentMatch = null;
+  }
 
   const handleNavigateMatch = (direction) => {
     if (direction === 'next') {
-      setCurrentMatchIndex(prev => Math.min(prev + 1, updatedMatches.length - 1));
+      setCurrentMatchIndex(prev => {
+        const newIndex = Math.min(prev + 1, updatedMatches.length - 1);
+        console.log('Navigating to next match, index:', newIndex, 'match:', updatedMatches[newIndex]);
+        return newIndex;
+      });
     } else if (direction === 'prev') {
-      setCurrentMatchIndex(prev => Math.max(prev - 1, 0));
+      setCurrentMatchIndex(prev => {
+        const newIndex = Math.max(prev - 1, 0);
+        console.log('Navigating to previous match, index:', newIndex, 'match:', updatedMatches[newIndex]);
+        return newIndex;
+      });
     }
   };
 
@@ -583,6 +620,7 @@ const LiveFieldView = ({
 
       // Generate playoff matches
       updated = generatePlayoffMatches(updated, finalStandings);
+      console.log('Playoff matches generated:', updated.filter(m => m.id >= 13));
     }
 
     setMatches(updated);
